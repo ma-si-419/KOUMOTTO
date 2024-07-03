@@ -151,7 +151,7 @@
     <ClCompile Include="MyEngine\Physics\Physics.cpp" />
     <ClCompile Include="Character\Player.cpp" />
     <ClCompile Include="MyEngine\Physics\Rigidbody.cpp" />
-    <ClCompile Include="SceneSelect.cpp" />
+    <ClCompile Include="Scene\SceneSelect.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneGame.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -170,7 +170,7 @@
     <ClInclude Include="MyEngine\Physics\Physics.h" />
     <ClInclude Include="Character\Player.h" />
     <ClInclude Include="MyEngine\Physics\Rigidbody.h" />
-    <ClInclude Include="SceneSelect.h" />
+    <ClInclude Include="Scene\SceneSelect.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneGame.h" />
     <ClInclude Include="Scene\SceneManager.h" />
