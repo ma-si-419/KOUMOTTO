@@ -23,5 +23,4 @@ void Rigidbody::SetVelo(MyEngine::Vector3 velo)
 		//•ûŒüƒxƒNƒgƒ‹‚ğİ’è‚·‚é
 		m_dir = m_velo.Normalize();
 	}
-	DrawFormatString(400, 0, GetColor(255, 255, 255), "%f,%f,%f", m_pos.x, m_pos.y, m_pos.z);
 }

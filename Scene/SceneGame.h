@@ -3,6 +3,8 @@
 #include <memory>
 class Physics;
 class Player;
+class Camera;
+class Enemy;
 class SceneGame : public SceneBase
 {
 public:
@@ -19,5 +21,7 @@ public:
 private:
 	Physics* m_pPhysics;
 	std::shared_ptr<Player> m_pPlayer;
+	std::shared_ptr<Camera> m_pCamera;
+	std::shared_ptr<Enemy> m_pEnemy;
 };
 

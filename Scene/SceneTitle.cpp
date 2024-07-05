@@ -1,9 +1,6 @@
+#include "Game.h"
 #include "SceneTitle.h"
 #include "SceneSelect.h"
-namespace
-{
-
-}
 SceneTitle::SceneTitle(SceneManager& sceneManager) :
 	SceneBase(sceneManager),
 	m_isEnd(false),
@@ -33,21 +30,21 @@ void SceneTitle::Update(MyEngine::Input input)
 	//何も開いていないとき
 	if (isCloseWindow)
 	{
-		if (input.IsTrigger("UP"))
+		if (input.IsTrigger(Game::InputId::kUp))
 		{
 			if (m_selectItem > 0)
 			{
 				m_selectItem--;
 			}
 		}
-		else if (input.IsTrigger("DOWN"))
+		else if (input.IsTrigger(Game::InputId::kDown))
 		{
 			if (m_selectItem < static_cast<int>(ItemKind::kEnd))
 			{
 				m_selectItem++;
 			}
 		}
-		if (input.IsTrigger("OK"))
+		if (input.IsTrigger(Game::InputId::kOk))
 		{
 			if (m_selectItem == static_cast<int>(ItemKind::kStart))
 			{
@@ -72,7 +69,7 @@ void SceneTitle::Update(MyEngine::Input input)
 	else if (m_isOpenOption)
 	{
 		//戻るボタンを押したとき
-		if (input.IsTrigger("CANCEL"))
+		if (input.IsTrigger(Game::InputId::kCancel))
 		{
 			m_isOpenOption = false;
 		}
@@ -82,23 +79,23 @@ void SceneTitle::Update(MyEngine::Input input)
 	{
 
 		//本当に終了するかどうかを選択する
-		if (input.IsTrigger("LEFT"))
+		if (input.IsTrigger(Game::InputId::kLeft))
 		{
 			m_isEnd = true;
 		}
-		else if (input.IsTrigger("RIGHT"))
+		else if (input.IsTrigger(Game::InputId::kRight))
 		{
 			m_isEnd = false;
 		}
 
 		//戻るボタンを押したとき
-		if (input.IsTrigger("CANCEL"))
+		if (input.IsTrigger(Game::InputId::kCancel))
 		{
 			m_isOpenEndWindow = false;
 		}
 
 		//決定ボタンを押したとき
-		if (input.IsTrigger("OK"))
+		if (input.IsTrigger(Game::InputId::kOk))
 		{
 			//本当に閉じるかどうかを確認
 			if (m_isEnd)
@@ -120,28 +117,36 @@ void SceneTitle::Draw()
 	DrawString(0, 0, "SceneTitle", GetColor(255, 255, 255));
 	//オプションもエンドウィンドウも開いていないとき
 	bool isCloseWindow = !m_isOpenEndWindow && !m_isOpenOption;
-	
+
 	//ウィンドウを何も開いていないとき
 	if (isCloseWindow)
 	{
+#ifdef _DEBUG
+
 		DrawString(200, 200, "はじめる", GetColor(255, 255, 255));
 		DrawString(200, 300, "オプション", GetColor(255, 255, 255));
 		DrawString(200, 400, "終わる", GetColor(255, 255, 255));
 		DrawCircle(150, 200 + m_selectItem * 100, 20, GetColor(255, 0, 0), true);
+
+#endif
 	}
 	//オプションを開いているとき
 	if (m_isOpenOption)
 	{
+#ifdef _DEBUG
 		DrawString(500, 500, "おぷしょんだよ", GetColor(255, 255, 255));
 		DrawString(500, 700, "Bで戻るよ", GetColor(255, 255, 255));
+#endif
 	}
 	//エンドウィンドウを開いているとき
 	if (m_isOpenEndWindow)
 	{
+#ifdef _DEBUG
 		DrawString(200, 200, "本当に終了しますか", GetColor(255, 255, 255));
 		DrawString(100, 400, "はい", GetColor(255, 255, 255));
 		DrawString(300, 400, "いいえ", GetColor(255, 255, 255));
 		DrawCircle(300 - m_isEnd * 200, 400, 20, GetColor(255, 0, 0), true);
+#endif
 	}
 
 #ifdef _DEBUG

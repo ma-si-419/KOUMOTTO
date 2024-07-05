@@ -1,9 +1,12 @@
+#include "Game.h"
 #include "SceneSelect.h"
 #include "SceneTitle.h"
 #include "SceneGame.h"
 
 SceneSelect::SceneSelect(SceneManager& sceneManager) :
-	SceneBase(sceneManager)
+	SceneBase(sceneManager),
+	m_selectLevel(0),
+	m_isBack(false)
 {
 }
 
@@ -17,25 +20,25 @@ void SceneSelect::Init()
 
 void SceneSelect::Update(MyEngine::Input input)
 {
-	if (input.IsTrigger("LEFT"))
+	if (input.IsTrigger(Game::InputId::kLeft))
 	{
 		if (m_selectLevel > 0)
 		{
 			m_selectLevel--;
 		}
 	}
-	else if (input.IsTrigger("RIGHT"))
+	else if (input.IsTrigger(Game::InputId::kRight))
 	{
 		if (m_selectLevel < static_cast<int>(LevelKind::kHard))
 		{
 			m_selectLevel++;
 		}
 	}
-	if (input.IsTrigger("UP"))
+	if (input.IsTrigger(Game::InputId::kUp))
 	{
 		m_isBack = false;
 	}
-	else if (input.IsTrigger("DOWN"))
+	else if (input.IsTrigger(Game::InputId::kDown))
 	{
 		m_isBack = true;
 	}
@@ -56,11 +59,14 @@ void SceneSelect::Update(MyEngine::Input input)
 
 void SceneSelect::Draw()
 {
+#ifdef _DEBUG
 	DrawString(200, 400, "チュートリアル", GetColor(255, 255, 255));
 	DrawString(400, 400, "イージー", GetColor(255, 255, 255));
 	DrawString(600, 400, "ノーマル", GetColor(255, 255, 255));
 	DrawString(800, 400, "ハード", GetColor(255, 255, 255));
 	DrawString(500, 700, "もどる", GetColor(255, 255, 255));
+
+	DrawFormatString(100, 0, GetColor(255, 255, 255), "%d", m_selectLevel);
 
 	if (!m_isBack)
 	{
@@ -68,8 +74,10 @@ void SceneSelect::Draw()
 	}
 	else
 	{
-		DrawCircle(500, 500, 20, GetColor(255, 0, 0), true);
+		DrawCircle(500, 700, 20, GetColor(255, 0, 0), true);
 	}
+#endif 
+
 }
 
 void SceneSelect::End()

@@ -1,19 +1,23 @@
 #include "Input.h"
+#include "Game.h"
 using namespace MyEngine;
-
 Input::Input()
 {
 	//É{É^ÉìÇÃê›íË
-	m_inputActionMap["OK"] = { {InputType::kKeyboard,KEY_INPUT_RETURN},{InputType::kPad,PAD_INPUT_A} };
-	m_inputActionMap["PAUSE"] = { {InputType::kKeyboard,KEY_INPUT_P}, {InputType::kPad,PAD_INPUT_START} };
-	m_inputActionMap["SELECT"] = { {InputType::kKeyboard,KEY_INPUT_TAB}, {InputType::kPad,PAD_INPUT_7} };
-	m_inputActionMap["CANCEL"] = { {InputType::kKeyboard,KEY_INPUT_ESCAPE}, {InputType::kPad,PAD_INPUT_B} };
-	m_inputActionMap["UP"] = { {InputType::kKeyboard,KEY_INPUT_UP}, {InputType::kPad,PAD_INPUT_UP} };
-	m_inputActionMap["DOWN"] = { {InputType::kKeyboard,KEY_INPUT_DOWN}, {InputType::kPad,PAD_INPUT_DOWN} };
-	m_inputActionMap["LEFT"] = { {InputType::kKeyboard,KEY_INPUT_LEFT}, {InputType::kPad,PAD_INPUT_LEFT} };
-	m_inputActionMap["RIGHT"] = { {InputType::kKeyboard,KEY_INPUT_RIGHT}, {InputType::kPad,PAD_INPUT_RIGHT} };
-	m_inputActionMap["LB"] = { {InputType::kKeyboard,KEY_INPUT_J}, {InputType::kPad,PAD_INPUT_5} };
-	m_inputActionMap["RB"] = { {InputType::kKeyboard,KEY_INPUT_L}, {InputType::kPad,PAD_INPUT_6} };
+	m_inputActionMap[Game::InputId::kOk] = { {InputType::kKeyboard,KEY_INPUT_RETURN},{InputType::kPad,PAD_INPUT_A} };
+	m_inputActionMap[Game::InputId::kPause] = { {InputType::kKeyboard,KEY_INPUT_P}, {InputType::kPad,PAD_INPUT_START} };
+	m_inputActionMap[Game::InputId::kSelect] = { {InputType::kKeyboard,KEY_INPUT_TAB}, {InputType::kPad,PAD_INPUT_7} };
+	m_inputActionMap[Game::InputId::kCancel] = { {InputType::kKeyboard,KEY_INPUT_ESCAPE}, {InputType::kPad,PAD_INPUT_B} };
+	m_inputActionMap[Game::InputId::kUp] = { {InputType::kKeyboard,KEY_INPUT_W}, {InputType::kPad,PAD_INPUT_UP} };
+	m_inputActionMap[Game::InputId::kDown] = { {InputType::kKeyboard,KEY_INPUT_S}, {InputType::kPad,PAD_INPUT_DOWN} };
+	m_inputActionMap[Game::InputId::kLeft] = { {InputType::kKeyboard,KEY_INPUT_A}, {InputType::kPad,PAD_INPUT_LEFT} };
+	m_inputActionMap[Game::InputId::kRight] = { {InputType::kKeyboard,KEY_INPUT_D}, {InputType::kPad,PAD_INPUT_RIGHT} };
+	m_inputActionMap[Game::InputId::kLb] = { {InputType::kKeyboard,KEY_INPUT_J}, {InputType::kPad,PAD_INPUT_5} };
+	m_inputActionMap[Game::InputId::kRb] = { {InputType::kKeyboard,KEY_INPUT_L}, {InputType::kPad,PAD_INPUT_6} };
+	m_inputActionMap[Game::InputId::kA] = { {InputType::kKeyboard,KEY_INPUT_U}, {InputType::kPad,PAD_INPUT_1} };
+	m_inputActionMap[Game::InputId::kB] = { {InputType::kKeyboard,KEY_INPUT_H}, {InputType::kPad,PAD_INPUT_2} };
+	m_inputActionMap[Game::InputId::kX] = { {InputType::kKeyboard,KEY_INPUT_G}, {InputType::kPad,PAD_INPUT_3} };
+	m_inputActionMap[Game::InputId::kY] = { {InputType::kKeyboard,KEY_INPUT_Y}, {InputType::kPad,PAD_INPUT_4} };
 
 }
 void Input::Update()
