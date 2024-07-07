@@ -28,11 +28,12 @@ void SceneGame::Init()
 
 void SceneGame::Update(MyEngine::Input input)
 {
-	m_pPlayer->Update(input);
-	m_pEnemy->Update();
-	/*m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
+	m_pPlayer->Update(shared_from_this(), input);
+	m_pEnemy->Update(shared_from_this());
+	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
+	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
 	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
-	m_pCamera->Update();*/
+	m_pCamera->Update();
 	m_pPhysics->Update();
 	
 	if (input.IsTrigger(Game::InputId::kPause))
@@ -45,6 +46,7 @@ void SceneGame::Update(MyEngine::Input input)
 void SceneGame::Draw()
 {
 	m_pPlayer->Draw();
+	m_pEnemy->Draw();
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 

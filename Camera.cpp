@@ -3,7 +3,7 @@
 namespace
 {
 	//カメラとプレイヤーの距離
-	constexpr float kPlayerDistance = 1.5f;
+	constexpr float kPlayerDistance = 2.5f;
 }
 
 Camera::Camera()
@@ -17,14 +17,18 @@ Camera::~Camera()
 
 void Camera::Update()
 {
-	m_cameraPos = m_playerPos/* - (m_playerPos - m_targetPos)*/;
+	//m_cameraPos = m_targetPos;
+	m_cameraPos = m_playerPos;
+
+	/*MyEngine::Vector3 targetToPlayer = m_playerPos - m_targetPos;
+
+	m_cameraPos = m_cameraPos + targetToPlayer.Normalize() * 1000;*/
+
+	m_cameraPos.y = m_cameraPos.y + 500;
+	m_cameraPos.z = m_cameraPos.z - 5000;
 
 
-	MyEngine::Vector3 dir;
+	MyEngine::Vector3 target = m_playerPos - (m_playerPos - m_targetPos) / 2;
 
-	dir = m_cameraPos - m_targetPos;
-
-	dir = dir.Normalize();
-
-	SetCameraPositionAndAngle(m_cameraPos.CastVECTOR(),dir.x,dir.y,dir.z);
+	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(),target.CastVECTOR());
 }

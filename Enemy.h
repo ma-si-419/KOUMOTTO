@@ -1,5 +1,7 @@
 #pragma once
 #include "CharacterBase.h"
+#include <memory>
+class SceneGame;
 class Enemy : public CharacterBase
 {
 public:
@@ -7,7 +9,7 @@ public:
 	~Enemy();
 
 	void Init(Physics* physics);
-	void Update();
+	void Update(std::shared_ptr<SceneGame> scene);
 	void Draw();
 
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }

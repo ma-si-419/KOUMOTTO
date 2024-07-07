@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AttackBase.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="MyEngine\Physics\CapsuleColliderData.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AttackBase.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
