@@ -20,6 +20,9 @@ public:
 	void Draw();
 	//I—¹ˆ—
 	void End();
+	//UŒ‚‚ğƒV[ƒ“‚É’Ç‰Á
+	void AddAttack(std::shared_ptr<AttackBase> pAttack);
+
 private:
 	Physics* m_pPhysics;
 	std::shared_ptr<Player> m_pPlayer;

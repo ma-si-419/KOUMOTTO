@@ -6,6 +6,8 @@ public:
 	Camera();
 	~Camera();
 
+	void Init();
+
 	void Update();
 
 	void SetPlayerPos(MyEngine::Vector3 pos) { m_playerPos = pos; }

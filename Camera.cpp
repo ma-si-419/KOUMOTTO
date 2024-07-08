@@ -1,34 +1,46 @@
 #include "Camera.h"
-
+#include <cmath>
 namespace
 {
 	//カメラとプレイヤーの距離
-	constexpr float kPlayerDistance = 2.5f;
+	constexpr float kPlayerDistance = 1.0f;
+	//デフォルトのカメラの位置
+	const MyEngine::Vector3 kDefaultPos(500, 500, -5000);
+	//カメラの移動速度(距離の倍率)
+	constexpr float kCameraSpeed = 0.1f;
 }
 
 Camera::Camera()
 {
-	SetCameraNearFar(1.0f,10000.0f);
+	SetCameraNearFar(1.0f, 10000.0f);
 }
 
 Camera::~Camera()
 {
 }
 
+void Camera::Init()
+{
+	m_cameraPos = m_playerPos + kDefaultPos;
+}
+
 void Camera::Update()
 {
-	//m_cameraPos = m_targetPos;
-	m_cameraPos = m_playerPos;
+	//エネミーからプレイヤーへのベクトル作成
+	MyEngine::Vector3 targetToPlayerVec = m_playerPos - m_targetPos;
+	
+	//X軸回転させる
+	MATRIX x = MGetRotX(-10);
+	//Y軸回転させる
+	MATRIX y = MGetRotY(10);
 
-	/*MyEngine::Vector3 targetToPlayer = m_playerPos - m_targetPos;
+	MATRIX m = MMult(x, y);
+	MyEngine::Vector3 moveVec = VTransformSR(targetToPlayerVec.CastVECTOR(),m);
 
-	m_cameraPos = m_cameraPos + targetToPlayer.Normalize() * 1000;*/
-
-	m_cameraPos.y = m_cameraPos.y + 500;
-	m_cameraPos.z = m_cameraPos.z - 5000;
+	m_cameraPos = m_playerPos - moveVec * kPlayerDistance;
 
 
-	MyEngine::Vector3 target = m_playerPos - (m_playerPos - m_targetPos) / 2;
+	MyEngine::Vector3 cameraTarget = m_playerPos - (m_playerPos - m_targetPos) / 2;
 
-	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(),target.CastVECTOR());
+	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(), cameraTarget.CastVECTOR());
 }

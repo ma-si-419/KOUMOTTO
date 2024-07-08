@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Enemy.h"
+#include "AttackBase.h"
 
 SceneGame::SceneGame(SceneManager& sceneManager) : SceneBase(sceneManager)
 {
@@ -24,6 +25,9 @@ void SceneGame::Init()
 {
 	m_pPlayer->Init(m_pPhysics);
 	m_pEnemy->Init(m_pPhysics);
+	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
+	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
+	m_pCamera->Init();
 }
 
 void SceneGame::Update(MyEngine::Input input)
@@ -34,8 +38,19 @@ void SceneGame::Update(MyEngine::Input input)
 	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
 	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
 	m_pCamera->Update();
+	
+	int count = 0;
+	for (auto& attack : m_pAttack)
+	{
+		count++;
+		attack->Update();
+	}
+	printfDx("%d\n",count);
+
 	m_pPhysics->Update();
 	
+
+
 	if (input.IsTrigger(Game::InputId::kPause))
 	{
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager));
@@ -47,9 +62,18 @@ void SceneGame::Draw()
 {
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
+	for (auto& attack : m_pAttack)
+	{
+		attack->Draw();
+	}
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 
 void SceneGame::End()
 {
+}
+
+void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)
+{
+	m_pAttack.push_back(pAttack);
 }
