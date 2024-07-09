@@ -3,9 +3,11 @@
 class SpecialAttack : public AttackBase
 {
 public:
-	SpecialAttack(ObjectTag tag, ColliderData::Kind kind);
+	SpecialAttack(ObjectTag tag);
 	virtual ~SpecialAttack();
 
 	virtual void Draw();
+private:
+
 };
 

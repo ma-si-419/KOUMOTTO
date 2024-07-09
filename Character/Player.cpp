@@ -1,13 +1,12 @@
 #include "Player.h"
 #include "Game.h"
 #include "SceneGame.h"
-#include "EnergyAttack.h"
-#include "PhysicalAttack.h"
+#include "NormalAttack.h"
 #include "SpecialAttack.h"
 namespace
 {
 	//移動速度
-	constexpr float kMoveSpeed = 0.1f;
+	constexpr float kMoveSpeed = 100.0f;
 	constexpr float kAttackPos = 400;
 }
 Player::Player() :
@@ -23,6 +22,10 @@ Player::~Player()
 
 void Player::Init(Physics* physics)
 {
+
+	m_nowHp = m_status.hp;
+	m_nowMp = m_status.mp;
+
 	m_pPhysics = physics;
 	Collidable::Init(physics);
 }
@@ -33,11 +36,22 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	//移動ベクトル
 	MyEngine::Vector3 velo;
 
-	//移動処理の計算
-	velo = Move(velo, input);
+	//気をためる処理
+	if (input.IsPress("Y"))
+	{
+		//マックスじゃなければ
+		if (m_nowMp < m_status.mp)
+		{
+			m_nowMp++;
+		}
+	}
 
 	//攻撃処理
 	Attack(scene, input);
+
+	//移動処理
+	velo = Move(velo, input);
+
 
 
 	//リギットボディにベロシティを設定する
@@ -68,12 +82,14 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 		if (stickDir.sqLength() != 0)
 		{
 
+			stickDir = stickDir.Normalize();
+
 			MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
 
 			//回転速度(横移動の速さ)
 			float HMoveSpeed = 0;
 
-			if (stickDir.x != 0)
+			if (stickDir.x != 0.0f)
 			{
 				HMoveSpeed = (stickDir.x * kMoveSpeed) / toTargetVec.Length();
 			}
@@ -88,6 +104,7 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 			/*if (isMoveVertical)
 			{
+				velo = MyEngine::Vector3();
 				velo.y += -stickDir.z * kMoveSpeed;
 			}
 			else
@@ -172,111 +189,123 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		//気弾攻撃
 		if (input.IsTrigger("X"))
 		{
-			//気弾攻撃のポインタ作成
-			std::shared_ptr<EnergyAttack> attack = std::make_shared<EnergyAttack>();
+			std::string attackId = "気弾";
+			//消費MPが現在のMPよりも少なかったら
+			if (m_nowMp > GetAttackCost(attackId))
+			{
+				//気弾攻撃のポインタ作成
+				std::shared_ptr<NormalAttack> attack = std::make_shared<NormalAttack>(ObjectTag::kEnergyAttack);
 				//気弾攻撃の初期化
 				attack->Init(m_pPhysics, attackPos);
 				//ステータス設定
-				AttackBase::AttackStatus status;
-			status.atk = 10;
-			status.spd = 80.0f;
-			status.rad = 100.0f;
-			status.dir = toEnemyVec.Normalize();
-			attack->SetStatus(status);
-			//シーンに気弾攻撃追加
-			scene->AddAttack(attack);
+				Game::AttackInfo status;
+				status.damageRate = 10;
+				status.speed = 80.0f;
+				status.radius = 100.0f;
+				status.isLaser = false;
+				attack->SetStatus(m_attackData[attackId], m_targetPos);
+				//シーンに気弾攻撃追加
+				scene->AddAttack(attack);
+			}
 		}
 		//格闘攻撃
-		else if (input.IsTrigger("A"))
+		else if (input.IsTrigger("B"))
 		{
 			//格闘攻撃のポインタ作成
-			std::shared_ptr<PhysicalAttack> attack = std::make_shared<PhysicalAttack>();
+			std::shared_ptr<NormalAttack> attack = std::make_shared<NormalAttack>(ObjectTag::kPhysicalAttack);
 			//格闘攻撃の初期化
 			attack->Init(m_pPhysics, attackPos);
 			//ステータス設定
-			AttackBase::AttackStatus status;
-			status.atk = 30;
-			status.spd = 0.0f;
-			status.rad = 200.0f;
-			status.dir = toEnemyVec.Normalize();
-			attack->SetStatus(status);
+			Game::AttackInfo status;
+			status.damageRate = 30;
+			status.speed = 0.0f;
+			status.radius = 200.0f;
+			status.isLaser = false;
+			attack->SetStatus(status, m_targetPos);
 			//シーンに格闘攻撃追加
 			scene->AddAttack(attack);
 		}
 	}
 	//必殺技パレットを開いているとき
-	//else
-	//{
-	//	//外部ファイル読み込みをする↓
+	else
+	{
+		//外部ファイル読み込みをする↓
 
-	//	//かめはめ波
-	//	if (input.IsTrigger("Y"))
-	//	{
-	//		//気弾攻撃のポインタ作成
-	//		std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kEnergyAttack,ColliderData::Kind::kCapsule);
-	//		//気弾攻撃の初期化
-	//		attack->Init(m_pPhysics, attackPos);
-	//		//ステータス設定
-	//		AttackBase::AttackStatus status;
-	//		status.atk = 10;
-	//		status.spd = 80.0f;
-	//		status.rad = 100.0f;
-	//		status.dir = toEnemyVec.Normalize();
-	//		attack->SetStatus(status);
-	//		//シーンに気弾攻撃追加
-	//		scene->AddAttack(attack);
-	//	}
-	//	//格闘必殺1
-	//	else if (input.IsTrigger("B"))
-	//	{
-	//		//格闘攻撃のポインタ作成
-	//		std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>();
-	//		//格闘攻撃の初期化
-	//		attack->Init(m_pPhysics, attackPos);
-	//		//ステータス設定
-	//		AttackBase::AttackStatus status;
-	//		status.atk = 30;
-	//		status.spd = 0.0f;
-	//		status.rad = 200.0f;
-	//		status.dir = toEnemyVec.Normalize();
-	//		attack->SetStatus(status);
-	//		//シーンに格闘攻撃追加
-	//		scene->AddAttack(attack);
-	//	}
-	//	//格闘必殺2
-	//	else if (input.IsTrigger("X"))
-	//	{
-	//		//格闘攻撃のポインタ作成
-	//		std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>();
-	//		//格闘攻撃の初期化
-	//		attack->Init(m_pPhysics, attackPos);
-	//		//ステータス設定
-	//		AttackBase::AttackStatus status;
-	//		status.atk = 30;
-	//		status.spd = 0.0f;
-	//		status.rad = 200.0f;
-	//		status.dir = toEnemyVec.Normalize();
-	//		attack->SetStatus(status);
-	//		//シーンに格闘攻撃追加
-	//		scene->AddAttack(attack);
-	//	}
-	//	//気弾連打
-	//	else if (input.IsTrigger("A"))
-	//	{
-	//		//格闘攻撃のポインタ作成
-	//		std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>();
-	//		//格闘攻撃の初期化
-	//		attack->Init(m_pPhysics, attackPos);
-	//		//ステータス設定
-	//		AttackBase::AttackStatus status;
-	//		status.atk = 30;
-	//		status.spd = 0.0f;
-	//		status.rad = 200.0f;
-	//		status.dir = toEnemyVec.Normalize();
-	//		attack->SetStatus(status);
-	//		//シーンに格闘攻撃追加
-	//		scene->AddAttack(attack);
-	//	}
-	//}
+		//かめはめ波
+		if (input.IsTrigger("Y"))
+		{
+			//必殺技のポインタ作成
+			std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kEnergyAttack);
+			//必殺技の初期化
+			attack->Init(m_pPhysics, attackPos);
+			//ステータス設定
+			Game::AttackInfo status;
+			status.damageRate = 10;
+			status.speed = 80.0f;
+			status.radius = 100.0f;
+			status.isLaser = true;
+			attack->SetStatus(status, m_targetPos);
+			//シーンに必殺技攻追加
+			scene->AddAttack(attack);
+		}
+		//格闘必殺1
+		else if (input.IsTrigger("B"))
+		{
+			//必殺技のポインタ作成
+			std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kPhysicalAttack);
+			//必殺技の初期化
+			attack->Init(m_pPhysics, attackPos);
+			//ステータス設定
+			Game::AttackInfo status;
+			status.damageRate = 30;
+			status.speed = 0.0f;
+			status.radius = 200.0f;
+			status.isLaser = false;
+			attack->SetStatus(status, m_targetPos);
+			//シーンに必殺技追加
+			scene->AddAttack(attack);
+		}
+		//格闘必殺2
+		else if (input.IsTrigger("X"))
+		{
+			//必殺技のポインタ作成
+			std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kPhysicalAttack);
+			//必殺技の初期化
+			attack->Init(m_pPhysics, attackPos);
+			//ステータス設定
+			Game::AttackInfo status;
+			status.damageRate = 30;
+			status.speed = 0.0f;
+			status.radius = 200.0f;
+			status.isLaser = false;
+			attack->SetStatus(status, m_targetPos);
+			//シーンに必殺技追加
+			scene->AddAttack(attack);
+		}
+		//気弾連打
+		else if (input.IsTrigger("A"))
+		{
+			for (int i = 0; i < 30; i++)
+			{
+				//必殺技のポインタ作成
+				std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kEnergyAttack);
+				//必殺技の初期化
+				MyEngine::Vector3 pos = attackPos;
+				pos.x += GetRand(800) - 400;
+				pos.y += GetRand(800) - 400;
+				pos.z += GetRand(800) - 400;
+				attack->Init(m_pPhysics, pos);
+				//ステータス設定
+				Game::AttackInfo status;
+				status.damageRate = 30;
+				status.speed = 100.0f;
+				status.radius = 200.0f;
+				status.isLaser = false;
+				attack->SetStatus(status, m_targetPos);
+				//シーンに必殺技追加
+				scene->AddAttack(attack);
+			}
+		}
+	}
 
 }

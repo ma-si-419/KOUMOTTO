@@ -4,20 +4,20 @@
 #include "Physics.h"
 #include <cassert>
 
-Collidable::Collidable(ObjectTag tag, ColliderData::Kind colKind):
-	m_colData(nullptr),
+Collidable::Collidable(ObjectTag tag, ColliderData::Kind colKind) :
+	m_pColData(nullptr),
 	m_tag(tag)
 {
-	m_colData = CreateColliderData(colKind);
+	m_pColData = CreateColliderData(colKind);
 }
 
 Collidable::~Collidable()
 {
 	//コライダーデータを消す。
-	if (m_colData != nullptr)
+	if (m_pColData != nullptr)
 	{
-		delete m_colData;
-		m_colData = nullptr;
+		delete m_pColData;
+		m_pColData = nullptr;
 	}
 }
 
@@ -35,20 +35,23 @@ void Collidable::Final(Physics* physics)
 
 ColliderData* Collidable::CreateColliderData(ColliderData::Kind kind)
 {
-	if (m_colData != nullptr)
+	if (m_pColData != nullptr)
 	{
 		assert(0 && "colliderDataはすでに作られています");
-		return m_colData;
+		return m_pColData;
 	}
 	if (kind == ColliderData::Kind::kCapsule)
 	{
 		//カプセルコライダーの情報を入れる
-		m_colData = new CapsuleColliderData();
+		return new CapsuleColliderData();
 	}
 	else if (kind == ColliderData::Kind::kSphere)
 	{
 		//スフィアコライダーの情報を入れる
-		m_colData = new SphereColliderData();
+		return new SphereColliderData();
 	}
-	return nullptr;
+	else
+	{
+		return nullptr;
+	}
 }

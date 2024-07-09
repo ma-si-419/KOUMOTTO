@@ -19,4 +19,14 @@ namespace Game
 		const char* const kY = "Y";
 
 	}
+	struct AttackInfo
+	{
+		float cost;
+		float damageRate;
+		float speed;
+		float radius;
+		int lifeTime;
+		bool isLaser;
+		int actionTime;
+	};
 }

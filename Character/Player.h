@@ -36,6 +36,5 @@ private:
 	//ロックオンしている敵の座標
 	MyEngine::Vector3 m_targetPos;
 
-
 };
 

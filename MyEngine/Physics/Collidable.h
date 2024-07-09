@@ -17,7 +17,7 @@ protected:
 	//物理データ
 	Rigidbody m_rigidbody;
 	//当たり判定データ
-	ColliderData* m_colData;
+	ColliderData* m_pColData;
 private:
 	ColliderData* CreateColliderData(ColliderData::Kind kind);
 

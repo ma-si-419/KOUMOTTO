@@ -96,20 +96,20 @@
     <ClCompile Include="Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="Character\Enemy.cpp">
       <Filter>ソース ファイル\Character</Filter>
     </ClCompile>
     <ClCompile Include="AttackBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="EnergyAttack.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicalAttack.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="SpecialAttack.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalAttack.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MyEngine\Utility\LoadCsv.cpp">
+      <Filter>ソース ファイル\MyEngine\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,20 +170,20 @@
     <ClInclude Include="Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
+    <ClInclude Include="Character\Enemy.h">
       <Filter>ヘッダー ファイル\Character</Filter>
     </ClInclude>
     <ClInclude Include="AttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="EnergyAttack.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicalAttack.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="SpecialAttack.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalAttack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MyEngine\Utility\LoadCsv.h">
+      <Filter>ヘッダー ファイル\MyEngine\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

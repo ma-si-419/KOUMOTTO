@@ -39,14 +39,23 @@ void SceneGame::Update(MyEngine::Input input)
 	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
 	m_pCamera->Update();
 	
-	int count = 0;
+
+	//std::vector<int> deleteAttackNum;
+	//int count = 0;
 	for (auto& attack : m_pAttack)
 	{
-		count++;
 		attack->Update();
+		////ˆ—‚ð‚µ‚È‚¢UŒ‚‚¾‚Á‚½‚ç
+		//if (!attack->GetExist())
+		//{
+		//	deleteAttackNum.push_back(count);
+		//}
+		//count++;
 	}
-	printfDx("%d\n",count);
-
+	//for (auto& item : deleteAttackNum)
+	//{
+	//	//m_pAttack[item] = nullptr;
+	//}
 	m_pPhysics->Update();
 	
 
@@ -62,10 +71,7 @@ void SceneGame::Draw()
 {
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
-	for (auto& attack : m_pAttack)
-	{
-		attack->Draw();
-	}
+	m_pPhysics->DebugDraw();
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 

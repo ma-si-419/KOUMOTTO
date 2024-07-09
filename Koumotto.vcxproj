@@ -145,8 +145,8 @@
   <ItemGroup>
     <ClCompile Include="AttackBase.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnergyAttack.cpp" />
+    <ClCompile Include="Character\Enemy.cpp" />
+    <ClCompile Include="MyEngine\Utility\LoadCsv.cpp" />
     <ClCompile Include="MyEngine\Physics\CapsuleColliderData.cpp" />
     <ClCompile Include="Character\CharacterBase.cpp" />
     <ClCompile Include="MyEngine\Physics\Collidable.cpp" />
@@ -155,7 +155,7 @@
     <ClCompile Include="MyEngine\Physics\Physics.cpp" />
     <ClCompile Include="Character\Player.cpp" />
     <ClCompile Include="MyEngine\Physics\Rigidbody.cpp" />
-    <ClCompile Include="PhysicalAttack.cpp" />
+    <ClCompile Include="NormalAttack.cpp" />
     <ClCompile Include="Scene\SceneSelect.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneGame.cpp" />
@@ -169,9 +169,9 @@
   <ItemGroup>
     <ClInclude Include="AttackBase.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnergyAttack.h" />
+    <ClInclude Include="Character\Enemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="MyEngine\Utility\LoadCsv.h" />
     <ClInclude Include="MyEngine\Physics\CapsuleColliderData.h" />
     <ClInclude Include="Character\CharacterBase.h" />
     <ClInclude Include="MyEngine\Physics\ColliderData.h" />
@@ -181,7 +181,7 @@
     <ClInclude Include="MyEngine\Physics\Physics.h" />
     <ClInclude Include="Character\Player.h" />
     <ClInclude Include="MyEngine\Physics\Rigidbody.h" />
-    <ClInclude Include="PhysicalAttack.h" />
+    <ClInclude Include="NormalAttack.h" />
     <ClInclude Include="Scene\SceneSelect.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneGame.h" />

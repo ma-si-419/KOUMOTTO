@@ -9,7 +9,8 @@ public:
 	};
 
 	ColliderData(Kind kind) { m_kind = kind; }
-	virtual ~ColliderData() {}
+	virtual ~ColliderData(){}
+
 
 	//“–‚½‚è”»’èí•Êæ“¾
 	Kind GetKind()const { return m_kind; }
