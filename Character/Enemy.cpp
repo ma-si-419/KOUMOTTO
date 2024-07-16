@@ -9,7 +9,7 @@ Enemy::~Enemy()
 {
 }
 
-void Enemy::Init(Physics* physics)
+void Enemy::Init(std::shared_ptr<Physics> physics)
 {
 	Collidable::Init(physics);
 	MV1SetScale(m_modelHandle,VGet(300,300,300));

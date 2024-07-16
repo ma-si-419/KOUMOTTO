@@ -185,5 +185,8 @@
     <ClInclude Include="MyEngine\Utility\LoadCsv.h">
       <Filter>ヘッダー ファイル\MyEngine\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Character\CommandIdList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

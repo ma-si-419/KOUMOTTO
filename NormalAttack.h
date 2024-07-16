@@ -4,8 +4,7 @@ class NormalAttack : public AttackBase
 {
 public:
 	NormalAttack(ObjectTag tag);
-	~NormalAttack();
+	virtual  ~NormalAttack();
 
 	virtual void Draw() {}
 };
-

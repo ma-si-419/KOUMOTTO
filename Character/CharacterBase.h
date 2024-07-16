@@ -22,12 +22,14 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	virtual void Init(Physics* physics) = 0;
+	virtual void Init(std::shared_ptr<Physics> physics) = 0;
 
 	/// <summary>
 	/// 描画処理
 	/// </summary>
 	virtual void Draw() = 0;
+
+	void SetAttackData(std::map<std::string, Game::AttackInfo> data) { m_attackData = data; }
 
 	int GetAttackCost(std::string Id) { return m_attackData[Id].cost; }
 
@@ -49,14 +51,15 @@ protected:
 	struct Status
 	{
 		int hp = 0;
-		int mp = 0;
+		int mp = 1000;
 		float atk = 0;
 		float def = 0;
 	};
+
 	//モデルハンドル
 	int m_modelHandle;
 	//登録したPhysicsを持っておく
-	Physics* m_pPhysics;
+	std::shared_ptr<Physics> m_pPhysics;
 	//TODO:下の変数、外部データ化
 	
 	//攻撃のデータ

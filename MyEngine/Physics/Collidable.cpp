@@ -13,27 +13,21 @@ Collidable::Collidable(ObjectTag tag, ColliderData::Kind colKind) :
 
 Collidable::~Collidable()
 {
-	//コライダーデータを消す。
-	if (m_pColData != nullptr)
-	{
-		delete m_pColData;
-		m_pColData = nullptr;
-	}
 }
 
-void Collidable::Init(Physics* physics)
+void Collidable::Init(std::shared_ptr<Physics> physics)
 {
 	//物理情報登録
-	physics->Entry(this);
+	physics->Entry(shared_from_this());
 }
 
-void Collidable::Final(Physics* physics)
+void Collidable::Final(std::shared_ptr<Physics> physics)
 {
 	//物理情報解除
-	physics->Exit(this);
+	physics->Exit(shared_from_this());
 }
 
-ColliderData* Collidable::CreateColliderData(ColliderData::Kind kind)
+std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind kind)
 {
 	if (m_pColData != nullptr)
 	{
@@ -43,12 +37,12 @@ ColliderData* Collidable::CreateColliderData(ColliderData::Kind kind)
 	if (kind == ColliderData::Kind::kCapsule)
 	{
 		//カプセルコライダーの情報を入れる
-		return new CapsuleColliderData();
+		return std::make_shared<CapsuleColliderData>();
 	}
 	else if (kind == ColliderData::Kind::kSphere)
 	{
 		//スフィアコライダーの情報を入れる
-		return new SphereColliderData();
+		return std::make_shared<CapsuleColliderData>();
 	}
 	else
 	{

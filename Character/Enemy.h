@@ -8,7 +8,7 @@ public:
 	Enemy();
 	~Enemy();
 
-	void Init(Physics* physics);
+	void Init(std::shared_ptr<Physics> physics);
 	void Update(std::shared_ptr<SceneGame> scene);
 	void Draw();
 

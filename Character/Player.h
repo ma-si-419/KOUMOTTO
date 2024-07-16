@@ -1,7 +1,6 @@
 #pragma once
 #include "CharacterBase.h"
 #include "Input.h"
-#include <memory>
 class SceneGame;
 class Player : public CharacterBase
 {
@@ -9,7 +8,7 @@ public:
 	Player();
 	~Player();
 
-	void Init(Physics* physics);
+	void Init(std::shared_ptr<Physics> physics);
 	void Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input);
 	void Draw();
 

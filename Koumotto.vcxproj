@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="AttackBase.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Character\CommandIdList.h" />
     <ClInclude Include="Character\Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="MyEngine\Utility\LoadCsv.h" />

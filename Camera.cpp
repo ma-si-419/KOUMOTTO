@@ -12,7 +12,7 @@ namespace
 
 Camera::Camera()
 {
-	SetCameraNearFar(1.0f, 10000.0f);
+	SetCameraNearFar(10.0f, 30000.0f);
 }
 
 Camera::~Camera()

@@ -21,12 +21,15 @@ namespace Game
 	}
 	struct AttackInfo
 	{
-		float cost;
+		int cost;
 		float damageRate;
 		float speed;
 		float radius;
 		int lifeTime;
+		int attackNum;
 		bool isLaser;
+		int trackStartTime;
+		int trackEndTime;
 		int actionTime;
 	};
 }

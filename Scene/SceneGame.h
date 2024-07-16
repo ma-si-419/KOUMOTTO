@@ -24,7 +24,7 @@ public:
 	void AddAttack(std::shared_ptr<AttackBase> pAttack);
 
 private:
-	Physics* m_pPhysics;
+	std::shared_ptr<Physics> m_pPhysics;
 	std::shared_ptr<Player> m_pPlayer;
 	std::shared_ptr<Camera> m_pCamera;
 	std::shared_ptr<Enemy> m_pEnemy;
