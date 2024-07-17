@@ -22,7 +22,7 @@ Player::~Player()
 
 void Player::Init(std::shared_ptr<Physics> physics)
 {
-
+	MV1SetScale(m_modelHandle, VGet(300, 300, 300));
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
@@ -126,32 +126,45 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 			MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
 
+			//Y軸を中心とした回転をするので
+			MyEngine::Vector3 rotationShaftPos = m_targetPos;
+			//Y座標が関係しないようにプレイヤーと同じ座標にする
+			rotationShaftPos.y = m_rigidbody.GetPos().y;
+
+			MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_rigidbody.GetPos();
+
 			//回転速度(横移動の速さ)
 			float HMoveSpeed = 0;
 
 			if (stickDir.x != 0.0f)
 			{
-				HMoveSpeed = (stickDir.x * kMoveSpeed) / toTargetVec.Length();
+				HMoveSpeed = (stickDir.x * kMoveSpeed) / toShaftPosVec.Length();
 			}
 
 			DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", HMoveSpeed);
 
+			/*MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
+
+			m_rota = atan2f(a.z,a.x);*/
+
 			m_rota += HMoveSpeed;
 
 			//左右移動は敵の周囲を回る
-			velo.x += (m_targetPos.x + cosf(m_rota) * toTargetVec.Length()) - m_rigidbody.GetPos().x;
-			velo.z += (m_targetPos.z + sinf(m_rota) * toTargetVec.Length()) - m_rigidbody.GetPos().z;
 
-			/*if (isMoveVertical)
+			velo.x = (rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().x;
+			velo.z = (rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().z;
+
+			//上下入力を入れていたら
+			if (isMoveVertical)
 			{
-				velo = MyEngine::Vector3();
-				velo.y += -stickDir.z * kMoveSpeed;
+				velo.y += stickDir.z * kMoveSpeed;
 			}
 			else
 			{
-			}*/
+				velo += toTargetVec.Normalize() * (stickDir.z * kMoveSpeed);
+			}
 
-			velo += toTargetVec.Normalize() * (stickDir.z * kMoveSpeed);
+
 			DrawFormatString(400, 0, GetColor(255, 255, 255), "%f", velo.Length());;
 
 			//MATRIX mat = MGetRotY(toTargetVec.y);
@@ -231,7 +244,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			if (m_nowMp > GetAttackCost(attackId))
 			{
 				//気弾攻撃のみ移動中に出せる業であるのでここで技を出す
-				scene->AddAttack(CreateAttack(m_pPhysics,attackId));
+				scene->AddAttack(CreateAttack(m_pPhysics, attackId));
 
 			}
 		}

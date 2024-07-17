@@ -41,14 +41,15 @@ void Physics::Update()
 	{
 		item->m_nextPos = (item->m_rigidbody.GetPos() + item->m_rigidbody.GetVelo());
 	}
+	//当たっているものを入れる配列
+	std::vector<OnCollideInfo> pushData;
 	for (auto& first : m_collidables)
 	{
 		for (auto& second : m_collidables)
 		{
 			//当たり判定チェック
-			if (CheckCollide(first,second))
+			if (CheckCollide(first, second))
 			{
-				//当たっていれば配列に入れる
 
 			}
 		}

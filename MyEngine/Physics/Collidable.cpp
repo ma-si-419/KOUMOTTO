@@ -27,6 +27,10 @@ void Collidable::Final(std::shared_ptr<Physics> physics)
 	physics->Exit(shared_from_this());
 }
 
+void Collidable::OnCollide(std::shared_ptr<Collidable> collider)
+{
+}
+
 std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind kind)
 {
 	if (m_pColData != nullptr)

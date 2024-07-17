@@ -12,13 +12,11 @@ Enemy::~Enemy()
 void Enemy::Init(std::shared_ptr<Physics> physics)
 {
 	Collidable::Init(physics);
-	MV1SetScale(m_modelHandle,VGet(300,300,300));
-
 }
 
 void Enemy::Update(std::shared_ptr<SceneGame> scene)
 {
-	m_rigidbody.SetPos(MyEngine::Vector3(0, -500, 1000));
+	m_rigidbody.SetPos(MyEngine::Vector3(1, 1, 1));
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 }
 

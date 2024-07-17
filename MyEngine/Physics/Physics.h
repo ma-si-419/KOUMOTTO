@@ -2,8 +2,8 @@
 #include <list>
 #include <vector>
 #include <memory>
+#include "Collidable.h"
 
-class Collidable;
 class Physics final
 {
 public:
