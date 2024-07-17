@@ -12,9 +12,6 @@ public:
 	void Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input);
 	void Draw();
 
-	//ロックオンしている敵の座標を設定する
-	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
-
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
 private:
 	/// <summary>
@@ -32,8 +29,6 @@ private:
 
 	float m_rota;
 
-	//ロックオンしている敵の座標
-	MyEngine::Vector3 m_targetPos;
 
 };
 

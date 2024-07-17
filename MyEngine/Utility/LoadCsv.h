@@ -19,7 +19,9 @@ private:
 		kLaser,
 		kTrackStartTime,
 		kTrackEndTime,
-		kActionTime
+		kAttackTime,
+		kActionTime,
+		kEnergy
 	};
 public:
 	void LoadAttackData();

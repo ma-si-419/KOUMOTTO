@@ -1,8 +1,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "SceneGame.h"
-#include "NormalAttack.h"
-#include "SpecialAttack.h"
+#include "AttackBase.h"
 #include "CommandIdList.h"
 namespace
 {
@@ -13,7 +12,6 @@ namespace
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
-	m_targetPos(),
 	m_rota(0)
 {
 }
@@ -34,28 +32,67 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 {
-
+	m_stanTime--;
 	//移動ベクトル
 	MyEngine::Vector3 velo;
-
-	//気をためる処理
-	if (input.IsPress("Y"))
+	//スタン中は操作できないようにする
+	if (m_stanTime < 0)
 	{
-		//マックスじゃなければ
-		if (m_nowMp < m_status.mp)
+
+		//気をためる処理
+		if (input.IsPress("Y"))
 		{
-			m_nowMp++;
+			//マックスじゃなければ
+			if (m_nowMp < m_status.mp)
+			{
+				m_nowMp++;
+			}
+		}
+
+		//攻撃処理
+		Attack(scene, input);
+
+		//移動処理
+		velo = Move(velo, input);
+	}
+	//操作できない時間
+	else
+	{
+		//攻撃を出している状態だったら
+		if (m_isAttack)
+		{
+			//攻撃を複数回出す技であれば
+			if (m_attackData[m_attackId].attackNum > 1)
+			{
+				//今攻撃を出し始めて何秒か
+				int time = m_attackData[m_attackId].actionTime - m_stanTime;
+				//攻撃のスパンを取得する
+				int span = m_attackData[m_attackId].attackTime / m_attackData[m_attackId].attackNum;
+				//攻撃を出し切る時間までしか攻撃を出せないようにする
+				if (time % span == 0 && time <= m_attackData[m_attackId].attackTime)
+				{
+					//攻撃を作成
+					std::shared_ptr<AttackBase> attack = CreateAttack(m_pPhysics, m_attackId);
+					//レーザー状の攻撃であれば消える時間をそろえる
+					if (m_attackData[m_attackId].isLaser)
+					{
+						//消えるまでの時間
+						int lifeTime = m_attackData[m_attackId].lifeTime - time;
+
+						attack->SetAttackTime(lifeTime);
+					}
+					//攻撃を出す
+					scene->AddAttack(attack);
+				}
+			}
+			//攻撃が一度のみであれば
+			else
+			{
+				//攻撃を出す
+				scene->AddAttack(CreateAttack(m_pPhysics, m_attackId));
+			}
 		}
 	}
-
-	//攻撃処理
-	Attack(scene, input);
-
-	//移動処理
-	velo = Move(velo, input);
-
-
-
 	//リギットボディにベロシティを設定する
 	m_rigidbody.SetVelo(velo);
 
@@ -193,20 +230,9 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//消費MPが現在のMPよりも少なかったら
 			if (m_nowMp > GetAttackCost(attackId))
 			{
-				//複数回技を出す場合もあるためfor文で回す
-				for (int i = 0; i < m_attackData[attackId].attackNum; i++)
-				{
-					//気弾攻撃のポインタ作成
-					std::shared_ptr<NormalAttack> attack = std::make_shared<NormalAttack>(ObjectTag::kEnergyAttack);
-					//攻撃を出す座標を作成
-					MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toEnemyVec.Normalize() * (m_attackData[attackId].radius + kAttackPos);
-					//気弾攻撃の初期化
-					attack->Init(m_pPhysics, attackPos);
-					//ステータス設定
-					attack->SetStatus(m_attackData[attackId], m_targetPos,m_rigidbody.GetPos());
-					//シーンに気弾攻撃追加
-					scene->AddAttack(attack);
-				}
+				//気弾攻撃のみ移動中に出せる業であるのでここで技を出す
+				scene->AddAttack(CreateAttack(m_pPhysics,attackId));
+
 			}
 		}
 		//格闘攻撃
@@ -215,20 +241,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			std::string attackId = CommandId::kPhysicalAttack;
 			if (m_nowMp > GetAttackCost(attackId))
 			{
-				//複数回技を出す場合もあるためfor文で回す
-				for (int i = 0; i < m_attackData[attackId].attackNum; i++)
-				{
-					//格闘攻撃のポインタ作成
-					std::shared_ptr<NormalAttack> attack = std::make_shared<NormalAttack>(ObjectTag::kPhysicalAttack);
-					//攻撃を出す座標を作成
-					MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toEnemyVec.Normalize() * (m_attackData[attackId].radius + kAttackPos);
-					//格闘攻撃の初期化
-					attack->Init(m_pPhysics, attackPos);
-					//ステータス設定
-					attack->SetStatus(m_attackData[attackId], m_targetPos,m_rigidbody.GetPos());
-					//シーンに格闘攻撃追加
-					scene->AddAttack(attack);
-				}
+				SetAttack(attackId);
 			}
 		}
 	}
@@ -242,20 +255,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_nowMp > GetAttackCost(attackId))
 			{
-				//複数回技を出す場合もあるためfor文で回す
-				for (int i = 0; i < m_attackData[attackId].attackNum; i++)
-				{
-					//必殺技のポインタ作成
-					std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kEnergyAttack);
-					//攻撃を出す座標を作成
-					MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toEnemyVec.Normalize() * (m_attackData[attackId].radius + kAttackPos);
-					//必殺技の初期化
-					attack->Init(m_pPhysics, attackPos);
-					//ステータス設定
-					attack->SetStatus(m_attackData[attackId], m_targetPos, m_rigidbody.GetPos());
-					//シーンに必殺技攻追加
-					scene->AddAttack(attack);
-				}
+				SetAttack(attackId);
 			}
 		}
 		//格闘必殺1
@@ -265,20 +265,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_nowMp > GetAttackCost(attackId))
 			{
-				//複数回技を出す場合もあるためfor文で回す
-				for (int i = 0; i < m_attackData[attackId].attackNum; i++)
-				{
-					//必殺技のポインタ作成
-					std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kPhysicalAttack);
-					//攻撃を出す座標を作成
-					MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toEnemyVec.Normalize() * (m_attackData[attackId].radius + kAttackPos);
-					//必殺技の初期化
-					attack->Init(m_pPhysics, attackPos);
-					//ステータス設定
-					attack->SetStatus(m_attackData[attackId], m_targetPos, m_rigidbody.GetPos());
-					//シーンに必殺技追加
-					scene->AddAttack(attack);
-				}
+				SetAttack(attackId);
 			}
 		}
 		//格闘必殺2
@@ -288,20 +275,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_nowMp > GetAttackCost(attackId))
 			{
-				//複数回技を出す場合もあるためfor文で回す
-				for (int i = 0; i < m_attackData[attackId].attackNum; i++)
-				{
-					//必殺技のポインタ作成
-					std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kPhysicalAttack);
-					//攻撃を出す座標を作成
-					MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toEnemyVec.Normalize() * (m_attackData[attackId].radius + kAttackPos);
-					//必殺技の初期化
-					attack->Init(m_pPhysics, attackPos);
-					//ステータス設定
-					attack->SetStatus(m_attackData[attackId], m_targetPos, m_rigidbody.GetPos());
-					//シーンに必殺技追加
-					scene->AddAttack(attack);
-				}
+				SetAttack(attackId);
 			}
 		}
 		//気弾連打
@@ -311,24 +285,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_nowMp > GetAttackCost(attackId))
 			{
-				//複数回技を出す場合もあるためfor文で回す
-				for (int i = 0; i < m_attackData[attackId].attackNum; i++)
-				{
-					//必殺技のポインタ作成
-					std::shared_ptr<SpecialAttack> attack = std::make_shared<SpecialAttack>(ObjectTag::kEnergyAttack);
-					//攻撃を出す座標を作成
-					MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toEnemyVec.Normalize() * (m_attackData[attackId].radius + kAttackPos);
-					//必殺技の初期化
-					MyEngine::Vector3 pos = attackPos;
-					pos.x += GetRand(800) - 400;
-					pos.y += GetRand(800) - 400;
-					pos.z += GetRand(800) - 400;
-					attack->Init(m_pPhysics, pos);
-					//ステータス設定
-					attack->SetStatus(m_attackData[attackId], m_targetPos, m_rigidbody.GetPos());
-					//シーンに必殺技追加
-					scene->AddAttack(attack);
-				}
+				SetAttack(attackId);
 			}
 		}
 	}

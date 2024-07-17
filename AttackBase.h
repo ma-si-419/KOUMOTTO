@@ -11,7 +11,10 @@ public:
 	void Init(std::shared_ptr<Physics> physics,MyEngine::Vector3 pos);
 	void SetStatus(Game::AttackInfo status,MyEngine::Vector3 target, MyEngine::Vector3 playerPos);
 	void Update(MyEngine::Vector3 targetPos);
-	virtual void Draw() = 0;
+	void Draw() {};
+
+	//ライフタイムを設定する
+	void SetAttackTime(int time) { m_status.lifeTime = time; };
 
 	void Final(std::shared_ptr<Physics> physics) { Collidable::Final(physics); }
 	bool GetIsExist() { return m_isExist; }

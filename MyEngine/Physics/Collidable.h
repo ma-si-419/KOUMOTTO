@@ -14,6 +14,8 @@ public:
 
 	ObjectTag GetTag() const { return m_tag; }
 
+	virtual void OnCollide(std::shared_ptr<Collidable> collider);
+
 protected:
 	//•¨—ƒf[ƒ^
 	Rigidbody m_rigidbody;

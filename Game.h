@@ -30,6 +30,8 @@ namespace Game
 		bool isLaser;
 		int trackStartTime;
 		int trackEndTime;
+		int attackTime;
 		int actionTime;
+		bool isEnergy;
 	};
 }

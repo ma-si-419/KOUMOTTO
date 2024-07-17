@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-
+class AttackBase;
 class Physics;
 class CharacterBase : public Collidable
 {
@@ -29,8 +29,14 @@ public:
 	/// </summary>
 	virtual void Draw() = 0;
 
-	void SetAttackData(std::map<std::string, Game::AttackInfo> data) { m_attackData = data; }
 
+	//ロックオンしている敵の座標を設定する
+	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
+	//攻撃の情報を設定する
+	void SetAttackData(std::map<std::string, Game::AttackInfo> data) { m_attackData = data; }
+	//動けない時間を設定する
+	void SetStanTime(int time) { m_stanTime = time; }
+	//攻撃に必要な気力量を取得する
 	int GetAttackCost(std::string Id) { return m_attackData[Id].cost; }
 
 protected:
@@ -70,4 +76,21 @@ protected:
 	int m_nowHp;
 	//気力
 	int m_nowMp;
+	//動けない時間
+	int m_stanTime;
+	//攻撃を出しているかどうか
+	bool m_isAttack;
+	//出している攻撃
+	std::string m_attackId;
+	//ロックオンしている相手の座標
+	MyEngine::Vector3 m_targetPos;
+	/// <summary>
+	/// 攻撃を作成する
+	/// </summary>
+	/// <param name="id">攻撃のID</param>
+	/// <returns>攻撃のポインタ</returns>
+	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id);
+
+	//攻撃を出している状態に変化させる
+	void SetAttack(std::string id);
 };

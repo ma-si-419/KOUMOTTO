@@ -15,7 +15,7 @@ SceneGame::SceneGame(SceneManager& sceneManager) : SceneBase(sceneManager)
 	m_pCamera = std::make_shared<Camera>();
 	m_pEnemy = std::make_shared<Enemy>();
 
-	m_pAttack.reserve(400);
+	m_pAttacks.reserve(400);
 }
 
 SceneGame::~SceneGame()
@@ -52,44 +52,27 @@ void SceneGame::Update(MyEngine::Input input)
 	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
 	m_pCamera->Update();
 
-
-	//std::vector<int> deleteAttackNum;
-	int count = 0;
-	for (auto& attack : m_pAttack)
+	for (auto& attack : m_pAttacks)
 	{
+		//çUåÇÇÃçXêV
 		attack->Update(m_pEnemy->GetPos());
 		//èàóùÇÇµÇ»Ç¢çUåÇÇæÇ¡ÇΩÇÁ
 		if (!attack->GetIsExist())
 		{
 			attack->Final(m_pPhysics);
 		}
-		count++;
 	}
-	DrawFormatString(0, 400, GetColor(255, 255, 255), "çUåÇÉ|ÉCÉìÉ^êî:%d", count);
 
-	for (int i = 0; i < m_pAttack.size(); i++)
+	for (int i = 0; i < m_pAttacks.size(); i++)
 	{
-		if (!m_pAttack[i]->GetIsExist())
+		if (!m_pAttacks[i]->GetIsExist())
 		{
-			m_pAttack.erase(m_pAttack.begin() + i);
+			m_pAttacks.erase(m_pAttacks.begin() + i);
 			i--;
 		}
 	}
 	//m_pAttack.shrink_to_fit();
-	printfDx("size:%d,capacity%d\n", m_pAttack.size(),m_pAttack.capacity());
-
-	//auto res = std::remove_if(m_pAttack.begin(), m_pAttack.end(),
-	//	[](const auto& attack)
-	//	{
-	//		return !attack->GetIsExist();
-	//	});
-	//m_pAttack.erase(res, m_pAttack.end());
-	//for (auto& item : deleteAttackNum)
-	//{
-	//	//m_pAttack[item] = nullptr;
-	//}
-
-
+	printfDx("size:%d,capacity%d\n", m_pAttacks.size(),m_pAttacks.capacity());
 
 	if (input.IsTrigger(Game::InputId::kPause))
 	{
@@ -112,5 +95,5 @@ void SceneGame::End()
 
 void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)
 {
-	m_pAttack.push_back(pAttack);
+	m_pAttacks.push_back(pAttack);
 }
