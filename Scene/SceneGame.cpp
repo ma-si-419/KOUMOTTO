@@ -50,6 +50,7 @@ void SceneGame::Update(MyEngine::Input input)
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
 	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
 	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
+	m_pCamera->SetPlayerRota(m_pPlayer->GetRota());
 	m_pCamera->Update();
 
 	for (auto& attack : m_pAttacks)

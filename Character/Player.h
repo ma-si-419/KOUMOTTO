@@ -12,6 +12,8 @@ public:
 	void Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input);
 	void Draw();
 
+	float GetRota() { return m_rota; }
+
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
 private:
 	/// <summary>

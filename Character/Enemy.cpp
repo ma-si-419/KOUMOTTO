@@ -16,7 +16,7 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 
 void Enemy::Update(std::shared_ptr<SceneGame> scene)
 {
-	m_rigidbody.SetPos(MyEngine::Vector3(1, 1, 1));
+	m_rigidbody.SetPos(MyEngine::Vector3(1, 1, 1000));
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 }
 

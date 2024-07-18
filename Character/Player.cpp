@@ -151,6 +151,8 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 			//左右移動は敵の周囲を回る
 
+			//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
+			//現在の座標からその座標に向かうベクトルを作成する
 			velo.x = (rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().x;
 			velo.z = (rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().z;
 

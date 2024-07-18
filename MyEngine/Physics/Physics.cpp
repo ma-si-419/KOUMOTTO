@@ -70,7 +70,7 @@ void Physics::DebugDraw()
 			auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(item->m_pColData);
 
 			DrawCapsule3D(capsuleData->m_startPos.CastVECTOR(), item->m_rigidbody.GetPos().CastVECTOR(),
-				capsuleData->m_radius, 5, GetColor(50, 50, 255), GetColor(255, 255, 255), false);
+				capsuleData->m_radius, 5, GetColor(50, 50, 255), GetColor(255, 255, 255), true);
 		}
 		else if (item->m_pColData->GetKind() == ColliderData::Kind::kSphere)
 		{
