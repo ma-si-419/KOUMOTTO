@@ -54,6 +54,11 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 
 		//移動処理
 		velo = Move(velo, input);
+		//スタンしていない時は常に敵の方向を向き続ける
+		//プレイヤーを常にエネミーの方向に向ける
+		//TODO：ターゲットがずれた時に一瞬で向くようになってるからそれを
+		//一瞬ではなく向いている感じを出す
+		MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 	}
 	//操作できない時間
 	else
@@ -72,7 +77,7 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 				if (time % span == 0 && time <= m_attackData[m_attackId].attackTime)
 				{
 					//攻撃を作成
-					std::shared_ptr<AttackBase> attack = CreateAttack(m_pPhysics, m_attackId);
+					std::shared_ptr<AttackBase> attack = CreateAttack(m_pPhysics, m_attackId, true);
 					//レーザー状の攻撃であれば消える時間をそろえる
 					if (m_attackData[m_attackId].isLaser)
 					{
@@ -89,7 +94,8 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			else
 			{
 				//攻撃を出す
-				scene->AddAttack(CreateAttack(m_pPhysics, m_attackId));
+				scene->AddAttack(CreateAttack(m_pPhysics, m_attackId,true));
+				m_isAttack = false;
 			}
 		}
 	}
@@ -105,6 +111,21 @@ void Player::Draw()
 	DrawFormatString(0, 100, GetColor(255, 255, 255), "%f,%f,%f", m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
 	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%d,MP:%d", m_nowHp, m_nowMp);
 	MV1DrawModel(m_modelHandle);
+}
+
+void Player::OnCollide(std::shared_ptr<Collidable> collider)
+{
+	if (collider->GetTag() == ObjectTag::kEnemyAttack)
+	{
+		auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
+		int damage = attack->GetDamage() - m_status.def;
+		if (damage < 0)
+		{
+			damage = 2;
+		}
+
+		m_nowHp -= damage;
+	}
 }
 
 MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
@@ -123,8 +144,6 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 		{
 
 			stickDir = stickDir.Normalize();
-
-			MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
 
 			//Y軸を中心とした回転をするので
 			MyEngine::Vector3 rotationShaftPos = m_targetPos;
@@ -156,27 +175,23 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 			velo.x = (rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().x;
 			velo.z = (rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().z;
 
-			//上下入力を入れていたら
+			//上下移動入力されていたら
 			if (isMoveVertical)
 			{
+				//前後入力を上下のベクトルに変換
 				velo.y += stickDir.z * kMoveSpeed;
 			}
+			//されていなかった場合
 			else
 			{
-				velo += toTargetVec.Normalize() * (stickDir.z * kMoveSpeed);
+				//前後入力を回転の中心に向かうベクトルに変換
+				MyEngine::Vector3 toCenterVec = m_targetPos - m_rigidbody.GetPos();
+				toCenterVec.y = 0;
+				velo += toCenterVec.Normalize() * (stickDir.z * kMoveSpeed);
 			}
 
 
 			DrawFormatString(400, 0, GetColor(255, 255, 255), "%f", velo.Length());;
-
-			//MATRIX mat = MGetRotY(toTargetVec.y);
-
-			//stickDir = stickDir.Normalize();
-
-
-			//velo = stickDir * kHSpeed + toTargetVec * kHSpeed;
-
-			//velo = velo.MatTransform(mat);
 
 		}
 	}
@@ -245,8 +260,10 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//消費MPが現在のMPよりも少なかったら
 			if (m_nowMp > GetAttackCost(attackId))
 			{
-				//気弾攻撃のみ移動中に出せる業であるのでここで技を出す
-				scene->AddAttack(CreateAttack(m_pPhysics, attackId));
+				//気弾攻撃のみ移動中に出せる技であるのでここで技を出す
+				m_nowMp -= m_attackData[attackId].cost;
+				m_attackTarget = m_targetPos;
+				scene->AddAttack(CreateAttack(m_pPhysics, attackId,true));
 
 			}
 		}

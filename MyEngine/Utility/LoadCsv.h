@@ -17,8 +17,8 @@ private:
 		kLifeTime,
 		kAttackNum,
 		kLaser,
-		kTrackStartTime,
-		kTrackEndTime,
+		kScatter,
+		kTrack,
 		kAttackTime,
 		kActionTime,
 		kEnergy

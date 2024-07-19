@@ -23,13 +23,14 @@ namespace Game
 	{
 		int cost;
 		float damageRate;
+		int damage;
 		float speed;
 		float radius;
 		int lifeTime;
 		int attackNum;
 		bool isLaser;
-		int trackStartTime;
-		int trackEndTime;
+		bool isScatter;
+		bool isTrack;
 		int attackTime;
 		int actionTime;
 		bool isEnergy;

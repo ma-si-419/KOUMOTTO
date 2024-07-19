@@ -40,8 +40,8 @@ void LoadCsv::LoadAttackData()
 		pushData.lifeTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kLifeTime)]);
 		pushData.attackNum = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kAttackNum)]);
 		pushData.isLaser = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kLaser)]));
-		pushData.trackStartTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kTrackStartTime)]);
-		pushData.trackEndTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kTrackEndTime)]);
+		pushData.isScatter = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kScatter)]));
+		pushData.isTrack = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kTrack)]));
 		pushData.attackTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kAttackTime)]);
 		pushData.actionTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kActionTime)]);
 		pushData.isEnergy = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kEnergy)]));

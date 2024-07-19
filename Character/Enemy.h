@@ -12,7 +12,9 @@ public:
 	void Update(std::shared_ptr<SceneGame> scene);
 	void Draw();
 
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
 private:
-
+	MyEngine::Vector3 debug;
 };

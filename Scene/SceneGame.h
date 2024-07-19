@@ -29,5 +29,6 @@ private:
 	std::shared_ptr<Camera> m_pCamera;
 	std::shared_ptr<Enemy> m_pEnemy;
 	std::vector<std::shared_ptr<AttackBase>> m_pAttacks;
+	int handle;
 };
 

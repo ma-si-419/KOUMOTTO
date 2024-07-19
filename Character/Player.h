@@ -15,6 +15,8 @@ public:
 	float GetRota() { return m_rota; }
 
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
+
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 private:
 	/// <summary>
 	/// ˆÚ“®ˆ—‚ÌŒvZ‚ğ‚·‚é

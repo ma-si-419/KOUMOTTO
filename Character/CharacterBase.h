@@ -56,10 +56,10 @@ protected:
 	};
 	struct Status
 	{
-		int hp = 0;
+		int hp = 1000;
 		int mp = 1000;
-		float atk = 0;
-		float def = 0;
+		float atk = 100.0f;
+		float def = 100.0f;
 	};
 
 	//モデルハンドル
@@ -82,6 +82,8 @@ protected:
 	bool m_isAttack;
 	//出している攻撃
 	std::string m_attackId;
+	//攻撃を出したタイミングの敵の座標
+	MyEngine::Vector3 m_attackTarget;
 	//ロックオンしている相手の座標
 	MyEngine::Vector3 m_targetPos;
 	/// <summary>
@@ -89,7 +91,7 @@ protected:
 	/// </summary>
 	/// <param name="id">攻撃のID</param>
 	/// <returns>攻撃のポインタ</returns>
-	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id);
+	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id,bool isPlayer);
 
 	//攻撃を出している状態に変化させる
 	void SetAttack(std::string id);

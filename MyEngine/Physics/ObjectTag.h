@@ -5,7 +5,7 @@ enum class ObjectTag
 {
 	kPlayer,			//プレイヤー
 	kEnemy,				//敵
-	kEnergyAttack,		//気弾攻撃
-	kPhysicalAttack,	//格闘攻撃
+	kPlayerAttack,		//プレイヤーの攻撃
+	kEnemyAttack,		//エネミーの攻撃
 	kGround				//地面
 };
