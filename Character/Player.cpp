@@ -28,6 +28,21 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 	m_pPhysics = physics;
 	Collidable::Init(physics);
+
+	//Y軸を中心とした回転をするので
+	MyEngine::Vector3 rotationShaftPos = m_targetPos;
+	//Y座標が関係しないようにプレイヤーと同じ座標にする
+	rotationShaftPos.y = m_rigidbody.GetPos().y;
+
+	MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_rigidbody.GetPos();
+
+	MyEngine::Vector3 pos;
+
+	 pos.x = rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length();
+	 pos.y = 0;
+	 pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
+
+	 m_rigidbody.SetPos(pos);
 }
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)

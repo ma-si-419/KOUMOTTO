@@ -56,7 +56,7 @@ protected:
 	};
 	struct Status
 	{
-		int hp = 1000;
+		int hp = 100000;
 		int mp = 1000;
 		float atk = 100.0f;
 		float def = 100.0f;

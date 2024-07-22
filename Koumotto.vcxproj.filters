@@ -105,6 +105,9 @@
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp">
       <Filter>ソース ファイル\MyEngine\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Ui.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -174,6 +177,9 @@
       <Filter>ヘッダー ファイル\MyEngine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="CommandIdList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

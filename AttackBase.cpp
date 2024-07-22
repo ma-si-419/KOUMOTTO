@@ -105,15 +105,13 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 		if (GetTag() == ObjectTag::kEnemyAttack)
 		{
 			m_isExist = false;
-			printfDx("“–‚½‚Á‚½‚É‚å‚ñ");
 		}
 	}
 	else if (collider->GetTag() == ObjectTag::kEnemy)
 	{
-		if (GetTag() == ObjectTag::kPlayer)
+		if (GetTag() == ObjectTag::kPlayerAttack)
 		{
 			m_isExist = false;
-			printfDx("“–‚½‚Á‚½‚É‚å‚ñ");
 		}
 	}
 }
