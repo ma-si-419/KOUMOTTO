@@ -43,15 +43,16 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 	enemyHpBarStartPos.y = m_showUi["EnemyHpBar"].drawPos.y - m_showUi["EnemyHpBar"].height / 2;
 	//HPバーの終了位置
 	MyEngine::Vector2 enemyHpBarEndPos;
-	float enemyHpBarLength = m_showUi["EnemyHpBar"].drawPos.x - enemyHpBarStartPos.x;
 
 	enemyHpBarEndPos.x = m_showUi["EnemyHpBar"].drawPos.x + m_showUi["EnemyHpBar"].width / 2;
 	enemyHpBarEndPos.y = m_showUi["EnemyHpBar"].drawPos.y + m_showUi["EnemyHpBar"].height / 2;
 
-	enemyHpBarEndPos.x = enemyHpBarEndPos.x * (targetHp / maxTargetHp);
+	float enemyHpBarLength = enemyHpBarEndPos.x - enemyHpBarStartPos.x;
+
+	enemyHpBarEndPos.x = enemyHpBarStartPos.x + enemyHpBarLength * (targetHp / maxTargetHp);
 
 	DrawBox(enemyHpBarStartPos.x, enemyHpBarStartPos.y, enemyHpBarEndPos.x, enemyHpBarEndPos.y,
-		GetColor(255, 255, 255), true);
+		GetColor(255, 0, 0), true);
 }
 
 
