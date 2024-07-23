@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "SceneTitle.h"
 #include "SceneManager.h"
+#include "DataManager.h"
 #include "Input.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -11,7 +12,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ウィンドウかフルスクリーンか可変にする
 	ChangeWindowMode(isWindow);
 
-	SetGraphMode(1280, 960, 16);
+	SetGraphMode(1536, 864, 16);
 
 
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
@@ -24,8 +25,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	SceneManager scene;
+	DataManager data;
+	data.LoadAttackFile();
+	data.LoadUiFile();
 	MyEngine::Input input;
-	scene.ChangeScene(std::make_shared<SceneTitle>(scene));
+	scene.ChangeScene(std::make_shared<SceneTitle>(scene,data));
 
 	scene.Init();
 

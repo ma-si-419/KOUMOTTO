@@ -1,13 +1,12 @@
+#include "Game.h"
 #include "LoadCsv.h"
 #include <fstream>
 #include <cassert>
 
 //SpringGameをみて実装する
 
-void LoadCsv::LoadAttackData()
+std::vector<std::vector<std::string>> LoadCsv::LoadFile(std::string path)
 {
-	//開くファイル名
-	std::string path = "data/attackData.csv";
 	//ファイル読み込み
 	std::ifstream ifs(path.c_str());
 	//読み込めなかったら止める
@@ -17,8 +16,8 @@ void LoadCsv::LoadAttackData()
 	}
 	//一行のデータを入れる
 	std::string strBuf;
-	//コンマ区切りのデータを入れる
-	std::vector<std::string> strCommaBuf;
+	//コンマ区切りのデータを入れる配列
+	std::vector<std::vector<std::string>> ans;
 
 	//一行目のデータはいらないので一度読み込んでおく
 	std::getline(ifs, strBuf);
@@ -27,29 +26,31 @@ void LoadCsv::LoadAttackData()
 	while (std::getline(ifs, strBuf))
 	{
 		//切り取ったデータ
-		strCommaBuf = Split(strBuf, ',');
+		std::vector<std::string> pushData = Split(strBuf, ',');
+		ans.push_back(pushData);
+		////入れるデータ
+		//Game::AttackInfo pushData;
 
-		//入れるデータ
-		Game::AttackInfo pushData;
+		////入れるデータに情報を入れる
+		//pushData.cost = std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kCost)]);
+		//pushData.damageRate = std::stof(ans[static_cast<int>(Game::AttackInfoSort::kDamageRate)]);
+		//pushData.speed = std::stof(ans[static_cast<int>(Game::AttackInfoSort::kSpeed)]);
+		//pushData.radius = std::stof(ans[static_cast<int>(Game::AttackInfoSort::kRadius)]);
+		//pushData.lifeTime = std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kLifeTime)]);
+		//pushData.attackNum = std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kAttackNum)]);
+		//pushData.isLaser = static_cast<bool>(std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kLaser)]));
+		//pushData.isScatter = static_cast<bool>(std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kScatter)]));
+		//pushData.isTrack = static_cast<bool>(std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kTrack)]));
+		//pushData.attackTime = std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kAttackTime)]);
+		//pushData.actionTime = std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kActionTime)]);
+		//pushData.isEnergy = static_cast<bool>(std::stoi(ans[static_cast<int>(Game::AttackInfoSort::kEnergy)]));
+		//
 
-		//入れるデータに情報を入れる
-		pushData.cost = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kCost)]);
-		pushData.damageRate = std::stof(strCommaBuf[static_cast<int>(AttackInfoSort::kDamageRate)]);
-		pushData.speed = std::stof(strCommaBuf[static_cast<int>(AttackInfoSort::kSpeed)]);
-		pushData.radius = std::stof(strCommaBuf[static_cast<int>(AttackInfoSort::kRadius)]);
-		pushData.lifeTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kLifeTime)]);
-		pushData.attackNum = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kAttackNum)]);
-		pushData.isLaser = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kLaser)]));
-		pushData.isScatter = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kScatter)]));
-		pushData.isTrack = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kTrack)]));
-		pushData.attackTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kAttackTime)]);
-		pushData.actionTime = std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kActionTime)]);
-		pushData.isEnergy = static_cast<bool>(std::stoi(strCommaBuf[static_cast<int>(AttackInfoSort::kEnergy)]));
-		
-
-		//データを入れる
-		m_attackData[strCommaBuf[static_cast<int>(AttackInfoSort::kId)]] = pushData;
+		////データを入れる
+		//m_attackData[ans[static_cast<int>(Game::AttackInfoSort::kId)]] = pushData;
 	}
+
+	return ans;
 }
 std::vector<std::string> LoadCsv::Split(const std::string& str, const char cutChar)
 {

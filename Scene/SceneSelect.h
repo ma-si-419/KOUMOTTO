@@ -11,7 +11,7 @@ private:
 		kHard
 	};
 public:
-	SceneSelect(SceneManager& sceneManager);
+	SceneSelect(SceneManager& sceneManager, DataManager& dataManager);
 	~SceneSelect();
 	//‰Šú‰»ˆ—
 	void Init();

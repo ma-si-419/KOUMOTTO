@@ -1,3 +1,4 @@
+#include "DxLib.h"
 #include "Input.h"
 #include "Game.h"
 using namespace MyEngine;

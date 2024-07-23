@@ -146,6 +146,7 @@
     <ClCompile Include="AttackBase.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character\Enemy.cpp" />
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp" />
     <ClCompile Include="MyEngine\Physics\CapsuleColliderData.cpp" />
     <ClCompile Include="Character\CharacterBase.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommandIdList.h" />
     <ClInclude Include="Character\Enemy.h" />
+    <ClInclude Include="DataManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="MyEngine\Utility\LoadCsv.h" />
     <ClInclude Include="MyEngine\Physics\CapsuleColliderData.h" />

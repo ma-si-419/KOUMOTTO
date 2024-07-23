@@ -5,10 +5,12 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Enemy.h"
+#include "Ui.h"
 #include "AttackBase.h"
 #include "LoadCsv.h"
 
-SceneGame::SceneGame(SceneManager& sceneManager) : SceneBase(sceneManager)
+SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
+	SceneBase(sceneManager,dataManager)
 {
 	handle = MV1LoadModel("data/model/Dome.mv1");
 	//当たり判定管理クラスのポインタ
@@ -19,6 +21,8 @@ SceneGame::SceneGame(SceneManager& sceneManager) : SceneBase(sceneManager)
 	m_pCamera = std::make_shared<Camera>();
 	//エネミーのポインタ
 	m_pEnemy = std::make_shared<Enemy>();
+	//Uiのポインタ
+	m_pUi = std::make_shared<Ui>();
 }
 
 SceneGame::~SceneGame()
@@ -31,11 +35,15 @@ void SceneGame::Init()
 	MV1SetPosition(handle, VGet(0, 0, 0));
 	MV1SetScale(handle, VGet(500, 500, 500));
 
-
-	//プレイヤーの初期化(当たり判定を登録する)
-	m_pPlayer->Init(m_pPhysics);
 	//エネミーの初期化(当たり判定を登録する)
 	m_pEnemy->Init(m_pPhysics);
+
+	//エネミーの座標をプレイヤーに渡す
+	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
+	//プレイヤーの初期化(当たり判定を登録する)
+	m_pPlayer->Init(m_pPhysics);
+	//
+
 	//カメラにプレイヤーの座標を渡す
 	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
@@ -43,15 +51,12 @@ void SceneGame::Init()
 	//カメラの初期化
 	m_pCamera->Init();
 
-	//外部データ
-	LoadCsv data;
-
-	//必殺技のデータをロードする
-	data.LoadAttackData();
 	//プレイヤーに必殺技のデータを入れる
-	m_pPlayer->SetAttackData(data.GetAttackData());
+	m_pPlayer->SetAttackData(m_dataManager.GetAttackData());
 	//エネミーに必殺技のデータを入れる
-	m_pEnemy->SetAttackData(data.GetAttackData());
+	m_pEnemy->SetAttackData(m_dataManager.GetAttackData());
+	//UIに画像のデータを入れる
+	m_pUi->LoadSceneHandle(m_dataManager.GetUiData(Game::SceneNum::kGame));
 }
 
 void SceneGame::Update(MyEngine::Input input)
@@ -95,11 +100,10 @@ void SceneGame::Update(MyEngine::Input input)
 			i--;
 		}
 	}
-	printfDx("size:%d,capacity%d\n", m_pAttacks.size(),m_pAttacks.capacity());
 
 	if (input.IsTrigger(Game::InputId::kPause))
 	{
-		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager));
+		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 		return;
 	}
 }
@@ -111,6 +115,7 @@ void SceneGame::Draw()
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
 	m_pPhysics->DebugDraw();
+	m_pUi->DrawHpBar(m_pPlayer->GetMaxHp(),m_pPlayer->GetNowHp(),m_pEnemy->GetMaxHp(), m_pEnemy->GetNowHp());
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 

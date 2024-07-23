@@ -6,6 +6,8 @@ namespace
 {
 	//ìñÇΩÇËîªíËÇÃëÂÇ´Ç≥
 	constexpr float kColScale = 100.0f;
+	//èâä˙à íu
+	const MyEngine::Vector3 kInitPos(0,0,1000);
 }
 Enemy::Enemy() :
 	CharacterBase("data/model/Enemy.mv1",ObjectTag::kEnemy)
@@ -23,6 +25,10 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 	colData->m_radius = kColScale;
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
+
+	m_rigidbody.SetPos(kInitPos);
+	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+
 
 }
 
@@ -45,7 +51,7 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 
 void Enemy::Draw()
 {
-	DrawFormatString(800, 300, GetColor(255, 255, 255), "HP:%d\nMP:%d", m_nowHp, m_nowMp);
+	DrawFormatString(800, 300, GetColor(255, 255, 255), "HP:%f\nMP:%f", m_nowHp, m_nowMp);
 
 	MV1DrawModel(m_modelHandle);
 }

@@ -6,29 +6,10 @@
 
 class LoadCsv
 {
-private:
-	enum class AttackInfoSort
-	{
-		kId,
-		kCost,
-		kDamageRate,
-		kSpeed,
-		kRadius,
-		kLifeTime,
-		kAttackNum,
-		kLaser,
-		kScatter,
-		kTrack,
-		kAttackTime,
-		kActionTime,
-		kEnergy
-	};
 public:
-	void LoadAttackData();
-	std::map<std::string, Game::AttackInfo> GetAttackData() { return m_attackData; };
+	std::vector<std::vector<std::string>> LoadFile(std::string path);
 private:
-	//UŒ‚‚Ìƒf[ƒ^
-	std::map<std::string, Game::AttackInfo> m_attackData;
+
 
 	//•¶š‚Å‹æØ‚éŠÖ”
 	std::vector<std::string> Split(const std::string& str, const char cutChar);

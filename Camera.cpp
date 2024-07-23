@@ -25,15 +25,11 @@ Camera::~Camera()
 
 void Camera::Init()
 {
-	m_cameraPos = m_playerPos;
+	m_cameraPos = MyEngine::Vector3(300,500,-500);
 }
 
 void Camera::Update()
 {
-
-	DrawFormatString(500, 0, GetColor(255, 255, 255), "cameraRota:%f", m_rota);
-	DrawFormatString(700, 0, GetColor(255, 255, 255), "playerRota:%f", m_playerRota);
-
 	//ˆÚ“®—Ê
 	MyEngine::Vector3 velo;
 

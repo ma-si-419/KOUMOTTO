@@ -18,7 +18,7 @@ private:
 		kKindNum
 	};
 public:
-	SceneTitle(SceneManager& sceneManager);
+	SceneTitle(SceneManager& sceneManager, DataManager& dataManager);
 	~SceneTitle();
 	//‰Šú‰»ˆ—
 	void Init();

@@ -1,8 +1,8 @@
 #include "Game.h"
 #include "SceneTitle.h"
 #include "SceneSelect.h"
-SceneTitle::SceneTitle(SceneManager& sceneManager) :
-	SceneBase(sceneManager),
+SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& dataManager) :
+	SceneBase(sceneManager,dataManager),
 	m_isEnd(false),
 	m_isOpenEndWindow(false),
 	m_isOpenOption(false),
@@ -49,7 +49,7 @@ void SceneTitle::Update(MyEngine::Input input)
 			if (m_selectItem == static_cast<int>(ItemKind::kStart))
 			{
 				//セレクトシーンに飛ぶ
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager,m_dataManager));
 			}
 			else if (m_selectItem == static_cast<int>(ItemKind::kOption))
 			{

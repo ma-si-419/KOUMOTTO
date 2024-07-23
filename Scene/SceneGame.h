@@ -7,10 +7,11 @@ class Player;
 class Camera;
 class Enemy;
 class AttackBase;
+class Ui;
 class SceneGame : public SceneBase , public std::enable_shared_from_this<SceneGame>
 {
 public:
-	SceneGame(SceneManager& sceneManager);
+	SceneGame(SceneManager& sceneManager,DataManager& dataManager);
 	~SceneGame();
 	//‰Šú‰»ˆ—
 	void Init();
@@ -28,6 +29,7 @@ private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::shared_ptr<Camera> m_pCamera;
 	std::shared_ptr<Enemy> m_pEnemy;
+	std::shared_ptr<Ui> m_pUi;
 	std::vector<std::shared_ptr<AttackBase>> m_pAttacks;
 	int handle;
 };

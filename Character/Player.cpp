@@ -26,6 +26,8 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
+	m_rota = 10;
+
 	m_pPhysics = physics;
 	Collidable::Init(physics);
 

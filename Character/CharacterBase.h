@@ -29,7 +29,10 @@ public:
 	/// </summary>
 	virtual void Draw() = 0;
 
-
+	//最大体力を返す
+	int GetMaxHp() { return m_status.hp; }
+	//現在の体力を返す
+	int GetNowHp() { return m_nowHp; }
 	//ロックオンしている敵の座標を設定する
 	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
 	//攻撃の情報を設定する
@@ -56,8 +59,8 @@ protected:
 	};
 	struct Status
 	{
-		int hp = 100000;
-		int mp = 1000;
+		float hp = 100000;
+		float mp = 1000;
 		float atk = 100.0f;
 		float def = 100.0f;
 	};
@@ -73,9 +76,9 @@ protected:
 
 	Status m_status;
 	//体力
-	int m_nowHp;
+	float m_nowHp;
 	//気力
-	int m_nowMp;
+	float m_nowMp;
 	//動けない時間
 	int m_stanTime;
 	//攻撃を出しているかどうか

@@ -3,8 +3,8 @@
 #include "SceneTitle.h"
 #include "SceneGame.h"
 
-SceneSelect::SceneSelect(SceneManager& sceneManager) :
-	SceneBase(sceneManager),
+SceneSelect::SceneSelect(SceneManager& sceneManager, DataManager& dataManager) :
+	SceneBase(sceneManager, dataManager),
 	m_selectLevel(0),
 	m_isBack(false)
 {
@@ -47,11 +47,11 @@ void SceneSelect::Update(MyEngine::Input input)
 	{
 		if (m_isBack)
 		{
-			m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager));
+			m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
 		}
 		else
 		{
-			m_sceneManager.ChangeScene(std::make_shared<SceneGame>(m_sceneManager));
+			m_sceneManager.ChangeScene(std::make_shared<SceneGame>(m_sceneManager, m_dataManager));
 		}
 	}
 

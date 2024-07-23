@@ -24,7 +24,7 @@ public:
 
 	void Final(std::shared_ptr<Physics> physics) { Collidable::Final(physics); }
 	bool GetIsExist() { return m_isExist; }
-protected:
+private:
 	/*ステータス*/
 	Game::AttackInfo m_status;
 	//攻撃の方向

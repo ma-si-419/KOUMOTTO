@@ -19,6 +19,23 @@ namespace Game
 		const char* const kY = "Y";
 
 	}
+	enum class AttackInfoSort
+	{
+		kId,
+		kCost,
+		kDamageRate,
+		kSpeed,
+		kRadius,
+		kLifeTime,
+		kAttackNum,
+		kLaser,
+		kScatter,
+		kTrack,
+		kAttackTime,
+		kActionTime,
+		kEnergy
+	};
+
 	struct AttackInfo
 	{
 		int cost;
@@ -34,5 +51,21 @@ namespace Game
 		int attackTime;
 		int actionTime;
 		bool isEnergy;
+	};
+
+	enum class UiInfoSort
+	{
+		kPath,
+		kPosX,
+		kPosY,
+		kWidth,
+		kHeight,
+		kScene
+	};
+	enum class SceneNum
+	{
+		kTitle,
+		kSelect,
+		kGame
 	};
 }
