@@ -13,7 +13,7 @@ namespace
 	//赤いゲージが減少する速度
 	constexpr int kLostHpBarDecreaseSpeed = 3;
 	//ダメージを受けた時に揺れる大きさ
-	constexpr int kShakeScale = 10;
+	constexpr int kShakeScale = 8;
 	//ダメージを受けた時に揺れる大きさの半分
 	constexpr int kShakeHalfScale = static_cast<int>(kShakeScale * 0.5);
 }
