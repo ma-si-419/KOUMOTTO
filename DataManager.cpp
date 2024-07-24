@@ -55,8 +55,8 @@ void DataManager::LoadUiFile()
 		pushData.path = item[static_cast<int>(Game::UiInfoSort::kPath)];
 		pushData.posX = stof(item[static_cast<int>(Game::UiInfoSort::kPosX)]);
 		pushData.posY = stof(item[static_cast<int>(Game::UiInfoSort::kPosY)]);
-		pushData.graphWidth = stof(item[static_cast<int>(Game::UiInfoSort::kWidth)]);
-		pushData.graphHeight = stof(item[static_cast<int>(Game::UiInfoSort::kHeight)]);
+		pushData.graphWidth = stoi(item[static_cast<int>(Game::UiInfoSort::kWidth)]);
+		pushData.graphHeight = stoi(item[static_cast<int>(Game::UiInfoSort::kHeight)]);
 
 		//使うシーンによって入れる配列を変える
 		if (item[static_cast<int>(Game::UiInfoSort::kScene)] == "Title")
@@ -98,4 +98,6 @@ std::vector<DataManager::UiInfo> DataManager::GetUiData(Game::SceneNum sceneNum)
 		//どれにも当てはまらなかったらエラー
 		assert(false);
 	}
+	std::vector<DataManager::UiInfo> empty;
+	return empty;
 }

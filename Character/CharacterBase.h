@@ -30,9 +30,9 @@ public:
 	virtual void Draw() = 0;
 
 	//最大体力を返す
-	int GetMaxHp() { return m_status.hp; }
+	float GetMaxHp() { return m_status.hp; }
 	//現在の体力を返す
-	int GetNowHp() { return m_nowHp; }
+	float GetNowHp() { return m_nowHp; }
 	//ロックオンしている敵の座標を設定する
 	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
 	//攻撃の情報を設定する
@@ -54,15 +54,15 @@ protected:
 		kSuperArmor,
 		kGuard,
 		kDown,
-		kHitNormalAttack,
-		kHitSpecialAttack
+		kHitLightAttack,
+		kHitHeavyAttack
 	};
 	struct Status
 	{
-		float hp = 100000;
+		float hp = 30000;
 		float mp = 1000;
-		float atk = 100.0f;
-		float def = 100.0f;
+		float atk = 100;
+		float def = 100;
 	};
 
 	//モデルハンドル

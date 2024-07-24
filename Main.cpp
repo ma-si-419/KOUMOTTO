@@ -14,6 +14,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SetGraphMode(1536, 864, 16);
 
+	SetMainWindowText("KOUMOTTO");
 
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
 	if (DxLib_Init() == -1)		// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—

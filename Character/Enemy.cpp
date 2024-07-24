@@ -51,7 +51,7 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 
 void Enemy::Draw()
 {
-	DrawFormatString(800, 300, GetColor(255, 255, 255), "HP:%f\nMP:%f", m_nowHp, m_nowMp);
+	DrawFormatString(1300, 300, GetColor(0, 0, 0), "HP:%f\nMP:%f", m_nowHp, m_nowMp);
 
 	MV1DrawModel(m_modelHandle);
 }
@@ -62,11 +62,15 @@ void Enemy::OnCollide(std::shared_ptr<Collidable> collider)
 	if (collider->GetTag() == ObjectTag::kPlayerAttack)
 	{
 		auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
-		int damage = attack->GetDamage() - m_status.def;
+		int damage = attack->GetDamage() - static_cast<int>(m_status.def);
 		if (damage < 0)
 		{
 			damage = 2;
 		}
 		m_nowHp -= damage;
+		if (m_nowHp < 0)
+		{
+			m_nowHp = 0;
+		}
 	}
 }

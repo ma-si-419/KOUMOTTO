@@ -39,7 +39,7 @@ void AttackBase::SetStatus(Game::AttackInfo status, MyEngine::Vector3 target, My
 	//ステータスを入れる
 	m_status = status;
 	//ダメージは出したキャラの攻撃力に倍率をかけて計算
-	m_status.damage = m_status.damageRate * power;
+	m_status.damage = static_cast<int>(m_status.damageRate * power);
 	//プレイヤーからターゲットに向かっての方向を入れる
 	m_dir = (target - playerPos).Normalize();
 	//打ち出す方向をちらばらせる技であれば

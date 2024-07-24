@@ -126,7 +126,7 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 void Player::Draw()
 {
 	DrawFormatString(0, 100, GetColor(255, 255, 255), "%f,%f,%f", m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
-	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%d,MP:%d", m_nowHp, m_nowMp);
+	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%f,MP:%f", m_nowHp, m_nowMp);
 	MV1DrawModel(m_modelHandle);
 }
 
@@ -135,7 +135,7 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 	if (collider->GetTag() == ObjectTag::kEnemyAttack)
 	{
 		auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
-		int damage = attack->GetDamage() - m_status.def;
+		int damage = attack->GetDamage() - static_cast<int>(m_status.def);
 		if (damage < 0)
 		{
 			damage = 2;

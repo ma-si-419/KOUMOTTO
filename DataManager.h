@@ -11,11 +11,11 @@ class DataManager
 public:
 	struct UiInfo
 	{
-		std::string path;
-		float posX;
-		float posY;
-		float graphWidth;
-		float graphHeight;
+		std::string path = "empty";
+		float posX = 0;
+		float posY = 0;
+		int graphWidth = 0;
+		int graphHeight = 0;
 	};
 	DataManager();
 	~DataManager();

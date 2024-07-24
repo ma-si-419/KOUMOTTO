@@ -7,7 +7,8 @@ CharacterBase::CharacterBase(const TCHAR* model, ObjectTag tag) :
 	Collidable(tag, ColliderData::Kind::kCapsule),
 	m_stanTime(0),
 	m_nowHp(0),
-	m_nowMp(0)
+	m_nowMp(0),
+	m_isAttack(false)
 {
 	m_modelHandle = MV1LoadModel(model);
 	//auto& coldata = std::dynamic_pointer_cast<CapsuleColliderData>;
