@@ -20,6 +20,7 @@ Enemy::~Enemy()
 
 void Enemy::Init(std::shared_ptr<Physics> physics)
 {
+	MV1SetScale(m_modelHandle, VGet(300, 300, 300));
 	Collidable::Init(physics);
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	colData->m_radius = kColScale;

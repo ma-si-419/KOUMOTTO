@@ -67,8 +67,8 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 	m_lastEnemyHp = targetHp;
 
 	//画像の名前
-	std::string playerHpBar = "PlayerHpBar";
-	std::string enemyHpBar = "EnemyHpBar";
+	std::string playerHpBar = "_PlayerHpBar";
+	std::string enemyHpBar = "_EnemyHpBar";
 	//プレイヤーHPバーの開始位置
 	MyEngine::Vector2 playerHpBarStartPos;
 
