@@ -1,6 +1,7 @@
 #pragma once
 #include "DxLib.h"
 #include "Collidable.h"
+#include "DataManager.h"
 #include "Game.h"
 #include <map>
 #include <string>
@@ -36,7 +37,7 @@ public:
 	//ロックオンしている敵の座標を設定する
 	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
 	//攻撃の情報を設定する
-	void SetAttackData(std::map<std::string, Game::AttackInfo> data) { m_attackData = data; }
+	void SetAttackData(std::map<std::string, DataManager::AttackInfo> data) { m_attackData = data; }
 	//動けない時間を設定する
 	void SetStanTime(int time) { m_stanTime = time; }
 	//攻撃に必要な気力量を取得する
@@ -72,7 +73,7 @@ protected:
 	//TODO:下の変数、外部データ化
 	
 	//攻撃のデータ
-	std::map<std::string,Game::AttackInfo> m_attackData;
+	std::map<std::string,DataManager::AttackInfo> m_attackData;
 
 	Status m_status;
 	//体力
@@ -83,6 +84,8 @@ protected:
 	int m_stanTime;
 	//攻撃を出しているかどうか
 	bool m_isAttack;
+	//ターゲットが近くにいるかどうか
+	bool m_isNearTarget;
 	//出している攻撃
 	std::string m_attackId;
 	//攻撃を出したタイミングの敵の座標

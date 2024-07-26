@@ -9,6 +9,8 @@ namespace
 	constexpr float kMoveSpeed = 100.0f;
 	//UŒ‚‚ğo‚·À•W
 	constexpr float kAttackPos = 500.0f;
+	//Ši“¬UŒ‚‚ğo‚·‚Ì“G‚Æ‚Ì‹——£(“–‚½‚è”»’è‚Ì‘å‚«‚³‚Ì”{—¦)
+	constexpr float kPhysicalAttackLange = 0.9f;
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
@@ -40,11 +42,11 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 	MyEngine::Vector3 pos;
 
-	 pos.x = rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length();
-	 pos.y = 0;
-	 pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
+	pos.x = rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length();
+	pos.y = 0;
+	pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
 
-	 m_rigidbody.SetPos(pos);
+	m_rigidbody.SetPos(pos);
 }
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
@@ -86,7 +88,7 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//UŒ‚‚ğ•¡”‰ño‚·‹Z‚Å‚ ‚ê‚Î
 			if (m_attackData[m_attackId].attackNum > 1)
 			{
-				//¡UŒ‚‚ğo‚µn‚ß‚Ä‰½•b‚©
+				//¡UŒ‚‚ğo‚µn‚ß‚Ä‰½•b‚©”‚¦‚é
 				int time = m_attackData[m_attackId].actionTime - m_stanTime;
 				//UŒ‚‚ÌƒXƒpƒ“‚ğæ“¾‚·‚é
 				int span = m_attackData[m_attackId].attackTime / m_attackData[m_attackId].attackNum;
@@ -110,9 +112,51 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//UŒ‚‚ªˆê“x‚Ì‚İ‚Å‚ ‚ê‚Î
 			else
 			{
-				//UŒ‚‚ğo‚·
-				scene->AddAttack(CreateAttack(m_pPhysics, m_attackId,true));
-				m_isAttack = false;
+				//Ši“¬UŒ‚‚¾‚Á‚½ê‡
+				if (m_attackData[m_attackId].isEnergy == false)
+				{
+					//UŒ‚‚Ì“–‚½‚è”»’è‚Ì‹——£
+					float attackLange = ((m_targetPos - m_rigidbody.GetPos()).Normalize() * kAttackPos).Length() + m_attackData[m_attackId].radius * kPhysicalAttackLange;
+
+					//“G‚Æ‚Ì‹——£‚ª‹ß‚­‚È‚Á‚½‚ç
+					if ((m_targetPos - m_rigidbody.GetPos()).Length() < attackLange)
+					{
+						m_isNearTarget = true;
+					}
+
+					//‚Ü‚¾“G‚Æ‚Ì‹——£‚ª‰“‚¯‚ê‚Î
+					if (!m_isNearTarget)
+					{
+						//“G‚É‹ß‚Ã‚­
+						velo = (m_targetPos - m_rigidbody.GetPos()).Normalize() * kMoveSpeed;
+						//“G‚ª‹ß‚­‚É‚¢‚È‚¢ê‡UŒ‚‚ÌƒJƒEƒ“ƒg‚ğ~‚ß‚é
+						m_stanTime++;
+					}
+
+					//UŒ‚ƒ‚[ƒVƒ‡ƒ“‚É“ü‚Á‚Ä‰½•b‚©‹‚ß‚é
+					int time = m_attackData[m_attackId].actionTime - m_stanTime;
+					//UŒ‚‚ğo‚·ŠÔ‚É‚È‚Á‚½‚ç
+					if (time > m_attackData[m_attackId].attackTime)
+					{
+						//UŒ‚‚ğo‚·
+						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));
+						m_isAttack = false;
+					}
+				}
+				//‹C’eUŒ‚‚¾‚Á‚½ê‡
+				else
+				{
+					//UŒ‚ƒ‚[ƒVƒ‡ƒ“‚É“ü‚Á‚Ä‰½•b‚©‹‚ß‚é
+					int time = m_attackData[m_attackId].actionTime - m_stanTime;
+					//UŒ‚‚ğo‚·ŠÔ‚É‚È‚Á‚½‚ç
+					if (time > m_attackData[m_attackId].attackTime)
+					{
+						//UŒ‚‚ğo‚·
+						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));
+						m_isAttack = false;
+					}
+
+				}
 			}
 		}
 	}
@@ -280,7 +324,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 				//‹C’eUŒ‚‚Ì‚İˆÚ“®’†‚Éo‚¹‚é‹Z‚Å‚ ‚é‚Ì‚Å‚±‚±‚Å‹Z‚ğo‚·
 				m_nowMp -= m_attackData[attackId].cost;
 				m_attackTarget = m_targetPos;
-				scene->AddAttack(CreateAttack(m_pPhysics, attackId,true));
+				scene->AddAttack(CreateAttack(m_pPhysics, attackId, true));
 
 			}
 		}

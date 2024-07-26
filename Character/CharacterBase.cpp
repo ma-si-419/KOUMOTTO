@@ -54,4 +54,6 @@ void CharacterBase::SetAttack(std::string id)
 	m_isAttack = true;
 	//o‚µ‚Ä‚¢‚éUŒ‚‚Ìí—Ş‚ğæ“¾‚·‚é
 	m_attackId = id;
+	//“G‚ª‹ß‚­‚É‚¢‚é‚©‚Ç‚¤‚©‚ğfalse‚É‚·‚é
+	m_isNearTarget = false;
 }

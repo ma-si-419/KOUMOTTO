@@ -22,8 +22,10 @@ namespace Game
 	enum class AttackInfoSort
 	{
 		kId,
+		kName,
 		kCost,
 		kDamageRate,
+		kStanDamage,
 		kSpeed,
 		kRadius,
 		kLifeTime,
@@ -36,30 +38,11 @@ namespace Game
 		kEnergy
 	};
 
-	struct AttackInfo
-	{
-		int cost;
-		float damageRate;
-		int damage;
-		float speed;
-		float radius;
-		int lifeTime;
-		int attackNum;
-		bool isLaser;
-		bool isScatter;
-		bool isTrack;
-		int attackTime;
-		int actionTime;
-		bool isEnergy;
-	};
-
 	enum class UiInfoSort
 	{
 		kPath,
 		kPosX,
 		kPosY,
-		kWidth,
-		kHeight,
 		kScene
 	};
 	enum class SceneNum

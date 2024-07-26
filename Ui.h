@@ -25,10 +25,6 @@ private:
 		int handle = -1;
 		//表示座標
 		MyEngine::Vector2 drawPos;
-		//画像の横幅
-		int width = 0;
-		//画像の縦幅
-		int height = 0;
 	};
 	//前のフレーム表示していたHpバーの状態を残しておく
 	int m_lastPlayerHpBarEndPosX;

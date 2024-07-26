@@ -13,7 +13,7 @@ namespace
 	//赤いゲージが減少する速度
 	constexpr int kLostHpBarDecreaseSpeed = 3;
 	//ダメージを受けた時に揺れる大きさ
-	constexpr int kShakeScale = 8;
+	constexpr int kShakeScale = 15;
 	//ダメージを受けた時に揺れる大きさの半分
 	constexpr int kShakeHalfScale = static_cast<int>(kShakeScale * 0.5);
 }
@@ -67,32 +67,35 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 	m_lastEnemyHp = targetHp;
 
 	//画像の名前
-	std::string playerHpBar = "_PlayerHpBar";
-	std::string enemyHpBar = "_EnemyHpBar";
+	std::string playerHpBar = "PlayerHpBar";
+	std::string enemyHpBar = "EnemyHpBar";
+	
 	//プレイヤーHPバーの開始位置
 	MyEngine::Vector2 playerHpBarStartPos;
 
-	playerHpBarStartPos.x = m_showUi[playerHpBar].drawPos.x - m_showUi[playerHpBar].width / 2 + kHpBarEdgeWidth;
-	playerHpBarStartPos.y = m_showUi[playerHpBar].drawPos.y - m_showUi[playerHpBar].height / 2 + kHpBarEdgeHeight;
+	playerHpBarStartPos.x = m_showUi[playerHpBar].drawPos.x - kHpBarEdgeWidth;
+	playerHpBarStartPos.y = m_showUi[playerHpBar].drawPos.y - kHpBarEdgeHeight;
+
 	//プレイヤーHPバーの終了位置
 	MyEngine::Vector2 playerHpBarEndPos;
 
-	playerHpBarEndPos.x = m_showUi[playerHpBar].drawPos.x + m_showUi[playerHpBar].width / 2 - kHpBarEdgeWidth;
-	playerHpBarEndPos.y = m_showUi[playerHpBar].drawPos.y + m_showUi[playerHpBar].height / 2 - kHpBarEdgeHeight;
-
+	playerHpBarEndPos.x = m_showUi[playerHpBar].drawPos.x + kHpBarEdgeWidth;
+	playerHpBarEndPos.y = m_showUi[playerHpBar].drawPos.y + kHpBarEdgeHeight;
+	
 	float playerHpBarLength = playerHpBarEndPos.x - playerHpBarStartPos.x;
 
 
 	//エネミーHPバーの開始位置
 	MyEngine::Vector2 enemyHpBarStartPos;
 
-	enemyHpBarStartPos.x = m_showUi[enemyHpBar].drawPos.x - m_showUi[enemyHpBar].width / 2 + kHpBarEdgeWidth;
-	enemyHpBarStartPos.y = m_showUi[enemyHpBar].drawPos.y - m_showUi[enemyHpBar].height / 2 + kHpBarEdgeHeight;
+	enemyHpBarStartPos.x = m_showUi[enemyHpBar].drawPos.x - kHpBarEdgeWidth;
+	enemyHpBarStartPos.y = m_showUi[enemyHpBar].drawPos.y - kHpBarEdgeHeight;
+	
 	//エネミーHPバーの終了位置
 	MyEngine::Vector2 enemyHpBarEndPos;
+	enemyHpBarEndPos.x = m_showUi[enemyHpBar].drawPos.x + kHpBarEdgeWidth;
+	enemyHpBarEndPos.y = m_showUi[enemyHpBar].drawPos.y + kHpBarEdgeHeight;
 
-	enemyHpBarEndPos.x = m_showUi[enemyHpBar].drawPos.x + m_showUi[enemyHpBar].width / 2 - kHpBarEdgeWidth;
-	enemyHpBarEndPos.y = m_showUi[enemyHpBar].drawPos.y + m_showUi[enemyHpBar].height / 2 - kHpBarEdgeHeight;
 
 	float enemyHpBarLength = enemyHpBarEndPos.x - enemyHpBarStartPos.x;
 
@@ -105,11 +108,11 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 	//プレイヤーのHPバー表示
 	DrawBox(static_cast<int>(playerHpBarStartPos.x), static_cast<int>(playerHpBarStartPos.y),
 		static_cast<int>(playerHpBarEndPos.x), static_cast<int>(playerHpBarEndPos.y),
-		GetColor(255, 255, 0), true);
+		GetColor(64, 255, 64), true);
 	//エネミーのHPバーの表示
 	DrawBox(static_cast<int>(enemyHpBarStartPos.x), static_cast<int>(enemyHpBarStartPos.y),
 		static_cast<int>(enemyHpBarEndPos.x), static_cast<int>(enemyHpBarEndPos.y),
-		GetColor(255, 255, 0), true);
+		GetColor(64, 255, 64), true);
 
 
 	//体力に応じて上にかぶせるボックスの長さを変化させる
@@ -150,9 +153,9 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 	if (m_playerLostHpBarLifeTime < 0)
 	{
 		//赤いゲージを短くしていく
-		m_lastPlayerHpBarEndPosX -= kLostHpBarDecreaseSpeed;
+		m_lastPlayerHpBarEndPosX += kLostHpBarDecreaseSpeed;
 		//現在の体力よりも短くなったら
-		if (m_lastPlayerHpBarEndPosX < playerLostHpBoxPosX)
+		if (m_lastPlayerHpBarEndPosX > playerLostHpBoxPosX)
 		{
 			//現在の体力の座標に合わせる
 			m_lastPlayerHpBarEndPosX = playerLostHpBoxPosX;
@@ -162,9 +165,9 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 	if (m_enemyLostHpBarLifeTime < 0)
 	{
 		//赤いゲージを短くしていく
-		m_lastEnemyHpBarEndPosX -= kLostHpBarDecreaseSpeed;
+		m_lastEnemyHpBarEndPosX += kLostHpBarDecreaseSpeed;
 		//現在の体力よりも短くなったら
-		if (m_lastEnemyHpBarEndPosX < enemyLostHpBoxPosX)
+		if (m_lastEnemyHpBarEndPosX > enemyLostHpBoxPosX)
 		{
 			//現在の体力の座標に合わせる
 			m_lastEnemyHpBarEndPosX = enemyLostHpBoxPosX;
@@ -198,8 +201,6 @@ void Ui::LoadSceneHandle(std::vector<DataManager::UiInfo> data)
 		UiStatus pushData;
 		//データを入れる
 		pushData.drawPos = MyEngine::Vector2(item.posX, item.posY);
-		pushData.width = item.graphWidth;
-		pushData.height = item.graphHeight;
 		//画像のロード
 		pushData.handle = LoadGraph(("data/image/" + item.path + ".png").c_str());
 		//画像の名前でマップに登録

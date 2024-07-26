@@ -32,7 +32,7 @@ void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos)
 	m_rigidbody.SetPos(pos);
 }
 
-void AttackBase::SetStatus(Game::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos,float power)
+void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos,float power)
 {
 	//コライダーデータをダウンキャストしデータを設定する
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(Collidable::m_pColData);

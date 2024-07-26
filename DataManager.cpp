@@ -22,12 +22,14 @@ void DataManager::LoadAttackFile()
 	for (auto& item : m_LoadAttackData)
 	{
 		//入れるデータ
-		Game::AttackInfo pushData;
+		DataManager::AttackInfo pushData;
 
 
 		//入れるデータに情報を入れる
+		pushData.name = item[static_cast<int>(Game::AttackInfoSort::kName)];
 		pushData.cost = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kCost)]);
 		pushData.damageRate = std::stof(item[static_cast<int>(Game::AttackInfoSort::kDamageRate)]);
+		pushData.stanDamage = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kStanDamage)]);
 		pushData.speed = std::stof(item[static_cast<int>(Game::AttackInfoSort::kSpeed)]);
 		pushData.radius = std::stof(item[static_cast<int>(Game::AttackInfoSort::kRadius)]);
 		pushData.lifeTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kLifeTime)]);
@@ -55,8 +57,6 @@ void DataManager::LoadUiFile()
 		pushData.path = item[static_cast<int>(Game::UiInfoSort::kPath)];
 		pushData.posX = stof(item[static_cast<int>(Game::UiInfoSort::kPosX)]);
 		pushData.posY = stof(item[static_cast<int>(Game::UiInfoSort::kPosY)]);
-		pushData.graphWidth = stoi(item[static_cast<int>(Game::UiInfoSort::kWidth)]);
-		pushData.graphHeight = stoi(item[static_cast<int>(Game::UiInfoSort::kHeight)]);
 
 		//使うシーンによって入れる配列を変える
 		if (item[static_cast<int>(Game::UiInfoSort::kScene)] == "Title")

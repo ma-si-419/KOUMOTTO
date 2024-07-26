@@ -14,8 +14,24 @@ public:
 		std::string path = "empty";
 		float posX = 0;
 		float posY = 0;
-		int graphWidth = 0;
-		int graphHeight = 0;
+	};
+	struct AttackInfo
+	{
+		std::string name = "empty";
+		int cost = 0;
+		float damageRate = 0;
+		int stanDamage = 0;
+		int damage = 0;
+		float speed = 0;
+		float radius = 0;
+		int lifeTime = 0;
+		int attackNum = 0;
+		bool isLaser = false;
+		bool isScatter = false;
+		bool isTrack = false;
+		int attackTime = 0;
+		int actionTime = 0;
+		bool isEnergy = false;
 	};
 	DataManager();
 	~DataManager();
@@ -26,7 +42,7 @@ public:
 	void LoadUiFile();
 
 	//攻撃のデータを取得
-	std::map<std::string, Game::AttackInfo> GetAttackData() { return m_attackData; };
+	std::map<std::string, AttackInfo> GetAttackData() { return m_attackData; };
 	//ゲームシーンのUIのパス取得
 	std::vector<UiInfo> GetUiData(Game::SceneNum sceneNum);
 
@@ -38,7 +54,7 @@ private:
 	std::vector<std::vector<std::string>> m_LoadUiData;
 
 	//攻撃のデータ
-	std::map<std::string, Game::AttackInfo> m_attackData;
+	std::map<std::string, AttackInfo> m_attackData;
 
 	//画像のデータ
 	std::vector<UiInfo> m_sceneGameUiData;

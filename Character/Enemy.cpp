@@ -48,6 +48,8 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	//“–‚½‚è”»’è‚ÌÀ•W’²®
 	colData->m_startPos = pos;
 
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+
 }
 
 void Enemy::Draw()

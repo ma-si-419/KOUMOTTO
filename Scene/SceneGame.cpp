@@ -69,6 +69,8 @@ void SceneGame::Update(MyEngine::Input input)
 	m_pEnemy->Update(shared_from_this());
 	//プレイヤーにエネミーの座標を渡す
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
+	//エネミーにぷりやーの座標を渡す
+	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 	//カメラにプレイヤーの座標を渡す
 	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
