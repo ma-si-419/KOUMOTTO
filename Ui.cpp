@@ -4,9 +4,9 @@
 
 namespace
 {
-	//Hpバーの縁の大きさ
-	constexpr int kHpBarEdgeHeight = 9;
-	constexpr int kHpBarEdgeWidth = 10;
+	//Hpバーの大きさ
+	constexpr int kHpBarHeight = 15;
+	constexpr int kHpBarWidth = 188;
 
 	//体力が減った時の赤いゲージが減少していくまでの時間
 	constexpr int kLostHpBarLifeTime = 30;
@@ -16,6 +16,9 @@ namespace
 	constexpr int kShakeScale = 15;
 	//ダメージを受けた時に揺れる大きさの半分
 	constexpr int kShakeHalfScale = static_cast<int>(kShakeScale * 0.5);
+	//HPバーの座標(画像の座標に対してのHPバーの座標のずれを直す)
+	constexpr int kHpBarPosX = -52;
+	constexpr int kHpBarPosY = 8;
 }
 
 Ui::Ui() :
@@ -69,33 +72,32 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 	//画像の名前
 	std::string playerHpBar = "PlayerHpBar";
 	std::string enemyHpBar = "EnemyHpBar";
-	
+
 	//プレイヤーHPバーの開始位置
 	MyEngine::Vector2 playerHpBarStartPos;
-
-	playerHpBarStartPos.x = m_showUi[playerHpBar].drawPos.x - kHpBarEdgeWidth;
-	playerHpBarStartPos.y = m_showUi[playerHpBar].drawPos.y - kHpBarEdgeHeight;
+	playerHpBarStartPos.x = m_showUi[playerHpBar].drawPos.x + kHpBarWidth + kHpBarPosX;
+	playerHpBarStartPos.y = m_showUi[playerHpBar].drawPos.y + kHpBarHeight + kHpBarPosY;
 
 	//プレイヤーHPバーの終了位置
 	MyEngine::Vector2 playerHpBarEndPos;
 
-	playerHpBarEndPos.x = m_showUi[playerHpBar].drawPos.x + kHpBarEdgeWidth;
-	playerHpBarEndPos.y = m_showUi[playerHpBar].drawPos.y + kHpBarEdgeHeight;
-	
+	playerHpBarEndPos.x = m_showUi[playerHpBar].drawPos.x - kHpBarWidth + kHpBarPosX;
+	playerHpBarEndPos.y = m_showUi[playerHpBar].drawPos.y - kHpBarHeight + kHpBarPosY;
+
+
 	float playerHpBarLength = playerHpBarEndPos.x - playerHpBarStartPos.x;
 
 
 	//エネミーHPバーの開始位置
 	MyEngine::Vector2 enemyHpBarStartPos;
-
-	enemyHpBarStartPos.x = m_showUi[enemyHpBar].drawPos.x - kHpBarEdgeWidth;
-	enemyHpBarStartPos.y = m_showUi[enemyHpBar].drawPos.y - kHpBarEdgeHeight;
+	enemyHpBarStartPos.x = m_showUi[enemyHpBar].drawPos.x + kHpBarWidth + kHpBarPosX;
+	enemyHpBarStartPos.y = m_showUi[enemyHpBar].drawPos.y + kHpBarHeight + kHpBarPosY;
 	
 	//エネミーHPバーの終了位置
 	MyEngine::Vector2 enemyHpBarEndPos;
-	enemyHpBarEndPos.x = m_showUi[enemyHpBar].drawPos.x + kHpBarEdgeWidth;
-	enemyHpBarEndPos.y = m_showUi[enemyHpBar].drawPos.y + kHpBarEdgeHeight;
-
+	
+	enemyHpBarEndPos.x = m_showUi[enemyHpBar].drawPos.x - kHpBarWidth + kHpBarPosX;
+	enemyHpBarEndPos.y = m_showUi[enemyHpBar].drawPos.y - kHpBarHeight + kHpBarPosY;
 
 	float enemyHpBarLength = enemyHpBarEndPos.x - enemyHpBarStartPos.x;
 
