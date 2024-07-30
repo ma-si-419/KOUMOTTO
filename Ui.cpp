@@ -4,10 +4,9 @@
 
 namespace
 {
-	//Hpバーの大きさ
+	//HPバーの大きさ
 	constexpr int kHpBarHeight = 15;
 	constexpr int kHpBarWidth = 188;
-
 	//体力が減った時の赤いゲージが減少していくまでの時間
 	constexpr int kLostHpBarLifeTime = 30;
 	//赤いゲージが減少する速度
