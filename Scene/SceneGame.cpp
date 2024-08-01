@@ -117,8 +117,7 @@ void SceneGame::Draw()
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
 	m_pPhysics->DebugDraw();
-	m_pUi->DrawHpBar(static_cast<float>(m_pPlayer->GetMaxHp()), static_cast<float>(m_pPlayer->GetNowHp()),
-		static_cast<float>(m_pEnemy->GetMaxHp()), static_cast<float>(m_pEnemy->GetNowHp()));
+	m_pUi->DrawStateBar(m_pPlayer,m_pEnemy);
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 

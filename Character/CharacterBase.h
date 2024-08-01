@@ -11,6 +11,13 @@ class Physics;
 class CharacterBase : public Collidable
 {
 public:
+	struct Status
+	{
+		float hp = 30000;
+		float mp = 300;
+		float atk = 100;
+		float def = 100;
+	};
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -31,9 +38,11 @@ public:
 	virtual void Draw() = 0;
 
 	//最大体力を返す
-	float GetMaxHp() { return m_status.hp; }
+	Status GetStatus() { return m_status; }
 	//現在の体力を返す
 	float GetNowHp() { return m_nowHp; }
+	//現在の気力量を返す
+	float GetNowMp() { return m_nowMp; }
 	//ロックオンしている敵の座標を設定する
 	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
 	//攻撃の情報を設定する
@@ -58,13 +67,7 @@ protected:
 		kHitLightAttack,
 		kHitHeavyAttack
 	};
-	struct Status
-	{
-		float hp = 30000;
-		float mp = 1000;
-		float atk = 100;
-		float def = 100;
-	};
+	
 
 	//モデルハンドル
 	int m_modelHandle;

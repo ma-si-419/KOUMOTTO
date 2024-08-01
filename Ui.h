@@ -4,7 +4,10 @@
 #include "Vector2.h"
 #include <string>
 #include "DataManager.h"
+#include <memory>
 
+class Player;
+class Enemy;
 class Ui
 {
 public:
@@ -12,7 +15,7 @@ public:
 	virtual ~Ui();
 
 	void Init();
-	void DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float targetHp);
+	void DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> enemy);
 
 	void SetUiPos(std::string name,MyEngine::Vector2 pos);
 

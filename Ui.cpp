@@ -1,12 +1,17 @@
 #include "Ui.h"
 #include "DxLib.h"
 #include "Game.h"
+#include "Player.h"
+#include "Enemy.h"
 
 namespace
 {
 	//HPバーの大きさ
 	constexpr int kHpBarHeight = 15;
 	constexpr int kHpBarWidth = 188;
+	//MPバーの大きさ
+	constexpr int kMpBarHeight = 8;
+	constexpr int kMpBarWidth = 188;
 	//体力が減った時の赤いゲージが減少していくまでの時間
 	constexpr int kLostHpBarLifeTime = 30;
 	//赤いゲージが減少する速度
@@ -18,6 +23,10 @@ namespace
 	//HPバーの座標(画像の座標に対してのHPバーの座標のずれを直す)
 	constexpr int kHpBarPosX = -52;
 	constexpr int kHpBarPosY = 8;
+	//プレイヤーのMPバーの座標(画像の座標に対してのMPバーの座標のずれを直す)
+	constexpr int kMpBarPosX = -36;
+	constexpr int kMpBarPosY = 40;
+
 }
 
 Ui::Ui() :
@@ -39,77 +48,105 @@ void Ui::Init()
 {
 }
 
-void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float targetHp)
+void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> enemy)
 {
-	//ダメージを受けた際プレイヤーのHPバーを揺らす大きさ
-	MyEngine::Vector2 playerHpBarShakeSize(0, 0);
-	//ダメージを受けた際エネミーのHPバーを揺らす大きさ
-	MyEngine::Vector2 enemyHpBarShakeSize(0, 0);
+	//ダメージを受けた際プレイヤーのステートバーを揺らす大きさ
+	MyEngine::Vector2 playerStateBarShakeSize(0, 0);
+	//ダメージを受けた際エネミーのステートバーを揺らす大きさ
+	MyEngine::Vector2 enemyStateBarShakeSize(0, 0);
 
 	//前のフレームよりプレイヤーのHPが減っていたら
-	if (m_lastPlayerHp > playerHp)
+	if (m_lastPlayerHp > player->GetNowHp())
 	{
 		//減った分を表す赤いバーが無くなるまでの時間を設定する
 		m_playerLostHpBarLifeTime = kLostHpBarLifeTime;
 
-		//プレイヤーのHPバーの座標を揺らす
-		playerHpBarShakeSize = MyEngine::Vector2(GetRand(kShakeScale) - kShakeHalfScale, GetRand(kShakeScale) - kShakeHalfScale);
+		//プレイヤーのステートバーの座標を揺らす
+		playerStateBarShakeSize = MyEngine::Vector2(GetRand(kShakeScale) - kShakeHalfScale, GetRand(kShakeScale) - kShakeHalfScale);
 	}
 	//前のフレームよりエネミーのHPが減っていたら
-	if (m_lastEnemyHp > targetHp)
+	if (m_lastEnemyHp > enemy->GetNowHp())
 	{
 		//減った分を表す赤いバーが無くなるまでの時間を設定する
 		m_enemyLostHpBarLifeTime = kLostHpBarLifeTime;
-		//エネミーのHPバーの座標を揺らす
-		enemyHpBarShakeSize = MyEngine::Vector2(GetRand(kShakeScale) - kShakeHalfScale, GetRand(kShakeScale) - kShakeHalfScale);
+		//エネミーのステートバーの座標を揺らす
+		enemyStateBarShakeSize = MyEngine::Vector2(GetRand(kShakeScale) - kShakeHalfScale, GetRand(kShakeScale) - kShakeHalfScale);
 	}
 
 	//体力量を覚えておく
-	m_lastPlayerHp = playerHp;
-	m_lastEnemyHp = targetHp;
+	m_lastPlayerHp = player->GetNowHp();
+	m_lastEnemyHp = enemy->GetNowHp();
 
 	//画像の名前
-	std::string playerHpBar = "PlayerHpBar";
-	std::string enemyHpBar = "EnemyHpBar";
+	std::string playerStateBar = "PlayerStateBar";
+	std::string enemyStateBar = "EnemyStateBar";
 
 	//プレイヤーHPバーの開始位置
 	MyEngine::Vector2 playerHpBarStartPos;
-	playerHpBarStartPos.x = m_showUi[playerHpBar].drawPos.x + kHpBarWidth + kHpBarPosX;
-	playerHpBarStartPos.y = m_showUi[playerHpBar].drawPos.y + kHpBarHeight + kHpBarPosY;
+	playerHpBarStartPos.x = m_showUi[playerStateBar].drawPos.x + kHpBarWidth + kHpBarPosX;
+	playerHpBarStartPos.y = m_showUi[playerStateBar].drawPos.y + kHpBarHeight + kHpBarPosY;
 
 	//プレイヤーHPバーの終了位置
 	MyEngine::Vector2 playerHpBarEndPos;
 
-	playerHpBarEndPos.x = m_showUi[playerHpBar].drawPos.x - kHpBarWidth + kHpBarPosX;
-	playerHpBarEndPos.y = m_showUi[playerHpBar].drawPos.y - kHpBarHeight + kHpBarPosY;
+	playerHpBarEndPos.x = m_showUi[playerStateBar].drawPos.x - kHpBarWidth + kHpBarPosX;
+	playerHpBarEndPos.y = m_showUi[playerStateBar].drawPos.y - kHpBarHeight + kHpBarPosY;
 
-
+	//プレイヤーHPバーの長さ
 	float playerHpBarLength = playerHpBarEndPos.x - playerHpBarStartPos.x;
 
+	//プレイヤーMPバーの開始位置
+	MyEngine::Vector2 playerMpBarStartPos;
+	playerMpBarStartPos.x = m_showUi[playerStateBar].drawPos.x + kMpBarWidth + kMpBarPosX;
+	playerMpBarStartPos.y = m_showUi[playerStateBar].drawPos.y + kMpBarHeight + kMpBarPosY;
+
+
+	//プレイヤーMPバーの終了位置
+	MyEngine::Vector2 playerMpBarEndPos;
+	playerMpBarEndPos.x = m_showUi[playerStateBar].drawPos.x - kMpBarWidth + kMpBarPosX;
+	playerMpBarEndPos.y = m_showUi[playerStateBar].drawPos.y - kMpBarHeight + kMpBarPosY;
+
+	//プレイヤーMPバーの長さ
+	float playerMpBarLength = playerMpBarEndPos.x - playerMpBarStartPos.x;
 
 	//エネミーHPバーの開始位置
 	MyEngine::Vector2 enemyHpBarStartPos;
-	enemyHpBarStartPos.x = m_showUi[enemyHpBar].drawPos.x + kHpBarWidth + kHpBarPosX;
-	enemyHpBarStartPos.y = m_showUi[enemyHpBar].drawPos.y + kHpBarHeight + kHpBarPosY;
-	
+	enemyHpBarStartPos.x = m_showUi[enemyStateBar].drawPos.x + kHpBarWidth + kHpBarPosX;
+	enemyHpBarStartPos.y = m_showUi[enemyStateBar].drawPos.y + kHpBarHeight + kHpBarPosY;
+
 	//エネミーHPバーの終了位置
 	MyEngine::Vector2 enemyHpBarEndPos;
-	
-	enemyHpBarEndPos.x = m_showUi[enemyHpBar].drawPos.x - kHpBarWidth + kHpBarPosX;
-	enemyHpBarEndPos.y = m_showUi[enemyHpBar].drawPos.y - kHpBarHeight + kHpBarPosY;
+
+	enemyHpBarEndPos.x = m_showUi[enemyStateBar].drawPos.x - kHpBarWidth + kHpBarPosX;
+	enemyHpBarEndPos.y = m_showUi[enemyStateBar].drawPos.y - kHpBarHeight + kHpBarPosY;
 
 	float enemyHpBarLength = enemyHpBarEndPos.x - enemyHpBarStartPos.x;
 
-	playerHpBarStartPos += playerHpBarShakeSize;
-	playerHpBarEndPos += playerHpBarShakeSize;
+	//エネミースタンバーの開始位置
+	MyEngine::Vector2 enemyStanBarStartPos;
 
-	enemyHpBarStartPos += enemyHpBarShakeSize;
-	enemyHpBarEndPos += enemyHpBarShakeSize;
+
+	//エネミースタンバーの終了位置
+	MyEngine::Vector2 enemyStanBarEndPos;
+
+	//プレイヤーのステートバーの座標を揺らす
+	playerHpBarStartPos += playerStateBarShakeSize;
+	playerHpBarEndPos += playerStateBarShakeSize;
+	playerMpBarStartPos += playerStateBarShakeSize;
+	playerMpBarEndPos += playerStateBarShakeSize;
+
+	//エネミーのステートバーの座標を揺らす
+	enemyHpBarStartPos += enemyStateBarShakeSize;
+	enemyHpBarEndPos += enemyStateBarShakeSize;
 
 	//プレイヤーのHPバー表示
 	DrawBox(static_cast<int>(playerHpBarStartPos.x), static_cast<int>(playerHpBarStartPos.y),
 		static_cast<int>(playerHpBarEndPos.x), static_cast<int>(playerHpBarEndPos.y),
 		GetColor(64, 255, 64), true);
+	//プレイヤーのMPバー表示
+	DrawBox(static_cast<int>(playerMpBarStartPos.x), static_cast<int>(playerMpBarStartPos.y),
+		static_cast<int>(playerMpBarEndPos.x), static_cast<int>(playerMpBarEndPos.y),
+		GetColor(160, 192, 255), true);
 	//エネミーのHPバーの表示
 	DrawBox(static_cast<int>(enemyHpBarStartPos.x), static_cast<int>(enemyHpBarStartPos.y),
 		static_cast<int>(enemyHpBarEndPos.x), static_cast<int>(enemyHpBarEndPos.y),
@@ -117,16 +154,24 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 
 
 	//体力に応じて上にかぶせるボックスの長さを変化させる
-	int playerLostHpBoxPosX = static_cast<int>(playerHpBarStartPos.x + playerHpBarLength * (playerHp / maxPlayerHp));
-	int enemyLostHpBoxPosX = static_cast<int>(enemyHpBarStartPos.x + enemyHpBarLength * (targetHp / maxTargetHp));
+	int playerLostHpBoxPosX = static_cast<int>(playerHpBarStartPos.x + playerHpBarLength * (player->GetNowHp() / player->GetStatus().hp));
+	int enemyLostHpBoxPosX = static_cast<int>(enemyHpBarStartPos.x + enemyHpBarLength * (enemy->GetNowHp() / enemy->GetStatus().hp));
+
+	//プレイヤーの気力に応じて上にかぶせるボックスの長さを変化させる
+	int playerLostMpBoxPosX = static_cast<int>(playerMpBarStartPos.x + playerMpBarLength * (player->GetNowMp() / player->GetStatus().mp));
 
 	//プレイヤーのHPバーの上にかぶせるボックス表示
 	DrawBox(playerLostHpBoxPosX, static_cast<int>(playerHpBarStartPos.y),
 		static_cast<int>(playerHpBarEndPos.x), static_cast<int>(playerHpBarEndPos.y),
 		GetColor(64, 64, 64), true);
-	//プレイヤーのHPバーの上にかぶせるボックス表示
+	//エネミーのHPバーの上にかぶせるボックス表示
 	DrawBox(enemyLostHpBoxPosX, static_cast<int>(enemyHpBarStartPos.y),
 		static_cast<int>(enemyHpBarEndPos.x), static_cast<int>(enemyHpBarEndPos.y),
+		GetColor(64, 64, 64), true);
+
+	//プレイヤーのMPバーの上にかぶせるボックス表示
+	DrawBox(playerLostMpBoxPosX, static_cast<int>(playerMpBarStartPos.y),
+		static_cast<int>(playerMpBarEndPos.x), static_cast<int>(playerMpBarEndPos.y),
 		GetColor(64, 64, 64), true);
 
 	//赤いバーの初期化
@@ -174,15 +219,14 @@ void Ui::DrawHpBar(float maxPlayerHp, float playerHp, float maxTargetHp, float t
 			m_lastEnemyHpBarEndPosX = enemyLostHpBoxPosX;
 		}
 	}
-	//プレイヤーのHPバーの縁表示
-	DrawRotaGraph(static_cast<int>(m_showUi[playerHpBar].drawPos.x + playerHpBarShakeSize.x),
-		static_cast<int>(m_showUi[playerHpBar].drawPos.y + playerHpBarShakeSize.y),
-		1.0, 0.0, m_showUi[playerHpBar].handle, true);
-	//エネミーのHPバーの縁表示
-	DrawRotaGraph(static_cast<int>(m_showUi[enemyHpBar].drawPos.x + enemyHpBarShakeSize.x),
-		static_cast<int>(m_showUi[enemyHpBar].drawPos.y + +enemyHpBarShakeSize.y),
-		1.0, 0.0, m_showUi[enemyHpBar].handle, true);
-
+	//プレイヤーのステートバー表示
+	DrawRotaGraph(static_cast<int>(m_showUi[playerStateBar].drawPos.x + playerStateBarShakeSize.x),
+		static_cast<int>(m_showUi[playerStateBar].drawPos.y + playerStateBarShakeSize.y),
+		1.0, 0.0, m_showUi[playerStateBar].handle, true);
+	//エネミーのステートバー表示
+	DrawRotaGraph(static_cast<int>(m_showUi[enemyStateBar].drawPos.x + enemyStateBarShakeSize.x),
+		static_cast<int>(m_showUi[enemyStateBar].drawPos.y + +enemyStateBarShakeSize.y),
+		1.0, 0.0, m_showUi[enemyStateBar].handle, true);
 }
 
 

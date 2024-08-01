@@ -319,7 +319,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		{
 			std::string attackId = CommandId::kEnergyAttack;
 			//消費MPが現在のMPよりも少なかったら
-			if (m_nowMp > GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(attackId))
 			{
 				//気弾攻撃のみ移動中に出せる技であるのでここで技を出す
 				m_nowMp -= m_attackData[attackId].cost;
@@ -332,7 +332,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		else if (input.IsTrigger("B"))
 		{
 			std::string attackId = CommandId::kPhysicalAttack;
-			if (m_nowMp > GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(attackId))
 			{
 				SetAttack(attackId);
 			}
@@ -346,7 +346,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		{
 			std::string attackId = CommandId::kSpLaserAttack;
 			//MPが十分にあったら
-			if (m_nowMp > GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(attackId))
 			{
 				SetAttack(attackId);
 			}
@@ -356,7 +356,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		{
 			std::string attackId = CommandId::kSpStanAttack;
 			//MPが十分にあったら
-			if (m_nowMp > GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(attackId))
 			{
 				SetAttack(attackId);
 			}
@@ -366,7 +366,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		{
 			std::string attackId = CommandId::kSpSlamAttack;
 			//MPが十分にあったら
-			if (m_nowMp > GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(attackId))
 			{
 				SetAttack(attackId);
 			}
@@ -376,7 +376,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		{
 			std::string attackId = CommandId::kSpEnergyAttack;
 			//MPが十分にあったら
-			if (m_nowMp > GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(attackId))
 			{
 				SetAttack(attackId);
 			}
