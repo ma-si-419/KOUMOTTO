@@ -16,6 +16,8 @@ public:
 
 	//ダメージを返す
 	int GetDamage() {return m_status.damage;}
+	//スタンダメージを返す
+	int GetStanDamage() { return m_status.stanDamage; }
 
 	//何かに当たった時の処理
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;

@@ -8,9 +8,16 @@ namespace
 	constexpr float kColScale = 100.0f;
 	//初期位置
 	const MyEngine::Vector3 kInitPos(0,0,1000);
+	//スタンゲージのマックス
+	constexpr float kMaxStanPoint = 500;
+	//スタンゲージが回復するまでの時間
+	constexpr int kHealStanPointTime = 300;
 }
 Enemy::Enemy() :
-	CharacterBase("data/model/Enemy.mv1",ObjectTag::kEnemy)
+	CharacterBase("data/model/Enemy.mv1",ObjectTag::kEnemy),
+	debug(),
+	m_stanPoint(kMaxStanPoint),
+	m_lastHitDamageTime(0)
 {
 }
 
@@ -35,6 +42,20 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 
 void Enemy::Update(std::shared_ptr<SceneGame> scene)
 {
+
+	//ダメージを受けてからの時間をカウントする
+	m_lastHitDamageTime++;
+	
+	//ダメージを受けてから一定時間たったらスタン値を回復していく
+	if (m_lastHitDamageTime > kHealStanPointTime)
+	{
+		m_stanPoint++;
+		//上限値を超えないように
+		if (m_stanPoint > kMaxStanPoint)
+		{
+			m_stanPoint = kMaxStanPoint;
+		}
+	}
 
 	//debug.x++;
 	debug.y += 0.01f;
@@ -75,5 +96,19 @@ void Enemy::OnCollide(std::shared_ptr<Collidable> collider)
 		{
 			m_nowHp = 0;
 		}
+		//スタンダメージを受ける
+		m_stanPoint -= attack->GetStanDamage();
+		//下がりすぎないように
+		if (m_stanPoint < 0)
+		{
+			m_stanPoint = 0;
+		}
+		//ダメージを受けてからの時間を数える
+		m_lastHitDamageTime = 0;
 	}
+}
+
+float Enemy::GetStanPointRate()
+{
+	return m_stanPoint / kMaxStanPoint;
 }

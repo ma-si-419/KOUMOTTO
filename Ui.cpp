@@ -12,6 +12,9 @@ namespace
 	//MPバーの大きさ
 	constexpr int kMpBarHeight = 8;
 	constexpr int kMpBarWidth = 188;
+	//スタンバーの大きさ
+	constexpr int kStanBarHeight = 8;
+	constexpr int kStanBarWidth = 128;
 	//体力が減った時の赤いゲージが減少していくまでの時間
 	constexpr int kLostHpBarLifeTime = 30;
 	//赤いゲージが減少する速度
@@ -26,7 +29,9 @@ namespace
 	//プレイヤーのMPバーの座標(画像の座標に対してのMPバーの座標のずれを直す)
 	constexpr int kMpBarPosX = -36;
 	constexpr int kMpBarPosY = 40;
-
+	//エネミーのスタンバーの座標(画像の座標に対してのスタンバーの座標のずれを直す)
+	constexpr int kStanBarPosX = 23;
+	constexpr int kStanBarPosY = 40;
 }
 
 Ui::Ui() :
@@ -111,6 +116,7 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 
 	//エネミーHPバーの開始位置
 	MyEngine::Vector2 enemyHpBarStartPos;
+
 	enemyHpBarStartPos.x = m_showUi[enemyStateBar].drawPos.x + kHpBarWidth + kHpBarPosX;
 	enemyHpBarStartPos.y = m_showUi[enemyStateBar].drawPos.y + kHpBarHeight + kHpBarPosY;
 
@@ -125,9 +131,16 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	//エネミースタンバーの開始位置
 	MyEngine::Vector2 enemyStanBarStartPos;
 
+	enemyStanBarStartPos.x = m_showUi[enemyStateBar].drawPos.x + kStanBarWidth + kStanBarPosX;
+	enemyStanBarStartPos.y = m_showUi[enemyStateBar].drawPos.y + kStanBarHeight + kStanBarPosY;
 
 	//エネミースタンバーの終了位置
 	MyEngine::Vector2 enemyStanBarEndPos;
+
+	enemyStanBarEndPos.x = m_showUi[enemyStateBar].drawPos.x - kStanBarWidth + kStanBarPosX;
+	enemyStanBarEndPos.y = m_showUi[enemyStateBar].drawPos.y - kStanBarHeight + kStanBarPosY;
+
+	float enemyStanBarLength = enemyStanBarEndPos.x - enemyStanBarStartPos.x;
 
 	//プレイヤーのステートバーの座標を揺らす
 	playerHpBarStartPos += playerStateBarShakeSize;
@@ -138,6 +151,8 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	//エネミーのステートバーの座標を揺らす
 	enemyHpBarStartPos += enemyStateBarShakeSize;
 	enemyHpBarEndPos += enemyStateBarShakeSize;
+	enemyStanBarStartPos += enemyStateBarShakeSize;
+	enemyStanBarEndPos += enemyStateBarShakeSize;
 
 	//プレイヤーのHPバー表示
 	DrawBox(static_cast<int>(playerHpBarStartPos.x), static_cast<int>(playerHpBarStartPos.y),
@@ -151,6 +166,10 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	DrawBox(static_cast<int>(enemyHpBarStartPos.x), static_cast<int>(enemyHpBarStartPos.y),
 		static_cast<int>(enemyHpBarEndPos.x), static_cast<int>(enemyHpBarEndPos.y),
 		GetColor(64, 255, 64), true);
+	//エネミーのスタンバー表示
+	DrawBox(static_cast<int>(enemyStanBarStartPos.x), static_cast<int>(enemyStanBarStartPos.y),
+		static_cast<int>(enemyStanBarEndPos.x), static_cast<int>(enemyStanBarEndPos.y),
+		GetColor(128, 128, 128), true);
 
 
 	//体力に応じて上にかぶせるボックスの長さを変化させる
@@ -159,6 +178,9 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 
 	//プレイヤーの気力に応じて上にかぶせるボックスの長さを変化させる
 	int playerLostMpBoxPosX = static_cast<int>(playerMpBarStartPos.x + playerMpBarLength * (player->GetNowMp() / player->GetStatus().mp));
+
+	//エネミーのスタンゲージに応じて上にかぶせるボックスの長さを変化させる
+	int enemyLostStanBoxPosX = static_cast<int>(enemyStanBarStartPos.x + enemyStanBarLength * enemy->GetStanPointRate());
 
 	//プレイヤーのHPバーの上にかぶせるボックス表示
 	DrawBox(playerLostHpBoxPosX, static_cast<int>(playerHpBarStartPos.y),
@@ -173,6 +195,11 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	DrawBox(playerLostMpBoxPosX, static_cast<int>(playerMpBarStartPos.y),
 		static_cast<int>(playerMpBarEndPos.x), static_cast<int>(playerMpBarEndPos.y),
 		GetColor(64, 64, 64), true);
+
+	//エネミーのスタンバーの上にかぶせるボックスを表示
+	DrawBox(enemyLostStanBoxPosX, static_cast<int>(enemyStanBarStartPos.y),
+		static_cast<int>(enemyStanBarEndPos.x), static_cast<int>(enemyStanBarEndPos.y),
+		GetColor(255, 0, 0), true);
 
 	//赤いバーの初期化
 	if (m_lastPlayerHpBarEndPosX == 0 && m_lastEnemyHpBarEndPosX == 0)
