@@ -169,7 +169,7 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	//エネミーのスタンバー表示
 	DrawBox(static_cast<int>(enemyStanBarStartPos.x), static_cast<int>(enemyStanBarStartPos.y),
 		static_cast<int>(enemyStanBarEndPos.x), static_cast<int>(enemyStanBarEndPos.y),
-		GetColor(128, 128, 128), true);
+		GetColor(192, 32, 192), true);
 
 
 	//体力に応じて上にかぶせるボックスの長さを変化させる
@@ -199,7 +199,7 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	//エネミーのスタンバーの上にかぶせるボックスを表示
 	DrawBox(enemyLostStanBoxPosX, static_cast<int>(enemyStanBarStartPos.y),
 		static_cast<int>(enemyStanBarEndPos.x), static_cast<int>(enemyStanBarEndPos.y),
-		GetColor(255, 0, 0), true);
+		GetColor(64, 64, 64), true);
 
 	//赤いバーの初期化
 	if (m_lastPlayerHpBarEndPosX == 0 && m_lastEnemyHpBarEndPosX == 0)
