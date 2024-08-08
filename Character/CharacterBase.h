@@ -102,6 +102,8 @@ protected:
 	/// <returns>攻撃のポインタ</returns>
 	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id,bool isPlayer);
 
-	//攻撃を出している状態に変化させる
-	void SetAttack(std::string id);
+	//必殺技を出している状態に変化させる
+	void SetSpecialAttack(std::string id);
+	//通常攻撃を出してる状態に変化させる
+	void SetNormalAttack(bool isPhysical,int time);
 };

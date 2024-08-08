@@ -14,7 +14,8 @@ namespace
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
-	m_rota(0)
+	m_rota(0),
+	m_lastAttackTime(0)
 {
 }
 
@@ -51,7 +52,6 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 {
-	m_stanTime--;
 	//ˆÚ“®ƒxƒNƒgƒ‹
 	MyEngine::Vector3 velo;
 	//ƒXƒ^ƒ“’†‚Í‘€ì‚Å‚«‚È‚¢‚æ‚¤‚É‚·‚é
@@ -69,7 +69,9 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		}
 
 		//UŒ‚ˆ—
-		Attack(scene, input);
+		Attack(input);
+
+		m_lastAttackTime++;
 
 		//ˆÚ“®ˆ—
 		velo = Move(velo, input);
@@ -82,10 +84,12 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	//‘€ì‚Å‚«‚È‚¢ŠÔ
 	else
 	{
+		//“®‚¯‚È‚¢ŠÔ‚ğŒ¸‚ç‚·
+		m_stanTime--;
 		//UŒ‚‚ğo‚µ‚Ä‚¢‚éó‘Ô‚¾‚Á‚½‚ç
 		if (m_isAttack)
 		{
-			//UŒ‚‚ğ•¡”‰ño‚·‹Z‚Å‚ ‚ê‚Î
+			//1‘€ì‚ÅUŒ‚‚ğ•¡”‰ño‚·‹Z‚Å‚ ‚ê‚Î
 			if (m_attackData[m_attackId].attackNum > 1)
 			{
 				//¡UŒ‚‚ğo‚µn‚ß‚Ä‰½•b‚©”‚¦‚é
@@ -107,9 +111,10 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 					}
 					//UŒ‚‚ğo‚·
 					scene->AddAttack(attack);
+					m_lastAttackTime = 0;
 				}
 			}
-			//UŒ‚‚ªˆê“x‚Ì‚İ‚Å‚ ‚ê‚Î
+			//’P”­UŒ‚‚Å‚ ‚ê‚Î
 			else
 			{
 				//Ši“¬UŒ‚‚¾‚Á‚½ê‡
@@ -141,6 +146,7 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 						//UŒ‚‚ğo‚·
 						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));
 						m_isAttack = false;
+						m_lastAttackTime = 0;
 					}
 				}
 				//‹C’eUŒ‚‚¾‚Á‚½ê‡
@@ -154,12 +160,14 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 						//UŒ‚‚ğo‚·
 						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));
 						m_isAttack = false;
+						m_lastAttackTime = 0;
 					}
 
 				}
 			}
 		}
 	}
+
 	//ƒŠƒMƒbƒgƒ{ƒfƒB‚ÉƒxƒƒVƒeƒB‚ğİ’è‚·‚é
 	m_rigidbody.SetVelo(velo);
 
@@ -306,10 +314,8 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 	return velo;
 }
 
-void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
+void Player::Attack(MyEngine::Input input)
 {
-	//ƒvƒŒƒCƒ„[‚©‚ç“G‚Ö‚ÌƒxƒNƒgƒ‹‚ğì¬
-	MyEngine::Vector3 toEnemyVec = m_targetPos - m_rigidbody.GetPos();
 
 	//•KE‹ZƒpƒŒƒbƒg‚ğŠJ‚¢‚Ä‚¢‚È‚¢‚Æ‚«
 	if (!input.IsPress("RB"))
@@ -317,25 +323,17 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		//‹C’eUŒ‚
 		if (input.IsTrigger("X"))
 		{
-			std::string attackId = CommandId::kEnergyAttack;
+			std::string attackId = CommandId::kEnergyAttack1;
 			//Á”ïMP‚ªŒ»İ‚ÌMP‚æ‚è‚à­‚È‚©‚Á‚½‚ç
 			if (m_nowMp >= GetAttackCost(attackId))
 			{
-				//‹C’eUŒ‚‚Ì‚İˆÚ“®’†‚Éo‚¹‚é‹Z‚Å‚ ‚é‚Ì‚Å‚±‚±‚Å‹Z‚ğo‚·
-				m_nowMp -= m_attackData[attackId].cost;
-				m_attackTarget = m_targetPos;
-				scene->AddAttack(CreateAttack(m_pPhysics, attackId, true));
-
+				SetNormalAttack(false,m_lastAttackTime);
 			}
 		}
 		//Ši“¬UŒ‚
 		else if (input.IsTrigger("B"))
 		{
-			std::string attackId = CommandId::kPhysicalAttack;
-			if (m_nowMp >= GetAttackCost(attackId))
-			{
-				SetAttack(attackId);
-			}
+			SetNormalAttack(true,m_lastAttackTime);
 		}
 	}
 	//•KE‹ZƒpƒŒƒbƒg‚ğŠJ‚¢‚Ä‚¢‚é‚Æ‚«
@@ -348,7 +346,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MP‚ª\•ª‚É‚ ‚Á‚½‚ç
 			if (m_nowMp >= GetAttackCost(attackId))
 			{
-				SetAttack(attackId);
+				SetSpecialAttack(attackId);
 			}
 		}
 		//Ši“¬•KE1
@@ -358,7 +356,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MP‚ª\•ª‚É‚ ‚Á‚½‚ç
 			if (m_nowMp >= GetAttackCost(attackId))
 			{
-				SetAttack(attackId);
+				SetSpecialAttack(attackId);
 			}
 		}
 		//Ši“¬•KE2
@@ -368,7 +366,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MP‚ª\•ª‚É‚ ‚Á‚½‚ç
 			if (m_nowMp >= GetAttackCost(attackId))
 			{
-				SetAttack(attackId);
+				SetSpecialAttack(attackId);
 			}
 		}
 		//‹C’e˜A‘Å
@@ -378,7 +376,7 @@ void Player::Attack(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			//MP‚ª\•ª‚É‚ ‚Á‚½‚ç
 			if (m_nowMp >= GetAttackCost(attackId))
 			{
-				SetAttack(attackId);
+				SetSpecialAttack(attackId);
 			}
 		}
 	}

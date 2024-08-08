@@ -11,7 +11,7 @@ namespace
 	//スタンゲージのマックス
 	constexpr float kMaxStanPoint = 500;
 	//スタンゲージが回復するまでの時間
-	constexpr int kHealStanPointTime = 300;
+	constexpr int kHealStanPointTime = 200;
 }
 Enemy::Enemy() :
 	CharacterBase("data/model/Enemy.mv1",ObjectTag::kEnemy),

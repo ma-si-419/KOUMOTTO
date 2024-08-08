@@ -29,10 +29,11 @@ private:
 	/// 攻撃関係操作の処理を行う
 	/// </summary>
 	/// <param name="input">入力</param>
-	void Attack(std::shared_ptr<SceneGame> scene,MyEngine::Input input);
+	void Attack(MyEngine::Input input);
 
 	float m_rota;
 
-
+	//最後に攻撃を出してからの時間をカウントする
+	int m_lastAttackTime;
 };
 
