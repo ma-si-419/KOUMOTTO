@@ -7,9 +7,9 @@
 namespace
 {
 	//格闘攻撃を連続で出したかどうかを判断する時間
-	constexpr int kPhysicalAttackConnectTime = 10;
+	constexpr int kPhysicalAttackConnectTime = 30;
 	//気弾攻撃を連続で出したかどうかを判断する時間
-	constexpr int kEnergyAttackConnectTime = 10;
+	constexpr int kEnergyAttackConnectTime = 30;
 }
 
 CharacterBase::CharacterBase(const TCHAR* model, ObjectTag tag) :
@@ -51,6 +51,10 @@ std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics>
 	return ans;
 }
 
+void CharacterBase::ChangeAnim(int animNum)
+{
+}
+
 void CharacterBase::SetSpecialAttack(std::string id)
 {
 	//技で動けない時間を設定する
@@ -90,6 +94,10 @@ void CharacterBase::SetNormalAttack(bool isPhysical, int time)
 				//格闘攻撃の三段目を出す
 				m_attackId = CommandId::kPhysicalAttack3;
 			}
+			else if (m_attackId == CommandId::kPhysicalAttack3)
+			{
+				m_attackId = CommandId::kPhysicalAttack1;
+			}
 		}
 		//格闘攻撃がコンボになるタイミングでなければ
 		else
@@ -123,6 +131,11 @@ void CharacterBase::SetNormalAttack(bool isPhysical, int time)
 			{
 				//気弾攻撃の四段目を出す
 				m_attackId = CommandId::kEnergyAttack4;
+			}
+			else if (m_attackId == CommandId::kEnergyAttack4)
+			{
+				//気弾攻撃の一段目を出す
+				m_attackId = CommandId::kEnergyAttack1;
 			}
 		}
 		//気弾攻撃がコンボになるタイミング出なければ

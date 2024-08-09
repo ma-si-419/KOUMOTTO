@@ -77,11 +77,11 @@ protected:
 	
 	//攻撃のデータ
 	std::map<std::string,DataManager::AttackInfo> m_attackData;
-
+	//基本的なステータス
 	Status m_status;
-	//体力
+	//現在の体力
 	float m_nowHp;
-	//気力
+	//現在の気力
 	float m_nowMp;
 	//動けない時間
 	int m_stanTime;
@@ -101,6 +101,9 @@ protected:
 	/// <param name="id">攻撃のID</param>
 	/// <returns>攻撃のポインタ</returns>
 	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id,bool isPlayer);
+
+	//アニメーションを変化させる
+	void ChangeAnim(int animNum);
 
 	//必殺技を出している状態に変化させる
 	void SetSpecialAttack(std::string id);
