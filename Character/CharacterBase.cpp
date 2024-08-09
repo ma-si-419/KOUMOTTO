@@ -3,6 +3,7 @@
 #include "AttackBase.h"
 #include "Physics.h"
 #include "CommandIdList.h"
+#include "LoadCsv.h"
 
 namespace
 {
@@ -28,6 +29,35 @@ CharacterBase::~CharacterBase()
 	MV1DeleteModel(m_modelHandle);
 }
 
+void CharacterBase::LoadAnimationData(bool isPlayer)
+{
+	LoadCsv loadCsv;
+	std::vector<std::vector<std::string>> data;
+	if (isPlayer)
+	{
+		//プレイヤーのファイルを読み込む
+		data = loadCsv.LoadFile("data/animationData.csv");
+	}
+	else
+	{
+		//エネミーのファイルを読み込む
+	}
+
+	for (auto& item : data)
+	{
+		//入れるデータ
+		AnimationInfo pushData;
+
+		pushData.number = std::stoi(item[static_cast<int>(AnimationInfoSort::kNumber)]);
+		pushData.startFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kStartFrame)]);
+		pushData.roopFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kRoopFrame)]);
+		pushData.endFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kEndFrame)]);
+
+		m_animationData[item[static_cast<int>(AnimationInfoSort::kName)]] = pushData;
+	}
+
+}
+
 std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics> physics, std::string id, bool isPlayer)
 {
 	std::shared_ptr<AttackBase> ans;
@@ -51,9 +81,12 @@ std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics>
 	return ans;
 }
 
-void CharacterBase::ChangeAnim(int animNum)
+void CharacterBase::ChangeAnim(AnimName nextAnim)
 {
+	int animNum = 0;
+	
 }
+
 
 void CharacterBase::SetSpecialAttack(std::string id)
 {
@@ -94,7 +127,8 @@ void CharacterBase::SetNormalAttack(bool isPhysical, int time)
 				//格闘攻撃の三段目を出す
 				m_attackId = CommandId::kPhysicalAttack3;
 			}
-			else if (m_attackId == CommandId::kPhysicalAttack3)
+			//格闘技の一段目、二段目を出していなければ
+			else
 			{
 				m_attackId = CommandId::kPhysicalAttack1;
 			}
@@ -132,7 +166,8 @@ void CharacterBase::SetNormalAttack(bool isPhysical, int time)
 				//気弾攻撃の四段目を出す
 				m_attackId = CommandId::kEnergyAttack4;
 			}
-			else if (m_attackId == CommandId::kEnergyAttack4)
+			//気弾攻撃の一、二、三段目でなければ
+			else
 			{
 				//気弾攻撃の一段目を出す
 				m_attackId = CommandId::kEnergyAttack1;

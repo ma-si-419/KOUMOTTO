@@ -33,6 +33,7 @@ public:
 		int actionTime = 0;
 		bool isEnergy = false;
 	};
+
 	DataManager();
 	~DataManager();
 

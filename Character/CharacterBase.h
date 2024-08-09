@@ -51,6 +51,8 @@ public:
 	void SetStanTime(int time) { m_stanTime = time; }
 	//攻撃に必要な気力量を取得する
 	int GetAttackCost(std::string Id) { return m_attackData[Id].cost; }
+	//アニメーションのデータを取得する
+	void LoadAnimationData(bool isPlayer);
 
 protected:
 	enum class State
@@ -67,7 +69,35 @@ protected:
 		kHitLightAttack,
 		kHitHeavyAttack
 	};
-	
+
+	enum class AnimationInfoSort
+	{
+		kName,
+		kNumber,
+		kStartFrame,
+		kRoopFrame,
+		kEndFrame,
+		kPlaySpeed
+	};
+	enum class AnimName
+	{
+		kIdle,
+		kIdleMove,
+		kMoveFront,
+		kMoveBack,
+		kMoveRight,
+		kMoveLeft,
+		kGuard,
+		kDash
+	};
+	struct AnimationInfo
+	{
+		int number = 0;
+		int startFrame = 0;
+		int roopFrame = 0;
+		int endFrame = 0;
+		float playSpeed = 0.0f;
+	};
 
 	//モデルハンドル
 	int m_modelHandle;
@@ -77,6 +107,8 @@ protected:
 	
 	//攻撃のデータ
 	std::map<std::string,DataManager::AttackInfo> m_attackData;
+	//アニメーションのデータ
+	std::map<std::string, AnimationInfo> m_animationData;
 	//基本的なステータス
 	Status m_status;
 	//現在の体力
@@ -89,6 +121,15 @@ protected:
 	bool m_isAttack;
 	//ターゲットが近くにいるかどうか
 	bool m_isNearTarget;
+	//今再生しているアニメーション
+	int m_playAnim;
+	//アニメーションの再生速度
+	float m_animPlaySpeed;
+	//アニメーションの総再生時間
+	float m_totalAnimTime;
+	//アニメーションの再生時間
+	float m_animTime;
+
 	//出している攻撃
 	std::string m_attackId;
 	//攻撃を出したタイミングの敵の座標
@@ -103,7 +144,7 @@ protected:
 	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id,bool isPlayer);
 
 	//アニメーションを変化させる
-	void ChangeAnim(int animNum);
+	void ChangeAnim(AnimName nextAnim);
 
 	//必殺技を出している状態に変化させる
 	void SetSpecialAttack(std::string id);

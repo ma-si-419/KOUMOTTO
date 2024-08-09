@@ -17,6 +17,7 @@ Player::Player() :
 	m_rota(0),
 	m_lastAttackTime(0)
 {
+	LoadAnimationData(true);
 }
 
 Player::~Player()
@@ -25,7 +26,7 @@ Player::~Player()
 
 void Player::Init(std::shared_ptr<Physics> physics)
 {
-	MV1SetScale(m_modelHandle, VGet(300, 300, 300));
+	MV1SetScale(m_modelHandle, VGet(2, 2, 2));
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
