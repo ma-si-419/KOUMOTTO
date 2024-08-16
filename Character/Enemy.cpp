@@ -61,8 +61,8 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	debug.y += 0.01f;
 	MyEngine::Vector3 pos(sinf(debug.x) * 100, sinf(debug.y) * 3000,1000.0f);
 
-	m_rigidbody.SetPos(pos);
-	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	//m_rigidbody.SetPos(pos);
+	//MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	//ìñÇΩÇËîªíËÇÃècïù
 	pos.y += kColScale;

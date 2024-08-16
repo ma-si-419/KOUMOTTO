@@ -87,12 +87,6 @@ protected:
 		int endFrame = 0;
 		float playSpeed = 0.0f;
 	};
-	struct PlayAnimData
-	{
-		int number = 0;
-		float rate = 0;
-	};
-
 	//モデルハンドル
 	int m_modelHandle;
 	//登録したPhysicsを持っておく
@@ -115,7 +109,7 @@ protected:
 	//ターゲットが近くにいるかどうか
 	bool m_isNearTarget;
 	//今再生しているアニメーション
-	std::vector<PlayAnimData> m_playAnims;
+	std::vector<int> m_playAnims;
 	//アニメーションの再生速度
 	float m_animPlaySpeed;
 	//アニメーションの総再生時間
@@ -137,11 +131,9 @@ protected:
 	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id,bool isPlayer);
 
 	//アニメーションを増やす
-	void AddPlayAnim(std::string animName);
-	//アニメーションを減らす
-	void SubPlayAnim();
+	void ChangeAnim(std::string animName);
 	//アニメーションブレンド
-	void BlendAnim(std::vector<float> rate);
+	void MoveAnim(MyEngine::Vector3 moveDir);
 
 	//必殺技を出している状態に変化させる
 	void SetSpecialAttack(std::string id);

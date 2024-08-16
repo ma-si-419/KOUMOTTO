@@ -3,6 +3,7 @@
 #include "SceneGame.h"
 #include "AttackBase.h"
 #include "CommandIdList.h"
+#include "CapsuleColliderData.h"
 namespace
 {
 	//移動速度
@@ -18,6 +19,8 @@ Player::Player() :
 	m_lastAttackTime(0)
 {
 	LoadAnimationData(true);
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
+	colData->m_radius = 100;
 }
 
 Player::~Player()
@@ -26,7 +29,7 @@ Player::~Player()
 
 void Player::Init(std::shared_ptr<Physics> physics)
 {
-	MV1SetScale(m_modelHandle, VGet(2, 2, 2));
+	MV1SetScale(m_modelHandle, VGet(3, 3, 3));
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
@@ -172,6 +175,15 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	//リギットボディにベロシティを設定する
 	m_rigidbody.SetVelo(velo);
 
+	//アニメーションを進める
+	m_animTime += m_animPlaySpeed / 1000;
+	int c = 0;
+	for (auto item : m_playAnims)
+	{
+		c++;
+		MV1SetAttachAnimTime(m_modelHandle,item,m_animTime);
+	}
+	printfDx("%d", c);
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 }
@@ -215,37 +227,6 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 		stickDir = stickDir.Normalize();
 
-		std::vector<float> rate;
-
-		if (stickDir.x > 0.0f)
-		{
-			AddPlayAnim("MoveRight");
-			rate.push_back(stickDir.x);
-		}
-		else if (stickDir.x < 0.0f)
-		{
-			AddPlayAnim("MoveLeft");
-			rate.push_back(stickDir.x);
-		}
-		if (stickDir.z > 0.0f)
-		{
-			AddPlayAnim("MoveFront");
-			rate.push_back(stickDir.z);
-		}
-		else if (stickDir.z < 0.0f)
-		{
-			AddPlayAnim("MoveBack");
-			rate.push_back(stickDir.z);
-		}
-		BlendAnim(rate);
-		printfDx("%f",rate[0]);
-		m_animTime += m_animPlaySpeed;
-		if(m_animTime > m_totalAnimTime)
-		{
-			m_animTime = m_animData["MoveFront"].roopFrame;
-		}
-
-		SubPlayAnim();
 		//Y軸を中心とした回転をするので
 		MyEngine::Vector3 rotationShaftPos = m_targetPos;
 		//Y座標が関係しないようにプレイヤーと同じ座標にする
@@ -342,6 +323,8 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 	//	}
 	//}
+
+	MoveAnim(stickDir);
 
 	m_lastInput = stickDir;
 

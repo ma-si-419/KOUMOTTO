@@ -81,44 +81,79 @@ std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics>
 	return ans;
 }
 
-void CharacterBase::AddPlayAnim(std::string animName)
+void CharacterBase::ChangeAnim(std::string animName)
 {
+
+	//前のアニメーションをデタッチする
+	for (auto item : m_playAnims)
+	{
+		MV1DetachAnim(m_modelHandle, item);
+	}
+	//再生していたアニメーションの配列を削除する
+	m_playAnims.clear();
 	//アニメの再生速度を設定
 	m_animPlaySpeed = m_animData[animName].playSpeed;
 	//アニメの再生時間をリセット
 	m_animTime = 0;
-	//アタッチするアニメーションを配列に追加する
-	PlayAnimData pushData;
-	pushData.number = MV1AttachAnim(m_modelHandle, m_animData[animName].number);
-	//新しいアニメをアタッチする
-	m_playAnims.push_back(pushData);
+	//新しいアニメーションをアタッチする
+	m_playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData[animName].number));
 	//アニメーションの総再生時間を設定する
 	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData[animName].endFrame);
 }
 
-void CharacterBase::SubPlayAnim()
+void CharacterBase::MoveAnim(MyEngine::Vector3 moveDir)
 {
-	//アニメーションのデータを見てブレンド率が0のものをデタッチする
-	for (int i = 0; i < m_playAnims.size(); i++)
+	std::vector<int> playAnims;
+
+	//スティックの傾きに併せてアニメーションを追加する
+	if (moveDir.x > 0.0f)
 	{
-		if (m_playAnims[i].rate <= 0)
+		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveRight"].number));
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveRight"].number, moveDir.x);
+	}
+	else if (moveDir.x < 0.0f)
+	{
+		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveLeft"].number));
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveLeft"].number, moveDir.x);
+	}
+	if (moveDir.z > 0.0f)
+	{
+		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveFront"].number));
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveFront"].number, moveDir.z);
+	}
+	else if (moveDir.z < 0.0f)
+	{
+		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveBack"].number));
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveBack"].number, moveDir.z);
+	}
+	if (moveDir.sqLength() == 0)
+	{
+		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["Idle"].number));
+	}
+
+	for (auto item : m_playAnims)
+	{
+		bool detachFlag = true;
+		for (auto item2 : playAnims)
 		{
-			m_playAnims.erase(m_playAnims.begin() + i);
-			i--;
+			if (item == item2)
+			{
+				detachFlag = false;
+			}
+		}
+		if (detachFlag)
+		{
+			MV1DetachAnim(m_modelHandle,item);
+			printfDx("消したよ");
 		}
 	}
-}
 
-void CharacterBase::BlendAnim(std::vector<float> rate)
-{
-	//アニメーションの配列の長さだけ回す
-	for (int i = 0; i < m_playAnims.size(); i++)
-	{
-		//引数で受け取ったブレンド率を当てはめる
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_playAnims[i].number, rate[i]);
-		//ブレンド率をアニメーションのプレイデータに入れる
-		m_playAnims[i].rate = rate[i];
-	}
+	m_playAnims = playAnims;
+
+	//アニメーションの終了フレームを取得する
+	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_playAnims[0]);
+	//移動の再生速度はすべて同じなのでとりあえずMoveFrontから持ってくる
+	m_animPlaySpeed = m_animData["MoveFront"].playSpeed;
 }
 
 
