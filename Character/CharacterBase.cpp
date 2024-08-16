@@ -53,7 +53,7 @@ void CharacterBase::LoadAnimationData(bool isPlayer)
 		pushData.roopFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kRoopFrame)]);
 		pushData.endFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kEndFrame)]);
 
-		m_animationData[item[static_cast<int>(AnimationInfoSort::kName)]] = pushData;
+		m_animData[item[static_cast<int>(AnimationInfoSort::kName)]] = pushData;
 	}
 
 }
@@ -81,10 +81,44 @@ std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics>
 	return ans;
 }
 
-void CharacterBase::ChangeAnim(AnimName nextAnim)
+void CharacterBase::AddPlayAnim(std::string animName)
 {
-	int animNum = 0;
-	
+	//アニメの再生速度を設定
+	m_animPlaySpeed = m_animData[animName].playSpeed;
+	//アニメの再生時間をリセット
+	m_animTime = 0;
+	//アタッチするアニメーションを配列に追加する
+	PlayAnimData pushData;
+	pushData.number = MV1AttachAnim(m_modelHandle, m_animData[animName].number);
+	//新しいアニメをアタッチする
+	m_playAnims.push_back(pushData);
+	//アニメーションの総再生時間を設定する
+	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData[animName].endFrame);
+}
+
+void CharacterBase::SubPlayAnim()
+{
+	//アニメーションのデータを見てブレンド率が0のものをデタッチする
+	for (int i = 0; i < m_playAnims.size(); i++)
+	{
+		if (m_playAnims[i].rate <= 0)
+		{
+			m_playAnims.erase(m_playAnims.begin() + i);
+			i--;
+		}
+	}
+}
+
+void CharacterBase::BlendAnim(std::vector<float> rate)
+{
+	//アニメーションの配列の長さだけ回す
+	for (int i = 0; i < m_playAnims.size(); i++)
+	{
+		//引数で受け取ったブレンド率を当てはめる
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_playAnims[i].number, rate[i]);
+		//ブレンド率をアニメーションのプレイデータに入れる
+		m_playAnims[i].rate = rate[i];
+	}
 }
 
 

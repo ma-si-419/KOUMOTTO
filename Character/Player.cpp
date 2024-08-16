@@ -201,70 +201,101 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 {
 	//スティックでの移動
+
+	//スティックの入力情報
+	MyEngine::Input::StickInfo stick = input.GetStickInfo();
+	//プレイヤーの移動方向ベクトル
+	MyEngine::Vector3 stickDir(stick.leftStickX, 0, -stick.leftStickY);
+
+	//プレイヤーが上下移動するかするかどうか
+	bool isMoveVertical = input.IsPress("LB");
+
+	if (stickDir.sqLength() != 0)
 	{
-		//スティックの入力情報
-		MyEngine::Input::StickInfo stick = input.GetStickInfo();
-		//プレイヤーの移動方向ベクトル
-		MyEngine::Vector3 stickDir(stick.leftStickX, 0, -stick.leftStickY);
 
-		//プレイヤーが上下移動するかするかどうか
-		bool isMoveVertical = input.IsPress("LB");
+		stickDir = stickDir.Normalize();
 
-		if (stickDir.sqLength() != 0)
+		std::vector<float> rate;
+
+		if (stickDir.x > 0.0f)
 		{
-
-			stickDir = stickDir.Normalize();
-
-			//Y軸を中心とした回転をするので
-			MyEngine::Vector3 rotationShaftPos = m_targetPos;
-			//Y座標が関係しないようにプレイヤーと同じ座標にする
-			rotationShaftPos.y = m_rigidbody.GetPos().y;
-
-			MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_rigidbody.GetPos();
-
-			//回転速度(横移動の速さ)
-			float HMoveSpeed = 0;
-
-			if (stickDir.x != 0.0f)
-			{
-				HMoveSpeed = (stickDir.x * kMoveSpeed) / toShaftPosVec.Length();
-			}
-
-			DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", HMoveSpeed);
-
-			/*MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
-
-			m_rota = atan2f(a.z,a.x);*/
-
-			m_rota += HMoveSpeed;
-
-			//左右移動は敵の周囲を回る
-
-			//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
-			//現在の座標からその座標に向かうベクトルを作成する
-			velo.x = (rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().x;
-			velo.z = (rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().z;
-
-			//上下移動入力されていたら
-			if (isMoveVertical)
-			{
-				//前後入力を上下のベクトルに変換
-				velo.y += stickDir.z * kMoveSpeed;
-			}
-			//されていなかった場合
-			else
-			{
-				//前後入力を回転の中心に向かうベクトルに変換
-				MyEngine::Vector3 toCenterVec = m_targetPos - m_rigidbody.GetPos();
-				toCenterVec.y = 0;
-				velo += toCenterVec.Normalize() * (stickDir.z * kMoveSpeed);
-			}
-
-
-			DrawFormatString(400, 0, GetColor(255, 255, 255), "%f", velo.Length());;
-
+			AddPlayAnim("MoveRight");
+			rate.push_back(stickDir.x);
 		}
+		else if (stickDir.x < 0.0f)
+		{
+			AddPlayAnim("MoveLeft");
+			rate.push_back(stickDir.x);
+		}
+		if (stickDir.z > 0.0f)
+		{
+			AddPlayAnim("MoveFront");
+			rate.push_back(stickDir.z);
+		}
+		else if (stickDir.z < 0.0f)
+		{
+			AddPlayAnim("MoveBack");
+			rate.push_back(stickDir.z);
+		}
+		BlendAnim(rate);
+		printfDx("%f",rate[0]);
+		m_animTime += m_animPlaySpeed;
+		if(m_animTime > m_totalAnimTime)
+		{
+			m_animTime = m_animData["MoveFront"].roopFrame;
+		}
+
+		SubPlayAnim();
+		//Y軸を中心とした回転をするので
+		MyEngine::Vector3 rotationShaftPos = m_targetPos;
+		//Y座標が関係しないようにプレイヤーと同じ座標にする
+		rotationShaftPos.y = m_rigidbody.GetPos().y;
+
+		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_rigidbody.GetPos();
+
+		//回転速度(横移動の速さ)
+		float HMoveSpeed = 0;
+
+		if (stickDir.x != 0.0f)
+		{
+			HMoveSpeed = (stickDir.x * kMoveSpeed) / toShaftPosVec.Length();
+		}
+
+		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", HMoveSpeed);
+
+		/*MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
+
+		m_rota = atan2f(a.z,a.x);*/
+
+		m_rota += HMoveSpeed;
+
+		//左右移動は敵の周囲を回る
+
+		//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
+		//現在の座標からその座標に向かうベクトルを作成する
+		velo.x = (rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().x;
+		velo.z = (rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().z;
+
+		//上下移動入力されていたら
+		if (isMoveVertical)
+		{
+			//前後入力を上下のベクトルに変換
+			velo.y += stickDir.z * kMoveSpeed;
+		}
+		//されていなかった場合
+		else
+		{
+			//前後入力を回転の中心に向かうベクトルに変換
+			MyEngine::Vector3 toCenterVec = m_targetPos - m_rigidbody.GetPos();
+			toCenterVec.y = 0;
+			velo += toCenterVec.Normalize() * (stickDir.z * kMoveSpeed);
+		}
+
+
+		DrawFormatString(400, 0, GetColor(255, 255, 255), "%f", velo.Length());;
+
 	}
+
 
 	//キーボードでの移動
 
@@ -312,6 +343,8 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 	//	}
 	//}
 
+	m_lastInput = stickDir;
+
 	return velo;
 }
 
@@ -328,13 +361,13 @@ void Player::Attack(MyEngine::Input input)
 			//消費MPが現在のMPよりも少なかったら
 			if (m_nowMp >= GetAttackCost(attackId))
 			{
-				SetNormalAttack(false,m_lastAttackTime);
+				SetNormalAttack(false, m_lastAttackTime);
 			}
 		}
 		//格闘攻撃
 		else if (input.IsTrigger("B"))
 		{
-			SetNormalAttack(true,m_lastAttackTime);
+			SetNormalAttack(true, m_lastAttackTime);
 		}
 	}
 	//必殺技パレットを開いているとき

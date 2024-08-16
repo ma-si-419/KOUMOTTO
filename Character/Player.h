@@ -35,5 +35,7 @@ private:
 
 	//最後に攻撃を出してからの時間をカウントする
 	int m_lastAttackTime;
+	//前のフレームの入力を保存しておく
+	MyEngine::Vector3 m_lastInput;
 };
 

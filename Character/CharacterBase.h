@@ -79,17 +79,6 @@ protected:
 		kEndFrame,
 		kPlaySpeed
 	};
-	enum class AnimName
-	{
-		kIdle,
-		kIdleMove,
-		kMoveFront,
-		kMoveBack,
-		kMoveRight,
-		kMoveLeft,
-		kGuard,
-		kDash
-	};
 	struct AnimationInfo
 	{
 		int number = 0;
@@ -98,17 +87,21 @@ protected:
 		int endFrame = 0;
 		float playSpeed = 0.0f;
 	};
+	struct PlayAnimData
+	{
+		int number = 0;
+		float rate = 0;
+	};
 
 	//モデルハンドル
 	int m_modelHandle;
 	//登録したPhysicsを持っておく
 	std::shared_ptr<Physics> m_pPhysics;
-	//TODO:下の変数、外部データ化
 	
 	//攻撃のデータ
 	std::map<std::string,DataManager::AttackInfo> m_attackData;
 	//アニメーションのデータ
-	std::map<std::string, AnimationInfo> m_animationData;
+	std::map<std::string, AnimationInfo> m_animData;
 	//基本的なステータス
 	Status m_status;
 	//現在の体力
@@ -122,7 +115,7 @@ protected:
 	//ターゲットが近くにいるかどうか
 	bool m_isNearTarget;
 	//今再生しているアニメーション
-	int m_playAnim;
+	std::vector<PlayAnimData> m_playAnims;
 	//アニメーションの再生速度
 	float m_animPlaySpeed;
 	//アニメーションの総再生時間
@@ -143,8 +136,12 @@ protected:
 	/// <returns>攻撃のポインタ</returns>
 	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id,bool isPlayer);
 
-	//アニメーションを変化させる
-	void ChangeAnim(AnimName nextAnim);
+	//アニメーションを増やす
+	void AddPlayAnim(std::string animName);
+	//アニメーションを減らす
+	void SubPlayAnim();
+	//アニメーションブレンド
+	void BlendAnim(std::vector<float> rate);
 
 	//必殺技を出している状態に変化させる
 	void SetSpecialAttack(std::string id);
