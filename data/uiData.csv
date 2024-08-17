@@ -1,3 +1,4 @@
 ﻿UIの名前,初期X座標,初期Y座標,どのシーンでロードするか
 PlayerStateBar,1260,780,Game
 EnemyStateBar,1280,60,Game
+TitleLogo,300,50,Title

@@ -144,7 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AttackBase.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="Character\Enemy.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp" />
@@ -164,11 +164,12 @@
     <ClCompile Include="MyEngine\Utility\Vector2.cpp" />
     <ClCompile Include="MyEngine\Utility\Vector3.cpp" />
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp" />
+    <ClCompile Include="TitleCamera.cpp" />
     <ClCompile Include="Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackBase.h" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="GameCamera.h" />
     <ClInclude Include="CommandIdList.h" />
     <ClInclude Include="Character\Enemy.h" />
     <ClInclude Include="DataManager.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="MyEngine\Utility\Vector2.h" />
     <ClInclude Include="MyEngine\Utility\Vector3.h" />
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
+    <ClInclude Include="TitleCamera.h" />
     <ClInclude Include="Ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

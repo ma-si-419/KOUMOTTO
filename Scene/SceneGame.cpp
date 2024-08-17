@@ -3,7 +3,7 @@
 #include "SceneSelect.h"
 #include "Physics.h"
 #include "Player.h"
-#include "Camera.h"
+#include "GameCamera.h"
 #include "Enemy.h"
 #include "Ui.h"
 #include "AttackBase.h"
@@ -18,7 +18,7 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
 	//プレイヤーのポインタ
 	m_pPlayer = std::make_shared<Player>();
 	//カメラのポインタ
-	m_pCamera = std::make_shared<Camera>();
+	m_pGameCamera = std::make_shared<GameCamera>();
 	//エネミーのポインタ
 	m_pEnemy = std::make_shared<Enemy>();
 	//Uiのポインタ
@@ -45,18 +45,18 @@ void SceneGame::Init()
 	//
 
 	//カメラにプレイヤーの座標を渡す
-	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
+	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
-	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
+	m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
 	//カメラの初期化
-	m_pCamera->Init();
+	m_pGameCamera->Init();
 
 	//プレイヤーに必殺技のデータを入れる
 	m_pPlayer->SetAttackData(m_dataManager.GetAttackData());
 	//エネミーに必殺技のデータを入れる
 	m_pEnemy->SetAttackData(m_dataManager.GetAttackData());
 	//UIに画像のデータを入れる
-	m_pUi->LoadSceneHandle(m_dataManager.GetUiData(Game::SceneNum::kGame));
+	m_pUi->LoadUiHandle(m_dataManager.GetUiData(Game::SceneNum::kGame));
 }
 
 void SceneGame::Update(MyEngine::Input input)
@@ -72,13 +72,13 @@ void SceneGame::Update(MyEngine::Input input)
 	//エネミーにぷりやーの座標を渡す
 	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 	//カメラにプレイヤーの座標を渡す
-	m_pCamera->SetPlayerPos(m_pPlayer->GetPos());
+	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
-	m_pCamera->SetTargetPos(m_pEnemy->GetPos());
+	m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
 	//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
-	m_pCamera->SetPlayerRota(m_pPlayer->GetRota());
+	m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
 	//カメラの更新
-	m_pCamera->Update();
+	m_pGameCamera->Update();
 
 	for (auto& attack : m_pAttacks)
 	{

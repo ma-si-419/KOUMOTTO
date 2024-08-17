@@ -21,6 +21,8 @@ Player::Player() :
 	LoadAnimationData(true);
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	colData->m_radius = 100;
+
+	//ChangeAnim("Idle");
 }
 
 Player::~Player()
@@ -176,14 +178,16 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	m_rigidbody.SetVelo(velo);
 
 	//アニメーションを進める
-	m_animTime += m_animPlaySpeed / 1000;
-	int c = 0;
+	m_animTime += m_animPlaySpeed;
+	if (m_animTime > m_totalAnimTime)
+	{
+		m_animTime = m_animLoopTime;
+	}
 	for (auto item : m_playAnims)
 	{
-		c++;
-		MV1SetAttachAnimTime(m_modelHandle,item,m_animTime);
+		MV1SetAttachAnimTime(m_modelHandle,item.first,m_animTime);
 	}
-	printfDx("%d", c);
+	printfDx("anim:%f\n", m_animTime);
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 }
@@ -325,6 +329,8 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 	//}
 
 	MoveAnim(stickDir);
+
+	
 
 	m_lastInput = stickDir;
 

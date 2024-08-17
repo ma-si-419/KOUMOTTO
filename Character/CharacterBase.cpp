@@ -18,7 +18,10 @@ CharacterBase::CharacterBase(const TCHAR* model, ObjectTag tag) :
 	m_stanTime(0),
 	m_nowHp(0),
 	m_nowMp(0),
-	m_isAttack(false)
+	m_isAttack(false),
+	m_animTime(0),
+	m_animPlaySpeed(0),
+	m_totalAnimTime(0)
 {
 	m_modelHandle = MV1LoadModel(model);
 	//auto& coldata = std::dynamic_pointer_cast<CapsuleColliderData>;
@@ -50,8 +53,9 @@ void CharacterBase::LoadAnimationData(bool isPlayer)
 
 		pushData.number = std::stoi(item[static_cast<int>(AnimationInfoSort::kNumber)]);
 		pushData.startFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kStartFrame)]);
-		pushData.roopFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kRoopFrame)]);
+		pushData.loopFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kLoopFrame)]);
 		pushData.endFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kEndFrame)]);
+		pushData.playSpeed = std::stof(item[static_cast<int>(AnimationInfoSort::kPlaySpeed)]);
 
 		m_animData[item[static_cast<int>(AnimationInfoSort::kName)]] = pushData;
 	}
@@ -87,7 +91,7 @@ void CharacterBase::ChangeAnim(std::string animName)
 	//前のアニメーションをデタッチする
 	for (auto item : m_playAnims)
 	{
-		MV1DetachAnim(m_modelHandle, item);
+		MV1DetachAnim(m_modelHandle, item.first);
 	}
 	//再生していたアニメーションの配列を削除する
 	m_playAnims.clear();
@@ -96,64 +100,114 @@ void CharacterBase::ChangeAnim(std::string animName)
 	//アニメの再生時間をリセット
 	m_animTime = 0;
 	//新しいアニメーションをアタッチする
-	m_playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData[animName].number));
+	std::pair<int, int> pushData;
+	pushData.first = MV1AttachAnim(m_modelHandle, m_animData[animName].number);
+	pushData.second = m_animData[animName].number;
+	m_playAnims.push_back(pushData);
 	//アニメーションの総再生時間を設定する
 	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData[animName].endFrame);
 }
 
 void CharacterBase::MoveAnim(MyEngine::Vector3 moveDir)
 {
-	std::vector<int> playAnims;
+	std::vector<std::pair<int, int>> playAnims;
 
 	//スティックの傾きに併せてアニメーションを追加する
 	if (moveDir.x > 0.0f)
 	{
-		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveRight"].number));
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveRight"].number, moveDir.x);
+		std::pair<int, int> pushData;
+		pushData.first = m_playAnims.size();
+		pushData.second = m_animData["MoveRight"].number;
+		playAnims.push_back(pushData);
+		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
 	}
 	else if (moveDir.x < 0.0f)
 	{
-		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveLeft"].number));
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveLeft"].number, moveDir.x);
+		std::pair<int, int> pushData;
+		pushData.first = m_playAnims.size();
+		pushData.second = m_animData["MoveLeft"].number;
+		playAnims.push_back(pushData);
+		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
 	}
 	if (moveDir.z > 0.0f)
 	{
-		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveFront"].number));
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveFront"].number, moveDir.z);
+		std::pair<int, int> pushData;
+		pushData.first = m_playAnims.size();
+		pushData.second = m_animData["MoveFront"].number;
+		playAnims.push_back(pushData);
+		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
 	}
 	else if (moveDir.z < 0.0f)
 	{
-		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["MoveBack"].number));
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_animData["MoveBack"].number, moveDir.z);
+		std::pair<int, int> pushData;
+		pushData.first = m_playAnims.size();
+		pushData.second = m_animData["MoveBack"].number;
+		playAnims.push_back(pushData);
+		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
 	}
 	if (moveDir.sqLength() == 0)
 	{
-		playAnims.push_back(MV1AttachAnim(m_modelHandle, m_animData["Idle"].number));
+		std::pair<int, int> pushData;
+		pushData.first = m_playAnims.size();
+		pushData.second = m_animData["Idle"].number;
+		playAnims.push_back(pushData);
 	}
-
+	//デタッチするかどうか判定
 	for (auto item : m_playAnims)
 	{
 		bool detachFlag = true;
 		for (auto item2 : playAnims)
 		{
-			if (item == item2)
+			//同じものが存在したらデタッチしない
+			if (item.second == item2.second)
 			{
 				detachFlag = false;
 			}
 		}
 		if (detachFlag)
 		{
-			MV1DetachAnim(m_modelHandle,item);
+			MV1DetachAnim(m_modelHandle, item.first);
 			printfDx("消したよ");
+		}
+	}
+
+	//アタッチするかどうか判定
+	for (auto item : playAnims)
+	{
+		bool attachFlag = true;
+		for (auto item2 : m_playAnims)
+		{
+			//同じものが存在したらアタッチしない
+			if (item.second == item2.second)
+			{
+				attachFlag = false;
+			}
+		}
+		if (attachFlag)
+		{
+			MV1AttachAnim(m_modelHandle, item.second);
+			printfDx("登録したよ");
 		}
 	}
 
 	m_playAnims = playAnims;
 
+	//アニメーションが複数個あったら
+	if (m_playAnims.size() > 1)
+	{
+		MV1SetAttachAnimBlendRate(m_modelHandle, 0, moveDir.x);
+		MV1SetAttachAnimBlendRate(m_modelHandle, 1, moveDir.z);
+		printfDx("複数個あるよ");
+	}
+
+
 	//アニメーションの終了フレームを取得する
-	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_playAnims[0]);
+	m_totalAnimTime = m_animData["MoveFront"].endFrame;
+	//アニメーションを繰り返すフレームを取得する
+	m_animLoopTime = m_animData["MoveFront"].loopFrame;
 	//移動の再生速度はすべて同じなのでとりあえずMoveFrontから持ってくる
 	m_animPlaySpeed = m_animData["MoveFront"].playSpeed;
+
 }
 
 

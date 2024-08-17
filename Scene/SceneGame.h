@@ -4,7 +4,7 @@
 #include <vector>
 class Physics;
 class Player;
-class Camera;
+class GameCamera;
 class Enemy;
 class AttackBase;
 class Ui;
@@ -27,7 +27,7 @@ public:
 private:
 	std::shared_ptr<Physics> m_pPhysics;
 	std::shared_ptr<Player> m_pPlayer;
-	std::shared_ptr<Camera> m_pCamera;
+	std::shared_ptr<GameCamera> m_pGameCamera;
 	std::shared_ptr<Enemy> m_pEnemy;
 	std::shared_ptr<Ui> m_pUi;
 	std::vector<std::shared_ptr<AttackBase>> m_pAttacks;

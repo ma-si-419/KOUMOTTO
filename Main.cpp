@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "DataManager.h"
 #include "Input.h"
+#include <cassert>
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -22,6 +23,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;			// エラーが起きたら直ちに終了
 	}
 
+	//フォントの読み込み
+	LPCSTR fontPath = "data/toroman.ttf";
+	if (AddFontResourceEx(fontPath, FR_PRIVATE, NULL) > 0)
+	{
+	}
+	else
+	{
+		// フォント読込エラー処理
+		assert(0 && "フォント読み込み失敗");
+	}
+
+	ChangeFont("アンニャントロマン", DX_CHARSET_DEFAULT);
+
 	SetUseZBuffer3D(true);
 	SetDrawScreen(DX_SCREEN_BACK);
 
@@ -30,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	data.LoadAttackFile();
 	data.LoadUiFile();
 	MyEngine::Input input;
-	scene.ChangeScene(std::make_shared<SceneTitle>(scene,data));
+	scene.ChangeScene(std::make_shared<SceneTitle>(scene, data));
 
 	scene.Init();
 

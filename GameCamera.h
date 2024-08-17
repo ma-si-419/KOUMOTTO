@@ -1,10 +1,10 @@
 #pragma once
 #include "Vector3.h"
-class Camera
+class GameCamera
 {
 public:
-	Camera();
-	~Camera();
+	GameCamera();
+	~GameCamera();
 
 	void Init();
 

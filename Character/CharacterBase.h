@@ -21,7 +21,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	CharacterBase(const TCHAR* graph,ObjectTag tag);
+	CharacterBase(const TCHAR* graph, ObjectTag tag);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -75,7 +75,7 @@ protected:
 		kName,
 		kNumber,
 		kStartFrame,
-		kRoopFrame,
+		kLoopFrame,
 		kEndFrame,
 		kPlaySpeed
 	};
@@ -83,7 +83,7 @@ protected:
 	{
 		int number = 0;
 		int startFrame = 0;
-		int roopFrame = 0;
+		int loopFrame = 0;
 		int endFrame = 0;
 		float playSpeed = 0.0f;
 	};
@@ -91,9 +91,9 @@ protected:
 	int m_modelHandle;
 	//登録したPhysicsを持っておく
 	std::shared_ptr<Physics> m_pPhysics;
-	
+
 	//攻撃のデータ
-	std::map<std::string,DataManager::AttackInfo> m_attackData;
+	std::map<std::string, DataManager::AttackInfo> m_attackData;
 	//アニメーションのデータ
 	std::map<std::string, AnimationInfo> m_animData;
 	//基本的なステータス
@@ -109,13 +109,15 @@ protected:
 	//ターゲットが近くにいるかどうか
 	bool m_isNearTarget;
 	//今再生しているアニメーション
-	std::vector<int> m_playAnims;
+	std::vector<std::pair<int, int>> m_playAnims;
 	//アニメーションの再生速度
 	float m_animPlaySpeed;
 	//アニメーションの総再生時間
 	float m_totalAnimTime;
 	//アニメーションの再生時間
 	float m_animTime;
+	//アニメーションのループするフレーム
+	float m_animLoopTime;
 
 	//出している攻撃
 	std::string m_attackId;
@@ -128,7 +130,7 @@ protected:
 	/// </summary>
 	/// <param name="id">攻撃のID</param>
 	/// <returns>攻撃のポインタ</returns>
-	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics,std::string id,bool isPlayer);
+	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics, std::string id, bool isPlayer);
 
 	//アニメーションを増やす
 	void ChangeAnim(std::string animName);
@@ -138,5 +140,5 @@ protected:
 	//必殺技を出している状態に変化させる
 	void SetSpecialAttack(std::string id);
 	//通常攻撃を出してる状態に変化させる
-	void SetNormalAttack(bool isPhysical,int time);
+	void SetNormalAttack(bool isPhysical, int time);
 };

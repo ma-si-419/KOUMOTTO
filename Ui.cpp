@@ -262,11 +262,8 @@ void Ui::SetUiPos(std::string name, MyEngine::Vector2 pos)
 	m_showUi[name].drawPos = pos;
 }
 
-void Ui::LoadSceneHandle(std::vector<DataManager::UiInfo> data)
+void Ui::LoadUiHandle(std::vector<DataManager::UiInfo> data)
 {
-	//中のものをすべて消す
-	m_showUi.clear();
-
 	for (auto& item : data)
 	{
 		//ゲームシーンのUIをロードする

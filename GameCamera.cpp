@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "GameCamera.h"
 #include <cmath>
 namespace
 {
@@ -12,23 +12,23 @@ namespace
 	constexpr float kRotaMargin = 600.0f;
 }
 
-Camera::Camera() :
+GameCamera::GameCamera() :
 	m_rota(0),
 	m_playerRota(0)
 {
 	SetCameraNearFar(15.0f, 100000.0f);
 }
 
-Camera::~Camera()
+GameCamera::~GameCamera()
 {
 }
 
-void Camera::Init()
+void GameCamera::Init()
 {
 	m_cameraPos = MyEngine::Vector3(300,500,-500);
 }
 
-void Camera::Update()
+void GameCamera::Update()
 {
 	//ˆÚ“®—Ê
 	MyEngine::Vector3 velo;
