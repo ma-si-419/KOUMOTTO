@@ -32,6 +32,13 @@ namespace
 	//エネミーのスタンバーの座標(画像の座標に対してのスタンバーの座標のずれを直す)
 	constexpr int kStanBarPosX = 23;
 	constexpr int kStanBarPosY = 40;
+	//ダメージを表示する時間
+	constexpr float kDamageShowTime = 30;
+	//ダメージ表示が消え始める時間
+	constexpr float kDamageVanishTime = 5;
+	//ダメージを表示する座標を少しずらす
+	constexpr int kDamageShowPosShakeScale = 10;
+	constexpr int kDamageShowPosShakeScaleHalf = 5;
 }
 
 Ui::Ui() :
@@ -43,6 +50,7 @@ Ui::Ui() :
 	m_enemyLostHpBarLifeTime(0),
 	m_showUi()
 {
+	m_fontHandle = CreateFontToHandle("アンニャントロマン", 64, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 }
 
 Ui::~Ui()
@@ -274,5 +282,54 @@ void Ui::LoadUiHandle(std::vector<DataManager::UiInfo> data)
 		pushData.handle = LoadGraph(("data/image/" + item.path + ".png").c_str());
 		//画像の名前でマップに登録
 		m_showUi[item.path] = pushData;
+	}
+}
+
+void Ui::AddShowDamage(MyEngine::Vector3 pos, int damage)
+{
+	DamageShowStatus pushData;
+	VECTOR screenPos = ConvWorldPosToScreenPos(pos.CastVECTOR());
+	pushData.pos = screenPos;
+	//表示座標を少しずらす
+	pushData.pos.x += GetRand(kDamageShowPosShakeScale) - kDamageShowPosShakeScaleHalf;
+	pushData.pos.y += GetRand(kDamageShowPosShakeScale) - kDamageShowPosShakeScaleHalf;
+	pushData.damage = damage;
+	pushData.time = kDamageShowTime;
+	m_showDamage.push_back(pushData);
+}
+
+void Ui::DrawDamage()
+{
+	//表示時間が終わっているものを削除する
+	for (int i = 0; i < m_showDamage.size(); i++)
+	{
+		if (m_showDamage[i].time < 0)
+		{
+			m_showDamage.erase(m_showDamage.begin() + i);
+			i--;
+		}
+	}
+	//描画処理
+	for (auto& item : m_showDamage)
+	{
+		int alpha = 0;
+		//表示する残り時間が一定以上の時はアルファ値を減らさない
+		if (item.time > kDamageVanishTime)
+		{
+			alpha = 255;
+		}
+		//残り時間が一定以下になったら
+		else
+		{
+			//残り時間からアルファ値を計算する
+			alpha = 255 / kDamageVanishTime * item.time;
+		}
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//ダメージの表示
+		DrawFormatStringToHandle(item.pos.x, item.pos.y, GetColor(255, 255, 255), m_fontHandle, "%d", item.damage);
+		//ブレンドモードを元に戻す
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		//表示時間を減らす
+		item.time--;
 	}
 }

@@ -24,6 +24,12 @@ namespace MyEngine
 			y = Y;
 		}
 
+		Vector2(VECTOR Vec)
+		{
+			x = Vec.x;
+			y = Vec.y;
+		}
+
 		/// <summary>
 		/// ƒxƒNƒgƒ‹‚Ì’·‚³‚ðŽæ“¾
 		/// </summary>

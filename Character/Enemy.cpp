@@ -2,6 +2,7 @@
 #include "SceneGame.h"
 #include "AttackBase.h"
 #include "CapsuleColliderData.h"
+#include "Ui.h"
 namespace
 {
 	//“–‚½‚è”»’è‚Ì‘å‚«‚³
@@ -61,8 +62,8 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	debug.y += 0.01f;
 	MyEngine::Vector3 pos(sinf(debug.x) * 100, sinf(debug.y) * 3000,1000.0f);
 
-	//m_rigidbody.SetPos(pos);
-	//MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	m_rigidbody.SetPos(pos);
+	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	//“–‚½‚è”»’è‚Ìc•
 	pos.y += kColScale;
@@ -86,7 +87,7 @@ void Enemy::OnCollide(std::shared_ptr<Collidable> collider)
 	if (collider->GetTag() == ObjectTag::kPlayerAttack)
 	{
 		auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
-		int damage = attack->GetDamage() - static_cast<int>(m_status.def);
+		int damage = attack->GetDamage() - GetRand(static_cast<int>(m_status.def));
 		if (damage < 0)
 		{
 			damage = 2;
@@ -105,7 +106,13 @@ void Enemy::OnCollide(std::shared_ptr<Collidable> collider)
 		}
 		//ƒ_ƒ[ƒW‚ğó‚¯‚Ä‚©‚ç‚ÌŠÔ‚ğ”‚¦‚é
 		m_lastHitDamageTime = 0;
+		m_pUi->AddShowDamage(m_rigidbody.GetPos(),damage);
 	}
+}
+
+void Enemy::SetUi(std::shared_ptr<Ui> pUi)
+{
+	m_pUi = pUi;
 }
 
 float Enemy::GetStanPointRate()

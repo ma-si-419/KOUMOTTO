@@ -16,7 +16,7 @@ GameCamera::GameCamera() :
 	m_rota(0),
 	m_playerRota(0)
 {
-	SetCameraNearFar(15.0f, 100000.0f);
+	SetCameraNearFar(10.0f, 100000.0f);
 }
 
 GameCamera::~GameCamera()

@@ -37,6 +37,7 @@ void SceneGame::Init()
 
 	//エネミーの初期化(当たり判定を登録する)
 	m_pEnemy->Init(m_pPhysics);
+	m_pEnemy->SetUi(m_pUi);
 
 	//エネミーの座標をプレイヤーに渡す
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
@@ -118,6 +119,7 @@ void SceneGame::Draw()
 	m_pEnemy->Draw();
 	m_pPhysics->DebugDraw();
 	m_pUi->DrawStateBar(m_pPlayer,m_pEnemy);
+	m_pUi->DrawDamage();
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 

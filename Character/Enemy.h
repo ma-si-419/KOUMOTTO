@@ -2,6 +2,7 @@
 #include "CharacterBase.h"
 #include <memory>
 class SceneGame;
+class Ui;
 class Enemy : public CharacterBase
 {
 public:
@@ -14,6 +15,8 @@ public:
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
+	void SetUi(std::shared_ptr<Ui> pUi);
+
 	//スタンゲージが今全体の何割あるかを返す
 	float GetStanPointRate();
 
@@ -25,4 +28,6 @@ private:
 	float m_stanPoint;
 	//最後に攻撃を受けてから立った時間
 	int m_lastHitDamageTime;
+	//受けたダメージを表示するためにUi管理クラスの参照を持つ
+	std::shared_ptr<Ui> m_pUi;
 };

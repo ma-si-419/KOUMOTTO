@@ -16,7 +16,7 @@ public:
 		float hp = 30000;
 		float mp = 300;
 		float atk = 100;
-		float def = 100;
+		float def = 200;
 	};
 	/// <summary>
 	/// コンストラクタ

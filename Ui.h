@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include "Vector2.h"
+#include "Vector3.h"
 #include <string>
 #include "DataManager.h"
 #include <memory>
@@ -21,6 +22,9 @@ public:
 
 	void LoadUiHandle(std::vector<DataManager::UiInfo> data);
 
+	void AddShowDamage(MyEngine::Vector3 pos,int damage);
+		
+	void DrawDamage();
 private:
 	struct UiStatus
 	{
@@ -28,6 +32,16 @@ private:
 		int handle = -1;
 		//表示座標
 		MyEngine::Vector2 drawPos;
+	};
+	//エネミーに与えたダメージを表示するときに必要な構造体
+	struct DamageShowStatus
+	{
+		//表示するダメージ
+		int damage = 0;
+		//表示時間
+		float time = 0;
+		//表示座標
+		MyEngine::Vector2 pos;
 	};
 	//前のフレーム表示していたHpバーの状態を残しておく
 	int m_lastPlayerHpBarEndPosX;
@@ -40,6 +54,12 @@ private:
 	//HPがなくなっていくまでの時間カウント
 	int m_playerLostHpBarLifeTime;
 	int m_enemyLostHpBarLifeTime;
+
+	//フォントハンドル
+	int m_fontHandle;
+	//表示するダメージの配列
+	std::vector<DamageShowStatus> m_showDamage;
+
 	//表示しているUiのデータ
 	std::map<std::string, UiStatus> m_showUi;
 };
