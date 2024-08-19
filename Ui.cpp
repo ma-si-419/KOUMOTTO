@@ -32,13 +32,15 @@ namespace
 	//エネミーのスタンバーの座標(画像の座標に対してのスタンバーの座標のずれを直す)
 	constexpr int kStanBarPosX = 23;
 	constexpr int kStanBarPosY = 40;
+	//ダメージを表示するフォントの大きさ
+	constexpr int kDamageFontSize = 48;
 	//ダメージを表示する時間
 	constexpr float kDamageShowTime = 30;
 	//ダメージ表示が消え始める時間
 	constexpr float kDamageVanishTime = 5;
 	//ダメージを表示する座標を少しずらす
-	constexpr int kDamageShowPosShakeScale = 10;
-	constexpr int kDamageShowPosShakeScaleHalf = 5;
+	constexpr int kDamageShowPosShakeScale = 30;
+	constexpr int kDamageShowPosShakeScaleHalf = kDamageShowPosShakeScale * 0.5;
 }
 
 Ui::Ui() :
@@ -50,7 +52,7 @@ Ui::Ui() :
 	m_enemyLostHpBarLifeTime(0),
 	m_showUi()
 {
-	m_fontHandle = CreateFontToHandle("アンニャントロマン", 64, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	m_fontHandle = CreateFontToHandle("アンニャントロマン", kDamageFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 }
 
 Ui::~Ui()
@@ -293,7 +295,7 @@ void Ui::AddShowDamage(MyEngine::Vector3 pos, int damage)
 	//表示座標を少しずらす
 	pushData.pos.x += GetRand(kDamageShowPosShakeScale) - kDamageShowPosShakeScaleHalf;
 	pushData.pos.y += GetRand(kDamageShowPosShakeScale) - kDamageShowPosShakeScaleHalf;
-	pushData.damage = damage;
+	pushData.damage = std::to_string(damage);
 	pushData.time = kDamageShowTime;
 	m_showDamage.push_back(pushData);
 }
@@ -324,9 +326,14 @@ void Ui::DrawDamage()
 			//残り時間からアルファ値を計算する
 			alpha = 255 / kDamageVanishTime * item.time;
 		}
+		//文字列の長さを取得
+		int length = GetStringLength(item.damage.c_str());
+		//表示座標をずらす
+		int shiftSize = length * kDamageFontSize * 0.5;
+		//ブレンドモードを変更
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 		//ダメージの表示
-		DrawFormatStringToHandle(item.pos.x, item.pos.y, GetColor(255, 255, 255), m_fontHandle, "%d", item.damage);
+		DrawFormatStringToHandle(item.pos.x - shiftSize, item.pos.y, GetColor(255, 255, 255), m_fontHandle, item.damage.c_str());
 		//ブレンドモードを元に戻す
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		//表示時間を減らす

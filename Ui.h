@@ -37,7 +37,7 @@ private:
 	struct DamageShowStatus
 	{
 		//表示するダメージ
-		int damage = 0;
+		std::string damage = "empty";
 		//表示時間
 		float time = 0;
 		//表示座標

@@ -12,6 +12,8 @@ namespace
 	constexpr float kAttackPos = 500.0f;
 	//Ši“¬UŒ‚‚ğo‚·‚Ì“G‚Æ‚Ì‹——£(“–‚½‚è”»’è‚Ì‘å‚«‚³‚Ì”{—¦)
 	constexpr float kPhysicalAttackLange = 0.9f;
+	//“–‚½‚è”»’è‚Ì‘å‚«‚³
+	constexpr float kColScale = 100.0f;
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
@@ -19,8 +21,7 @@ Player::Player() :
 	m_lastAttackTime(0)
 {
 	LoadAnimationData(true);
-	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
-	colData->m_radius = 100;
+
 
 	//ChangeAnim("Idle");
 }
@@ -54,6 +55,9 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
 
 	m_rigidbody.SetPos(pos);
+
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
+	colData->m_radius = kColScale;
 }
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
@@ -188,6 +192,12 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		MV1SetAttachAnimTime(m_modelHandle,item.first,m_animTime);
 	}
 	printfDx("anim:%f\n", m_animTime);
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
+	//“–‚½‚è”»’è‚Ìc•
+	MyEngine::Vector3 colPos = m_rigidbody.GetPos();
+	colPos.y += kColScale;
+	//“–‚½‚è”»’è‚ÌÀ•W’²®
+	colData->m_startPos = colPos;
 	//ƒnƒ“ƒhƒ‹‚ÌÀ•W‚ğİ’è‚·‚é
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 }
