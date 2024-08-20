@@ -211,7 +211,7 @@ void CharacterBase::MoveAnim(MyEngine::Vector3 moveDir)
 }
 
 
-void CharacterBase::SetSpecialAttack(std::string id)
+void CharacterBase::PlaySpecialAttack(std::string id)
 {
 	//‹Z‚Å“®‚¯‚È‚¢ŠÔ‚ğİ’è‚·‚é
 	m_stanTime = m_attackData[id].actionTime;

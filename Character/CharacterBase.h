@@ -53,23 +53,10 @@ public:
 	int GetAttackCost(std::string Id) { return m_attackData[Id].cost; }
 	//アニメーションのデータを取得する
 	void LoadAnimationData(bool isPlayer);
+	//必殺技を出している状態に変化させる
+	void PlaySpecialAttack(std::string id);
 
 protected:
-	enum class State
-	{
-		kIdle,
-		kMove,
-		kDash,
-		kDodge,
-		kCharge,
-		kBoostAttack,
-		kSuperArmor,
-		kGuard,
-		kDown,
-		kHitLightAttack,
-		kHitHeavyAttack
-	};
-
 	enum class AnimationInfoSort
 	{
 		kName,
@@ -137,8 +124,7 @@ protected:
 	//アニメーションブレンド
 	void MoveAnim(MyEngine::Vector3 moveDir);
 
-	//必殺技を出している状態に変化させる
-	void SetSpecialAttack(std::string id);
+
 	//通常攻撃を出してる状態に変化させる
 	void SetNormalAttack(bool isPhysical, int time);
 };

@@ -156,6 +156,13 @@
     <ClCompile Include="MyEngine\Physics\Physics.cpp" />
     <ClCompile Include="Character\Player.cpp" />
     <ClCompile Include="MyEngine\Physics\Rigidbody.cpp" />
+    <ClCompile Include="PlayerStateDodge.cpp" />
+    <ClCompile Include="PlayerStateGuard.cpp" />
+    <ClCompile Include="PlayerStateMove.cpp" />
+    <ClCompile Include="PlayerStateNormalEnergyAttack.cpp" />
+    <ClCompile Include="PlayerStateNormalPhysicalAttack.cpp" />
+    <ClCompile Include="PlayerStateSpecialEnergyAttack.cpp" />
+    <ClCompile Include="PlayerStateSpecialPhysicalAttack.cpp" />
     <ClCompile Include="Scene\SceneSelect.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneGame.cpp" />
@@ -164,6 +171,8 @@
     <ClCompile Include="MyEngine\Utility\Vector2.cpp" />
     <ClCompile Include="MyEngine\Utility\Vector3.cpp" />
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp" />
+    <ClCompile Include="PlayerStateBase.cpp" />
+    <ClCompile Include="PlayerStateIdle.cpp" />
     <ClCompile Include="TitleCamera.cpp" />
     <ClCompile Include="Ui.cpp" />
   </ItemGroup>
@@ -184,6 +193,13 @@
     <ClInclude Include="MyEngine\Physics\Physics.h" />
     <ClInclude Include="Character\Player.h" />
     <ClInclude Include="MyEngine\Physics\Rigidbody.h" />
+    <ClInclude Include="PlayerStateDodge.h" />
+    <ClInclude Include="PlayerStateGuard.h" />
+    <ClInclude Include="PlayerStateMove.h" />
+    <ClInclude Include="PlayerStateNormalEnergyAttack.h" />
+    <ClInclude Include="PlayerStateNormalPhysicalAttack.h" />
+    <ClInclude Include="PlayerStateSpecialEnergyAttack.h" />
+    <ClInclude Include="PlayerStateSpecialPhysicalAttack.h" />
     <ClInclude Include="Scene\SceneSelect.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneGame.h" />
@@ -192,6 +208,8 @@
     <ClInclude Include="MyEngine\Utility\Vector2.h" />
     <ClInclude Include="MyEngine\Utility\Vector3.h" />
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
+    <ClInclude Include="PlayerStateBase.h" />
+    <ClInclude Include="PlayerStateIdle.h" />
     <ClInclude Include="TitleCamera.h" />
     <ClInclude Include="Ui.h" />
   </ItemGroup>

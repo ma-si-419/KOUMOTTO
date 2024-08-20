@@ -2,6 +2,7 @@
 #include "CharacterBase.h"
 #include "Input.h"
 class SceneGame;
+class PlayerStateBase;
 class Player : public CharacterBase
 {
 public:
@@ -16,7 +17,17 @@ public:
 
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
 
+	/// <summary>
+	/// 攻撃の種類を取得する
+	/// </summary>
+	/// <param name="attackId">調べたい攻撃のID</param>
+	/// <returns>true:Energy,false:Physical</returns>
+	bool GetAttackKind(std::string attackId);
+
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+
+	std::map<std::string, std::string> GetSetSpecialAttack() { return m_setSpecialAttack; };
+
 private:
 	/// <summary>
 	/// 移動処理の計算をする
@@ -37,5 +48,15 @@ private:
 	int m_lastAttackTime;
 	//前のフレームの入力を保存しておく
 	MyEngine::Vector3 m_lastInput;
+
+	void ChangeState(std::shared_ptr<PlayerStateBase> state);
+
+	void SetSpecialAttack();
+
+	//設定している技
+	std::map<std::string, std::string> m_setSpecialAttack;
+
+	//Stateパターン
+	std::shared_ptr<PlayerStateBase> m_pState;
 };
 

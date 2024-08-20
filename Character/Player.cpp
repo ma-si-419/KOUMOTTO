@@ -4,6 +4,8 @@
 #include "AttackBase.h"
 #include "CommandIdList.h"
 #include "CapsuleColliderData.h"
+#include "PlayerStateBase.h"
+#include "PlayerStateIdle.h"
 namespace
 {
 	//移動速度
@@ -22,7 +24,7 @@ Player::Player() :
 {
 	LoadAnimationData(true);
 
-
+	m_pState = std::make_shared<PlayerStateIdle>();
 	//ChangeAnim("Idle");
 }
 
@@ -32,6 +34,8 @@ Player::~Player()
 
 void Player::Init(std::shared_ptr<Physics> physics)
 {
+	SetSpecialAttack();
+
 	MV1SetScale(m_modelHandle, VGet(3, 3, 3));
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
@@ -58,6 +62,7 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	colData->m_radius = kColScale;
+
 }
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
@@ -178,6 +183,16 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		}
 	}
 
+	//Stateの更新
+	std::shared_ptr<PlayerStateBase> nowState = m_pState->Update(std::static_pointer_cast<Player>(shared_from_this()), input);
+
+	//前のフレームとStateを見比べて違うStateだったら
+	if (nowState->GetKind() != m_pState->GetKind())
+	{
+		//Stateを変更する
+		m_pState = nowState;
+	}
+
 	//リギットボディにベロシティを設定する
 	m_rigidbody.SetVelo(velo);
 
@@ -189,9 +204,8 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	}
 	for (auto item : m_playAnims)
 	{
-		MV1SetAttachAnimTime(m_modelHandle,item.first,m_animTime);
+		MV1SetAttachAnimTime(m_modelHandle, item.first, m_animTime);
 	}
-	printfDx("anim:%f\n", m_animTime);
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	//当たり判定の縦幅
 	MyEngine::Vector3 colPos = m_rigidbody.GetPos();
@@ -207,6 +221,11 @@ void Player::Draw()
 	DrawFormatString(0, 100, GetColor(255, 255, 255), "%f,%f,%f", m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
 	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%f,MP:%f", m_nowHp, m_nowMp);
 	MV1DrawModel(m_modelHandle);
+}
+
+bool Player::GetAttackKind(std::string attackId)
+{
+	return m_attackData[attackId].isEnergy;
 }
 
 void Player::OnCollide(std::shared_ptr<Collidable> collider)
@@ -234,7 +253,7 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 	MyEngine::Vector3 stickDir(stick.leftStickX, 0, -stick.leftStickY);
 
 	//プレイヤーが上下移動するかするかどうか
-	bool isMoveVertical = input.IsPress("LB");
+	bool isMoveVertical = input.IsPress(Game::InputId::kLb);
 
 	if (stickDir.sqLength() != 0)
 	{
@@ -340,7 +359,7 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 	MoveAnim(stickDir);
 
-	
+
 
 	m_lastInput = stickDir;
 
@@ -351,7 +370,7 @@ void Player::Attack(MyEngine::Input input)
 {
 
 	//必殺技パレットを開いていないとき
-	if (!input.IsPress("RB"))
+	if (!input.IsPress("LB"))
 	{
 		//気弾攻撃
 		if (input.IsTrigger("X"))
@@ -375,43 +394,53 @@ void Player::Attack(MyEngine::Input input)
 		//かめはめ波
 		if (input.IsTrigger("Y"))
 		{
-			std::string attackId = CommandId::kSpLaserAttack;
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["Y"]))
 			{
-				SetSpecialAttack(attackId);
+				PlaySpecialAttack(m_setSpecialAttack["Y"]);
 			}
 		}
 		//格闘必殺1
 		else if (input.IsTrigger("B"))
 		{
-			std::string attackId = CommandId::kSpStanAttack;
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["B"]))
 			{
-				SetSpecialAttack(attackId);
+				PlaySpecialAttack(m_setSpecialAttack["B"]);
 			}
 		}
 		//格闘必殺2
 		else if (input.IsTrigger("X"))
 		{
-			std::string attackId = CommandId::kSpSlamAttack;
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["X"]))
 			{
-				SetSpecialAttack(attackId);
+				PlaySpecialAttack(m_setSpecialAttack["X"]);
 			}
 		}
 		//気弾連打
 		else if (input.IsTrigger("A"))
 		{
-			std::string attackId = CommandId::kSpEnergyAttack;
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(attackId))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["A"]))
 			{
-				SetSpecialAttack(attackId);
+				PlaySpecialAttack(m_setSpecialAttack["A"]);
 			}
 		}
 	}
+
+}
+
+void Player::ChangeState(std::shared_ptr<PlayerStateBase> state)
+{
+	m_pState = state;
+}
+
+void Player::SetSpecialAttack()
+{
+	m_setSpecialAttack["A"] = CommandId::kSpEnergyAttack;
+	m_setSpecialAttack["B"] = CommandId::kSpStanAttack;
+	m_setSpecialAttack["X"] = CommandId::kSpSlamAttack;
+	m_setSpecialAttack["Y"] = CommandId::kSpLaserAttack;
 
 }
