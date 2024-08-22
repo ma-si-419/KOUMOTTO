@@ -42,6 +42,7 @@ void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 tar
 	m_status.damage = static_cast<int>(m_status.damageRate * power);
 	//プレイヤーからターゲットに向かっての方向を入れる
 	m_dir = (target - playerPos).Normalize();
+	
 	//打ち出す方向をちらばらせる技であれば
 	if (status.isScatter)
 	{

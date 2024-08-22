@@ -5,7 +5,6 @@
 class AttackBase : public Collidable
 {
 public:
-
 	AttackBase(ObjectTag tag);
 	virtual ~AttackBase();
 
@@ -21,6 +20,9 @@ public:
 
 	//何かに当たった時の処理
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+
+	//当たった時の処理を返す
+	int GetHitEffect() { return m_status.hitEffect; }
 
 	//ライフタイムを設定する
 	void SetAttackTime(int time) { m_status.lifeTime = time; };

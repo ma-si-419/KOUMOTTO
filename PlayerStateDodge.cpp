@@ -1,6 +1,11 @@
 #include "PlayerStateDodge.h"
 
-std::shared_ptr<PlayerStateBase> PlayerStateDodge::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateDodge::Update(std::shared_ptr<Player> player, MyEngine::Input input)
 {
 	return shared_from_this();
+}
+
+int PlayerStateDodge::OnDamage(std::shared_ptr<Collidable> collider)
+{
+	return 0;
 }

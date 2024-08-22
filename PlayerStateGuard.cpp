@@ -1,6 +1,11 @@
 #include "PlayerStateGuard.h"
 
-std::shared_ptr<PlayerStateBase> PlayerStateGuard::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateGuard::Update(std::shared_ptr<Player> player, MyEngine::Input input)
 {
 	return shared_from_this();
+}
+
+int PlayerStateGuard::OnDamage(std::shared_ptr<Collidable> collider)
+{
+	return 0;
 }

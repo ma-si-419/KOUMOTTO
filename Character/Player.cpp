@@ -183,15 +183,15 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		}
 	}
 
-	//Stateの更新
-	std::shared_ptr<PlayerStateBase> nowState = m_pState->Update(std::static_pointer_cast<Player>(shared_from_this()), input);
-
-	//前のフレームとStateを見比べて違うStateだったら
-	if (nowState->GetKind() != m_pState->GetKind())
+	//前のフレームとStateを比較して違うStateだったら
+	if (m_pState->m_nextState->GetKind() != m_pState->GetKind())
 	{
 		//Stateを変更する
-		m_pState = nowState;
+		m_pState = m_pState->m_nextState;
 	}
+
+	//Stateの更新
+	m_pState->Update(std::static_pointer_cast<Player>(shared_from_this()), input);
 
 	//リギットボディにベロシティを設定する
 	m_rigidbody.SetVelo(velo);

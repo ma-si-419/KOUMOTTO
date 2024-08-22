@@ -1,6 +1,11 @@
 #include "PlayerStateNormalPhysicalAttack.h"
 
-std::shared_ptr<PlayerStateBase> PlayerStateNormalPhysicalAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateNormalPhysicalAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
 {
 	return shared_from_this();
+}
+
+int PlayerStateNormalPhysicalAttack::OnDamage(std::shared_ptr<Collidable> collider)
+{
+	return 0;
 }

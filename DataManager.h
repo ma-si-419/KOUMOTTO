@@ -32,6 +32,7 @@ public:
 		int attackTime = 0;
 		int actionTime = 0;
 		bool isEnergy = false;
+		int hitEffect = 0;
 	};
 
 	DataManager();

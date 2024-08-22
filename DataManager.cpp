@@ -40,7 +40,8 @@ void DataManager::LoadAttackFile()
 		pushData.attackTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kAttackTime)]);
 		pushData.actionTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kActionTime)]);
 		pushData.isEnergy = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kEnergy)]));
-		
+		pushData.hitEffect = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kHitEffect)]);
+
 		//ÉfÅ[É^Çì¸ÇÍÇÈ
 		m_attackData[item[static_cast<int>(Game::AttackInfoSort::kId)]] = pushData;
 	}

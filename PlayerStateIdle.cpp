@@ -6,16 +6,20 @@
 #include "PlayerStateNormalPhysicalAttack.h"
 #include "PlayerStateSpecialEnergyAttack.h"
 #include "PlayerStateSpecialPhysicalAttack.h"
+#include "PlayerStateHitAttack.h"
+
+#include "AttackBase.h"
 
 #include "Player.h"
 
-std::shared_ptr<PlayerStateBase> PlayerStateIdle::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateIdle::Update(std::shared_ptr<Player> player, MyEngine::Input input)
 {
 	//移動入力がされていたら
 	if (input.GetStickInfo().leftStickX != 0 || input.GetStickInfo().leftStickY != 0)
 	{
 		//StateをMoveに変更する
-		return std::make_shared<PlayerStateMove>();
+		m_nextState = std::make_shared<PlayerStateMove>();
+		return;
 	}
 	//必殺技パレットを開いていない場合
 	if (!input.IsPress(Game::InputId::kLb))
@@ -24,25 +28,29 @@ std::shared_ptr<PlayerStateBase> PlayerStateIdle::Update(std::shared_ptr<Player>
 		if (input.IsTrigger(Game::InputId::kX))
 		{
 			//StateをNormalEnergyAttackに変更する
-			return std::make_shared<PlayerStateNormalEnergyAttack>();
+			m_nextState =  std::make_shared<PlayerStateNormalEnergyAttack>();
+			return;
 		}
 		//格闘攻撃をした場合
 		if (input.IsTrigger(Game::InputId::kB))
 		{
 			//StateをNormalPhysicalAttackに変更する
-			return std::make_shared<PlayerStateNormalPhysicalAttack>();
+			m_nextState =  std::make_shared<PlayerStateNormalPhysicalAttack>();
+			return;
 		}
 		//回避行動の入力がされたら
 		if (input.IsTrigger(Game::InputId::kA))
 		{
 			//StateをDodgeに変更する
-			return std::make_shared<PlayerStateDodge>();
+			m_nextState =  std::make_shared<PlayerStateDodge>();
+			return;
 		}
 		//ガード入力がされていたら
 		if (input.IsPress(Game::InputId::kRb))
 		{
 			//StateをGuardに変更する
-			return std::make_shared<PlayerStateGuard>();
+			m_nextState =  std::make_shared<PlayerStateGuard>();
+			return;
 		}
 	}
 	//必殺技パレットを開いている場合
@@ -59,11 +67,13 @@ std::shared_ptr<PlayerStateBase> PlayerStateIdle::Update(std::shared_ptr<Player>
 				//次のStateを必殺技の種類に応じて変更する
 				if (player->GetAttackKind(setSpecialAttack[Game::InputId::kY]))
 				{
-					return std::make_shared<PlayerStateSpecialEnergyAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialEnergyAttack>();
+					return;
 				}
 				else
 				{
-					return std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					return;
 				}
 			}
 		}
@@ -77,11 +87,13 @@ std::shared_ptr<PlayerStateBase> PlayerStateIdle::Update(std::shared_ptr<Player>
 				//次のStateを必殺技の種類に応じて変更する
 				if (player->GetAttackKind(setSpecialAttack[Game::InputId::kB]))
 				{
-					return std::make_shared<PlayerStateSpecialEnergyAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialEnergyAttack>();
+					return;
 				}
 				else
 				{
-					return std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					return;
 				}
 			}
 
@@ -96,11 +108,13 @@ std::shared_ptr<PlayerStateBase> PlayerStateIdle::Update(std::shared_ptr<Player>
 				//次のStateを必殺技の種類に応じて変更する
 				if (player->GetAttackKind(setSpecialAttack[Game::InputId::kX]))
 				{
-					return std::make_shared<PlayerStateSpecialEnergyAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialEnergyAttack>();
+					return;
 				}
 				else
 				{
-					return std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					return;
 				}
 			}
 		}
@@ -114,11 +128,13 @@ std::shared_ptr<PlayerStateBase> PlayerStateIdle::Update(std::shared_ptr<Player>
 				//次のStateを必殺技の種類に応じて変更する
 				if (player->GetAttackKind(setSpecialAttack[Game::InputId::kA]))
 				{
-					return std::make_shared<PlayerStateSpecialEnergyAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialEnergyAttack>();
+					return;
 				}
 				else
 				{
-					return std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					m_nextState =  std::make_shared<PlayerStateSpecialPhysicalAttack>();
+					return;
 				}
 			}
 		}
@@ -126,5 +142,23 @@ std::shared_ptr<PlayerStateBase> PlayerStateIdle::Update(std::shared_ptr<Player>
 
 
 	//上記の入力がされていなかったらStateを変更しない
-	return shared_from_this();
+	m_nextState =  shared_from_this();
+}
+
+int PlayerStateIdle::OnDamage(std::shared_ptr<Collidable> collider)
+{
+	//ダメージ
+	int damage = 0;
+	//攻撃のポインタ
+	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
+	//ダメージをそのまま渡す
+	damage = attack->GetDamage();
+	//状態を変化させる
+	m_nextState = std::make_shared<PlayerStateHitAttack>();
+	//受けた攻撃の種類を設定する
+	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
+	state->SetEffect(attack->GetHitEffect());
+
+	
+	return damage;
 }

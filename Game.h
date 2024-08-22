@@ -35,7 +35,8 @@ namespace Game
 		kTrack,
 		kAttackTime,
 		kActionTime,
-		kEnergy
+		kEnergy,
+		kHitEffect
 	};
 
 	enum class UiInfoSort
