@@ -43,6 +43,10 @@ void PlayerStateIdle::Update(std::shared_ptr<Player> player, MyEngine::Input inp
 		{
 			//State‚ğDodge‚É•ÏX‚·‚é
 			m_nextState =  std::make_shared<PlayerStateDodge>();
+			//‰ñ”ğ‚Ì•ûŒü‚ğİ’è‚·‚é
+			auto state = std::dynamic_pointer_cast<PlayerStateDodge>(m_nextState);
+			state->SetAnimDir(PlayerStateDodge::MoveDir::kFront);
+			//state->SetMoveDir(player->);
 			return;
 		}
 		//ƒK[ƒh“ü—Í‚ª‚³‚ê‚Ä‚¢‚½‚ç
@@ -159,6 +163,5 @@ int PlayerStateIdle::OnDamage(std::shared_ptr<Collidable> collider)
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->SetEffect(attack->GetHitEffect());
 
-	
 	return damage;
 }

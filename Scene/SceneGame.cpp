@@ -10,7 +10,7 @@
 #include "LoadCsv.h"
 
 SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
-	SceneBase(sceneManager,dataManager)
+	SceneBase(sceneManager, dataManager)
 {
 	handle = MV1LoadModel("data/model/Dome.mv1");
 	//当たり判定管理クラスのポインタ
@@ -64,14 +64,14 @@ void SceneGame::Update(MyEngine::Input input)
 {
 	//当たり判定の更新
 	m_pPhysics->Update();
-	//プレイヤーの更新
-	m_pPlayer->Update(shared_from_this(), input);
-	//エネミーの更新
-	m_pEnemy->Update(shared_from_this());
 	//プレイヤーにエネミーの座標を渡す
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
 	//エネミーにぷりやーの座標を渡す
 	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
+	//プレイヤーの更新
+	m_pPlayer->Update(shared_from_this(), input);
+	//エネミーの更新
+	m_pEnemy->Update(shared_from_this());
 	//カメラにプレイヤーの座標を渡す
 	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
@@ -118,7 +118,7 @@ void SceneGame::Draw()
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
 	m_pPhysics->DebugDraw();
-	m_pUi->DrawStateBar(m_pPlayer,m_pEnemy);
+	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
 	m_pUi->DrawDamage();
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }

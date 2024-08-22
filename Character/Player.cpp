@@ -25,6 +25,7 @@ Player::Player() :
 	LoadAnimationData(true);
 
 	m_pState = std::make_shared<PlayerStateIdle>();
+	m_pState->m_nextState = std::make_shared<PlayerStateIdle>();
 	//ChangeAnim("Idle");
 }
 
@@ -268,20 +269,20 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_rigidbody.GetPos();
 
 		//‰ñ“]‘¬“x(‰¡ˆÚ“®‚Ì‘¬‚³)
-		float HMoveSpeed = 0;
+		float hMoveSpeed = 0;
 
 		if (stickDir.x != 0.0f)
 		{
-			HMoveSpeed = (stickDir.x * kMoveSpeed) / toShaftPosVec.Length();
+			hMoveSpeed = (stickDir.x * kMoveSpeed) / toShaftPosVec.Length();
 		}
 
-		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", HMoveSpeed);
+		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", hMoveSpeed);
 
-		/*MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
+		MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
 
-		m_rota = atan2f(a.z,a.x);*/
+		/*m_rota = atan2f(a.z,a.x);
 
-		m_rota += HMoveSpeed;
+		m_rota += hMoveSpeed;*/
 
 		//¶‰EˆÚ“®‚Í“G‚ÌüˆÍ‚ğ‰ñ‚é
 
