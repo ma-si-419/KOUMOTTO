@@ -15,7 +15,14 @@ public:
 
 	float GetRota() { return m_rota; }
 
+	void SetRota(float rota) { m_rota = rota; }
+
+	void SetVelo(MyEngine::Vector3 velo) { m_rigidbody.SetVelo(velo); }
+
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
+
+	MyEngine::Vector3 GetTargetPos() { return m_targetPos; }
+
 
 	/// <summary>
 	/// UŒ‚‚Ìí—Ş‚ğæ“¾‚·‚é

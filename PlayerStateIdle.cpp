@@ -8,9 +8,6 @@
 #include "PlayerStateSpecialPhysicalAttack.h"
 #include "PlayerStateHitAttack.h"
 
-#include "AttackBase.h"
-
-#include "Player.h"
 
 void PlayerStateIdle::Update(std::shared_ptr<Player> player, MyEngine::Input input)
 {
@@ -46,7 +43,7 @@ void PlayerStateIdle::Update(std::shared_ptr<Player> player, MyEngine::Input inp
 			//回避の方向を設定する
 			auto state = std::dynamic_pointer_cast<PlayerStateDodge>(m_nextState);
 			state->SetAnimDir(PlayerStateDodge::MoveDir::kFront);
-			//state->SetMoveDir(player->);
+			state->SetMoveDir(MyEngine::Vector3(0,0,1));
 			return;
 		}
 		//ガード入力がされていたら
@@ -144,7 +141,7 @@ void PlayerStateIdle::Update(std::shared_ptr<Player> player, MyEngine::Input inp
 		}
 	}
 
-
+	player->SetVelo(MyEngine::Vector3(0,0,0));
 	//上記の入力がされていなかったらStateを変更しない
 	m_nextState =  shared_from_this();
 }

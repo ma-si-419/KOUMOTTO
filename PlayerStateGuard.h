@@ -8,6 +8,6 @@ public:
 	virtual PlayerStateKind GetKind()override { return PlayerStateKind::kGuard; }
 	
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) override;
-
+	
 };
 

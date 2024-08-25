@@ -2,7 +2,9 @@
 #include <memory>
 #include "Input.h"
 #include "Collidable.h"
-class Player;
+#include "AttackBase.h"
+#include "Player.h"
+
 class PlayerStateBase : public std::enable_shared_from_this<PlayerStateBase>
 {
 public:

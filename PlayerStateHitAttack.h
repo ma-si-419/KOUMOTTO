@@ -3,6 +3,13 @@
 class PlayerStateHitAttack : public PlayerStateBase
 {
 public:
+	enum class HitEffect
+	{
+		kLightHit,
+		kStun,
+		kBurst,
+		kGuard
+	};
 	virtual void Update(std::shared_ptr<Player> player, MyEngine::Input input) override;
 
 	virtual PlayerStateKind GetKind()override { return PlayerStateKind::kHitAttack; }
@@ -12,12 +19,6 @@ public:
 	void SetEffect(int effect) { m_hitEffect = static_cast<HitEffect>(effect); }
 
 private:
-	enum class HitEffect
-	{
-		kLightHit,
-		kStun,
-		kBurst
-	};
 	HitEffect m_hitEffect;
 };
 

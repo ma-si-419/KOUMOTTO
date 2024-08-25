@@ -1,0 +1,10 @@
+#pragma once
+#include "PlayerStateIdle.h"
+#include "PlayerStateMove.h"
+#include "PlayerStateGuard.h"
+#include "PlayerStateDodge.h"
+#include "PlayerStateNormalEnergyAttack.h"
+#include "PlayerStateNormalPhysicalAttack.h"
+#include "PlayerStateSpecialEnergyAttack.h"
+#include "PlayerStateSpecialPhysicalAttack.h"
+#include "PlayerStateHitAttack.h"

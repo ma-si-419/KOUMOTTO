@@ -28,6 +28,9 @@ private:
 
 	//ƒAƒjƒ‚Ì•ûŒü
 	MoveDir m_animDir;
+	
+	//Œo‰ßŠÔ
+	int m_time;
 
 };
 

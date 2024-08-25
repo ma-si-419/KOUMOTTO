@@ -9,5 +9,11 @@ public:
 
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) override;
 
+	void SetAttackNum(int num) { m_attackNum = num; }
+private:
+	//¡‰½’i–Ú‚ÌUŒ‚‚ğ‚µ‚Ä‚¢‚é‚Ì‚©
+	int m_attackNum = 0;
+	//ó‘Ô‘JˆÚ‚µ‚Ä‰½•b–Ú‚©
+	int m_time;
 };
 

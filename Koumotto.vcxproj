@@ -212,6 +212,7 @@
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
     <ClInclude Include="PlayerStateBase.h" />
     <ClInclude Include="PlayerStateIdle.h" />
+    <ClInclude Include="PlayerStateAll.h" />
     <ClInclude Include="TitleCamera.h" />
     <ClInclude Include="Ui.h" />
   </ItemGroup>

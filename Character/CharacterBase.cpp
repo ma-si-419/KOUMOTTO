@@ -167,7 +167,6 @@ void CharacterBase::MoveAnim(MyEngine::Vector3 moveDir)
 		if (detachFlag)
 		{
 			MV1DetachAnim(m_modelHandle, item.first);
-			printfDx("è¡ÇµÇΩÇÊ");
 		}
 	}
 
@@ -186,7 +185,6 @@ void CharacterBase::MoveAnim(MyEngine::Vector3 moveDir)
 		if (attachFlag)
 		{
 			MV1AttachAnim(m_modelHandle, item.second);
-			printfDx("ìoò^ÇµÇΩÇÊ");
 		}
 	}
 
@@ -197,7 +195,6 @@ void CharacterBase::MoveAnim(MyEngine::Vector3 moveDir)
 	{
 		MV1SetAttachAnimBlendRate(m_modelHandle, 0, moveDir.x);
 		MV1SetAttachAnimBlendRate(m_modelHandle, 1, moveDir.z);
-		printfDx("ï°êîå¬Ç†ÇÈÇÊ");
 	}
 
 

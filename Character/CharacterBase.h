@@ -55,7 +55,10 @@ public:
 	void LoadAnimationData(bool isPlayer);
 	//必殺技を出している状態に変化させる
 	void PlaySpecialAttack(std::string id);
-
+	//アニメーションを増やす
+	void ChangeAnim(std::string animName);
+	//アニメーションブレンド
+	void MoveAnim(MyEngine::Vector3 moveDir);
 protected:
 	enum class AnimationInfoSort
 	{
@@ -119,10 +122,7 @@ protected:
 	/// <returns>攻撃のポインタ</returns>
 	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics, std::string id, bool isPlayer);
 
-	//アニメーションを増やす
-	void ChangeAnim(std::string animName);
-	//アニメーションブレンド
-	void MoveAnim(MyEngine::Vector3 moveDir);
+	
 
 
 	//通常攻撃を出してる状態に変化させる

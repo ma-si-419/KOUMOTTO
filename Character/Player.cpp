@@ -5,7 +5,7 @@
 #include "CommandIdList.h"
 #include "CapsuleColliderData.h"
 #include "PlayerStateBase.h"
-#include "PlayerStateIdle.h"
+#include "PlayerStateAll.h"
 namespace
 {
 	//移動速度
@@ -25,7 +25,7 @@ Player::Player() :
 	LoadAnimationData(true);
 
 	m_pState = std::make_shared<PlayerStateIdle>();
-	m_pState->m_nextState = std::make_shared<PlayerStateIdle>();
+	m_pState->m_nextState = m_pState;
 	//ChangeAnim("Idle");
 }
 
@@ -189,13 +189,13 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	{
 		//Stateを変更する
 		m_pState = m_pState->m_nextState;
+		m_pState->m_nextState = m_pState;
+		printfDx("変更\n");
 	}
 
+	printfDx("%d", m_pState->GetKind());
 	//Stateの更新
 	m_pState->Update(std::static_pointer_cast<Player>(shared_from_this()), input);
-
-	//リギットボディにベロシティを設定する
-	m_rigidbody.SetVelo(velo);
 
 	//アニメーションを進める
 	m_animTime += m_animPlaySpeed;
@@ -223,7 +223,6 @@ void Player::Draw()
 	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%f,MP:%f", m_nowHp, m_nowMp);
 	MV1DrawModel(m_modelHandle);
 }
-
 bool Player::GetAttackKind(std::string attackId)
 {
 	return m_attackData[attackId].isEnergy;
@@ -278,11 +277,11 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", hMoveSpeed);
 
-		MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
+		//MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
 
-		/*m_rota = atan2f(a.z,a.x);
+		//m_rota = atan2f(a.z,a.x);
 
-		m_rota += hMoveSpeed;*/
+		m_rota += hMoveSpeed;
 
 		//左右移動は敵の周囲を回る
 
@@ -359,10 +358,6 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 	//}
 
 	MoveAnim(stickDir);
-
-
-
-	m_lastInput = stickDir;
 
 	return velo;
 }
