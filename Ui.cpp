@@ -340,3 +340,17 @@ void Ui::DrawDamage()
 		item.time--;
 	}
 }
+
+void Ui::DrawGameOver()
+{
+	//後ろのバトルシーンを暗くする
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
+	DrawBox(0,0,Game::kWindowWidth,Game::kWindowHeight,GetColor(0,0,0),true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND,0);
+	//ゲームオーバーの画像データ
+	std::string logo = "GameOverLogo";
+	DrawGraph(m_showUi[logo].drawPos.x, m_showUi[logo].drawPos.y,m_showUi[logo].handle,true);
+	
+	DrawStringToHandle(500, 500, "リトライ", GetColor(0, 0, 0), m_fontHandle, GetColor(255, 255, 255));
+	DrawStringToHandle(620, 650, "やめる", GetColor(0, 0, 0), m_fontHandle, GetColor(255, 255, 255));
+}

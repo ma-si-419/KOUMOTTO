@@ -25,6 +25,8 @@ public:
 	void AddShowDamage(MyEngine::Vector3 pos,int damage);
 		
 	void DrawDamage();
+
+	void DrawGameOver();
 private:
 	struct UiStatus
 	{

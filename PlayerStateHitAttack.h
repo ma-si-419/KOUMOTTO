@@ -18,7 +18,12 @@ public:
 
 	void SetEffect(int effect) { m_hitEffect = static_cast<HitEffect>(effect); }
 
+	void SetBurstDir(MyEngine::Vector3 dir) { m_burstDir = dir; }
 private:
+	//経過時間
+	int m_time = 0;
+	//受けた攻撃の種類
 	HitEffect m_hitEffect;
+	//ノックバックの方向
+	MyEngine::Vector3 m_burstDir;
 };
-

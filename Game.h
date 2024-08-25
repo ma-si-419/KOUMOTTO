@@ -52,4 +52,7 @@ namespace Game
 		kSelect,
 		kGame
 	};
+	constexpr int kWindowWidth = 1536;
+	constexpr int kWindowHeight = 864;
+
 }

@@ -9,4 +9,8 @@ public:
 
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) override;
 
+	void SetTime(int time) { m_actionTime = time; }
+private:
+	//‰½•bŠÔ‚ÅŒ³‚Ìó‘Ô‚É–ß‚é‚©
+	int m_actionTime = 0;
 };

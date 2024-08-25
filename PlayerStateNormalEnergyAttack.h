@@ -14,6 +14,8 @@ private:
 	//¡‰½’i–Ú‚ÌUŒ‚‚ğ‚µ‚Ä‚¢‚é‚Ì‚©
 	int m_attackNum = 0;
 	//ó‘Ô‘JˆÚ‚µ‚Ä‰½•b–Ú‚©
-	int m_time;
+	int m_time = 0;
+	//UŒ‚‚Ì“ü—Í‚ª‚³‚ê‚½‚©‚Ç‚¤‚©
+	bool m_isAttackInput = false;
 };
 

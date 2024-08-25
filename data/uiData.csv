@@ -2,3 +2,4 @@
 PlayerStateBar,1260,780,Game
 EnemyStateBar,1280,60,Game
 TitleLogo,300,50,Title
+GameOverLogo,550,300,Game

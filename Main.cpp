@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "DataManager.h"
 #include "Input.h"
+#include "Game.h"
 #include <cassert>
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -13,7 +14,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ウィンドウかフルスクリーンか可変にする
 	ChangeWindowMode(isWindow);
 
-	SetGraphMode(1536, 864, 16);
+	SetGraphMode(Game::kWindowWidth, Game::kWindowHeight, 16);
 
 	SetMainWindowText("KOUMOTTO");
 

@@ -120,6 +120,8 @@ void SceneGame::Draw()
 	m_pPhysics->DebugDraw();
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
 	m_pUi->DrawDamage();
+	m_pUi->DrawGameOver();
+
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 

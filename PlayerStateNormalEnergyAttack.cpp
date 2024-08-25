@@ -1,5 +1,7 @@
 #include "PlayerStateNormalEnergyAttack.h"
 #include "PlayerStateIdle.h"
+#include "PlayerStateHitAttack.h"
+#include "PlayerStateGuard.h"
 
 namespace
 {
@@ -20,6 +22,14 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 
 	MyEngine::Vector3 dir(stick.leftStickX, 0, -stick.leftStickY);
 
+	//ガード入力がされていたら
+	if (input.IsPress(Game::InputId::kRb))
+	{
+		//StateをGuardに変更する
+		m_nextState = std::make_shared<PlayerStateGuard>();
+		return;
+	}
+
 	//移動入力がされているとき
 	if (dir.sqLength() != 0)
 	{
@@ -39,12 +49,6 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 		{
 			hMoveSpeed = (dir.x * kMoveSpeed) / toShaftPosVec.Length();
 		}
-
-		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", hMoveSpeed);
-
-		MyEngine::Vector3 a = rotationShaftPos - player->GetPos();
-
-		//m_rota = atan2f(a.z,a.x);
 
 		player->SetRota(player->GetRota() + hMoveSpeed);
 
@@ -76,9 +80,12 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 		//気弾攻撃をした場合
 		if (input.IsTrigger(Game::InputId::kX))
 		{
-			m_attackNum++;
+			//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
+			m_isAttackInput = true;
+			//攻撃の回数がコンボの最大数を超えたら
 			if (m_attackNum > kComboMax)
 			{
+				//コンボを一段目に戻す
 				m_attackNum = 0;
 			}
 			m_time = 0;
@@ -87,18 +94,50 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 
 	//経過時間管理
 	m_time++;
-	if (m_time < kComboTime)
+	//入力待機時間を超えたら
+	if (m_time > kComboTime)
 	{
-		m_nextState = shared_from_this();
-	}
-	else
-	{
-		m_nextState = std::make_shared<PlayerStateIdle>();
+		//攻撃の入力がされていたら
+		if (m_isAttackInput)
+		{
+			//次段の攻撃に移行する
+			m_attackNum++;
+			//いまだした攻撃が最終段だったら
+			if (m_attackNum > kComboMax)
+			{
+				//アイドル状態に戻る
+				m_nextState = std::make_shared<PlayerStateIdle>();
+				return;
+			}
+			//攻撃の入力をリセットする
+			m_isAttackInput = false;
+		}
+		//攻撃の入力がされていなかったら
+		else
+		{
+			//アイドル状態に戻る
+			m_nextState = std::make_shared<PlayerStateIdle>();
+			return;
+		}
 	}
 	player->SetVelo(velo);
+	//上で状態に変化がなければ今の状態を返す
+	m_nextState = shared_from_this();
 }
 
 int PlayerStateNormalEnergyAttack::OnDamage(std::shared_ptr<Collidable> collider)
 {
-	return 0;
+	//ダメージ
+	int damage = 0;
+	//攻撃のポインタ
+	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
+	//ダメージをそのまま渡す
+	damage = attack->GetDamage();
+	//状態を変化させる
+	m_nextState = std::make_shared<PlayerStateHitAttack>();
+	//受けた攻撃の種類を設定する
+	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
+	state->SetEffect(attack->GetHitEffect());
+
+	return damage;
 }
