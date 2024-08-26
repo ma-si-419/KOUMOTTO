@@ -15,6 +15,8 @@ public:
 	~SceneGame();
 	//初期化処理
 	void Init();
+	//リトライ時の初期化処理
+	void RetryInit();
 	//更新処理
 	void Update(MyEngine::Input input);
 	//描画処理
@@ -23,6 +25,8 @@ public:
 	void End();
 	//攻撃をシーンに追加
 	void AddAttack(std::shared_ptr<AttackBase> pAttack);
+	//ゲームオーバー時に呼び出す
+	void GameOver() { m_isGameOver = true; }
 
 private:
 	std::shared_ptr<Physics> m_pPhysics;
@@ -32,5 +36,9 @@ private:
 	std::shared_ptr<Ui> m_pUi;
 	std::vector<std::shared_ptr<AttackBase>> m_pAttacks;
 	int handle;
+	//ゲームオーバーかどうか
+	bool m_isGameOver;
+	//ゲームオーバー時の選択しているアイテム
+	int m_gameOverSelectItemNum;
 };
 

@@ -12,22 +12,31 @@ class Enemy;
 class Ui
 {
 public:
+	enum class GameOverItem
+	{
+		kRetry,
+		kEnd,
+		kItemNum
+	};
+public:
 	Ui();
 	virtual ~Ui();
 
 	void Init();
 	void DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> enemy);
 
-	void SetUiPos(std::string name,MyEngine::Vector2 pos);
+	void SetUiPos(std::string name, MyEngine::Vector2 pos);
 
 	void LoadUiHandle(std::vector<DataManager::UiInfo> data);
 
-	void AddShowDamage(MyEngine::Vector3 pos,int damage);
-		
+	void AddShowDamage(MyEngine::Vector3 pos, int damage);
+
 	void DrawDamage();
 
-	void DrawGameOver();
+	void DrawGameOver(int arrowPos);
 private:
+
+
 	struct UiStatus
 	{
 		//画像ハンドル
@@ -57,12 +66,15 @@ private:
 	int m_playerLostHpBarLifeTime;
 	int m_enemyLostHpBarLifeTime;
 
-	//フォントハンドル
-	int m_fontHandle;
+	//ダメージを表示するときのフォントハンドル
+	int m_damageFontHandle;
+	//ゲームオーバーの時の選択肢をのフォントハンドル
+	int m_gameOverFontHandle;
 	//表示するダメージの配列
 	std::vector<DamageShowStatus> m_showDamage;
+	//選択している矢印を動かす際に使用する変数
+	float m_shakeArrowNum;
 
 	//表示しているUiのデータ
 	std::map<std::string, UiStatus> m_showUi;
 };
-

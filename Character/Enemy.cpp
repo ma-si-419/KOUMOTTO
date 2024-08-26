@@ -41,6 +41,15 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 
 }
 
+void Enemy::RetryInit()
+{
+	m_nowHp = m_status.hp;
+	m_nowMp = m_status.mp;
+
+	m_rigidbody.SetPos(kInitPos);
+	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+}
+
 void Enemy::Update(std::shared_ptr<SceneGame> scene)
 {
 

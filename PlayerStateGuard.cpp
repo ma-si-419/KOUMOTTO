@@ -4,6 +4,7 @@
 
 void PlayerStateGuard::Update(std::shared_ptr<Player> player, MyEngine::Input input)
 {
+	player->SetVelo(MyEngine::Vector3(0,0,0));
 	if (input.IsPress(Game::InputId::kRb))
 	{
 		m_nextState = shared_from_this();

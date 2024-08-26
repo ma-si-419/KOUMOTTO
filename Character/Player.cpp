@@ -66,6 +66,30 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 }
 
+void Player::RetryInit()
+{
+	m_nowHp = m_status.hp;
+	m_nowMp = m_status.mp;
+
+	m_rota = 10;
+
+
+	//Y軸を中心とした回転をするので
+	MyEngine::Vector3 rotationShaftPos = m_targetPos;
+	//Y座標が関係しないようにプレイヤーと同じ座標にする
+	rotationShaftPos.y = m_rigidbody.GetPos().y;
+
+	MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_rigidbody.GetPos();
+
+	MyEngine::Vector3 pos;
+
+	pos.x = rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length();
+	pos.y = 0;
+	pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
+
+	m_rigidbody.SetPos(pos);
+}
+
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 {
 	//移動ベクトル
@@ -89,8 +113,6 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 
 		m_lastAttackTime++;
 
-		//移動処理
-		velo = Move(velo, input);
 		//スタンしていない時は常に敵の方向を向き続ける
 		//プレイヤーを常にエネミーの方向に向ける
 		//TODO：ターゲットがずれた時に一瞬で向くようになってるからそれを
@@ -215,6 +237,16 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	colData->m_startPos = colPos;
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	if (m_nowHp <= 0)
+	{
+		scene->GameOver();
+	}
+#ifdef _DEBUG
+	if (input.IsPress(Game::InputId::kSelect))
+	{
+		m_nowHp -= 1000;
+	}
+#endif
 }
 
 void Player::Draw()

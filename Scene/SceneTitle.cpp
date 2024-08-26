@@ -35,7 +35,10 @@ SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& dataManager) :
 
 SceneTitle::~SceneTitle()
 {
-
+	MV1DeleteModel(m_domeHandle);
+	MV1DeleteModel(m_playerHandle);
+	MV1DeleteModel(m_enemyHandle);
+	DeleteFontToHandle(m_fontHandle);
 }
 
 void SceneTitle::Init()

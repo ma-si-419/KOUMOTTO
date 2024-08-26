@@ -9,8 +9,15 @@
 #include "AttackBase.h"
 #include "LoadCsv.h"
 
+namespace
+{
+	//ゲームオーバー時の選択肢の数
+	constexpr int kGameOverItemNum = 1;
+}
+
 SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
-	SceneBase(sceneManager, dataManager)
+	SceneBase(sceneManager, dataManager),
+	m_isGameOver(false)
 {
 	handle = MV1LoadModel("data/model/Dome.mv1");
 	//当たり判定管理クラスのポインタ
@@ -60,14 +67,60 @@ void SceneGame::Init()
 	m_pUi->LoadUiHandle(m_dataManager.GetUiData(Game::SceneNum::kGame));
 }
 
+void SceneGame::RetryInit()
+{
+	m_pPlayer->RetryInit();
+	m_pEnemy->RetryInit();
+	m_isGameOver = false;
+}
+
 void SceneGame::Update(MyEngine::Input input)
 {
-	//当たり判定の更新
-	m_pPhysics->Update();
-	//プレイヤーの更新
-	m_pPlayer->Update(shared_from_this(), input);
-	//エネミーの更新
-	m_pEnemy->Update(shared_from_this());
+	//ゲームオーバー時の処理
+	if (m_isGameOver)
+	{
+		//上入力
+		if (input.IsTrigger(Game::InputId::kUp))
+		{
+			m_gameOverSelectItemNum--;
+			if (m_gameOverSelectItemNum < 0)
+			{
+				m_gameOverSelectItemNum = 0;
+			}
+		}
+		//下入力
+		if (input.IsTrigger(Game::InputId::kDown))
+		{
+			m_gameOverSelectItemNum++;
+			if (m_gameOverSelectItemNum > static_cast<int>(Ui::GameOverItem::kItemNum))
+			{
+				m_gameOverSelectItemNum = static_cast<int>(Ui::GameOverItem::kItemNum);
+			}
+		}
+		//決定入力
+		if (input.IsTrigger(Game::InputId::kOk))
+		{
+			if (m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kRetry))
+			{
+				RetryInit();
+			}
+			else if(m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kEnd))
+			{
+				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+				return;
+			}
+		}
+	}
+	//ゲームオーバーしていないときの処理
+	else
+	{
+		//当たり判定の更新
+		m_pPhysics->Update();
+		//プレイヤーの更新
+		m_pPlayer->Update(shared_from_this(), input);
+		//エネミーの更新
+		m_pEnemy->Update(shared_from_this());
+	}
 	//プレイヤーにエネミーの座標を渡す
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
 	//エネミーにプレイヤーの座標を渡す
@@ -104,11 +157,13 @@ void SceneGame::Update(MyEngine::Input input)
 		}
 	}
 
+#ifdef _DEBUG
 	if (input.IsTrigger(Game::InputId::kPause))
 	{
 		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 		return;
 	}
+#endif
 }
 
 void SceneGame::Draw()
@@ -120,13 +175,19 @@ void SceneGame::Draw()
 	m_pPhysics->DebugDraw();
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
 	m_pUi->DrawDamage();
-	m_pUi->DrawGameOver();
-
+	if (m_isGameOver)
+	{
+		m_pUi->DrawGameOver(m_gameOverSelectItemNum);
+	}
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 
 void SceneGame::End()
 {
+	m_pPlayer->Final(m_pPhysics);
+	m_pEnemy->Final(m_pPhysics);
+	MV1DeleteModel(handle);
+
 }
 
 void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)

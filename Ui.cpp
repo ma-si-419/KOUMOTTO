@@ -41,6 +41,15 @@ namespace
 	//ダメージを表示する座標を少しずらす
 	constexpr int kDamageShowPosShakeScale = 30;
 	constexpr int kDamageShowPosShakeScaleHalf = kDamageShowPosShakeScale * 0.5;
+	//矢印を揺らす大きさ
+	constexpr float kShakeArrowScale = 10.0f;
+	//矢印を揺らすスピード
+	constexpr float kShakeArrowSpeed = 0.5f;
+	//ゲームオーバーの文字を表示する座標
+	constexpr float kGameOverStringPosX[2] = { 650,620 };
+	constexpr float kGameOverStringPosY[2] = { 500,650 };
+	//矢印と文字の距離
+	constexpr int kArrowDistance = 75;
 }
 
 Ui::Ui() :
@@ -50,13 +59,15 @@ Ui::Ui() :
 	m_lastEnemyHpBarEndPosX(0),
 	m_playerLostHpBarLifeTime(0),
 	m_enemyLostHpBarLifeTime(0),
-	m_showUi()
+	m_showUi(),
+	m_shakeArrowNum(0)
 {
-	m_fontHandle = CreateFontToHandle("アンニャントロマン", kDamageFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	m_damageFontHandle = CreateFontToHandle("アンニャントロマン", kDamageFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 }
 
 Ui::~Ui()
 {
+	DeleteFontToHandle(m_damageFontHandle);
 }
 
 void Ui::Init()
@@ -333,7 +344,7 @@ void Ui::DrawDamage()
 		//ブレンドモードを変更
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 		//ダメージの表示
-		DrawFormatStringToHandle(item.pos.x - shiftSize, item.pos.y, GetColor(255, 255, 255), m_fontHandle, item.damage.c_str());
+		DrawFormatStringToHandle(item.pos.x - shiftSize, item.pos.y, GetColor(255, 255, 255), m_damageFontHandle, item.damage.c_str());
 		//ブレンドモードを元に戻す
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		//表示時間を減らす
@@ -341,16 +352,30 @@ void Ui::DrawDamage()
 	}
 }
 
-void Ui::DrawGameOver()
+void Ui::DrawGameOver(int arrowPos)
 {
 	//後ろのバトルシーンを暗くする
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA,128);
-	DrawBox(0,0,Game::kWindowWidth,Game::kWindowHeight,GetColor(0,0,0),true);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND,0);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(0, 0, Game::kWindowWidth, Game::kWindowHeight, GetColor(0, 0, 0), true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	//ゲームオーバーの画像データ
 	std::string logo = "GameOverLogo";
-	DrawGraph(m_showUi[logo].drawPos.x, m_showUi[logo].drawPos.y,m_showUi[logo].handle,true);
-	
-	DrawStringToHandle(500, 500, "リトライ", GetColor(0, 0, 0), m_fontHandle, GetColor(255, 255, 255));
-	DrawStringToHandle(620, 650, "やめる", GetColor(0, 0, 0), m_fontHandle, GetColor(255, 255, 255));
+	DrawGraph(m_showUi[logo].drawPos.x, m_showUi[logo].drawPos.y, m_showUi[logo].handle, true);
+
+	DrawStringToHandle(kGameOverStringPosX[static_cast<int>(GameOverItem::kRetry)], kGameOverStringPosY[static_cast<int>(GameOverItem::kRetry)], "リトライ", GetColor(0, 0, 0), m_damageFontHandle, GetColor(255, 255, 255));
+	DrawStringToHandle(kGameOverStringPosX[static_cast<int>(GameOverItem::kEnd)], kGameOverStringPosY[static_cast<int>(GameOverItem::kEnd)], "やめる", GetColor(0, 0, 0), m_damageFontHandle, GetColor(255, 255, 255));
+
+	m_shakeArrowNum += kShakeArrowSpeed;
+
+	//矢印の表示
+	if (arrowPos == 0)
+	{
+		MyEngine::Vector2 pos(kGameOverStringPosX[static_cast<int>(GameOverItem::kRetry)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance, kGameOverStringPosY[static_cast<int>(GameOverItem::kRetry)]);
+		DrawStringToHandle(pos.x, pos.y, "→", GetColor(0, 0, 0), m_damageFontHandle, GetColor(255, 255, 255));
+	}
+	else
+	{
+		MyEngine::Vector2 pos(kGameOverStringPosX[static_cast<int>(GameOverItem::kEnd)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance, kGameOverStringPosY[static_cast<int>(GameOverItem::kEnd)]);
+		DrawStringToHandle(pos.x, pos.y, "→", GetColor(0, 0, 0), m_damageFontHandle, GetColor(255, 255, 255));
+	}
 }

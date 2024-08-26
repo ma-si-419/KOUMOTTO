@@ -10,6 +10,7 @@ public:
 	~Enemy();
 
 	void Init(std::shared_ptr<Physics> physics);
+	void RetryInit();
 	void Update(std::shared_ptr<SceneGame> scene);
 	void Draw();
 

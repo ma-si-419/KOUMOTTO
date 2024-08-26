@@ -30,12 +30,14 @@ public:
 	/// <summary>
 	/// ‰Šú‰»ˆ—
 	/// </summary>
-	virtual void Init(std::shared_ptr<Physics> physics) = 0;
+	virtual void Init(std::shared_ptr<Physics> physics) abstract;
+
+	virtual void RetryInit() abstract;
 
 	/// <summary>
 	/// •`‰æˆ—
 	/// </summary>
-	virtual void Draw() = 0;
+	virtual void Draw() abstract;
 
 	//Å‘å‘Ì—Í‚ğ•Ô‚·
 	Status GetStatus() { return m_status; }

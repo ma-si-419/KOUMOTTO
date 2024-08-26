@@ -10,6 +10,7 @@ public:
 	~Player();
 
 	void Init(std::shared_ptr<Physics> physics);
+	void RetryInit();
 	void Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input);
 	void Draw();
 
