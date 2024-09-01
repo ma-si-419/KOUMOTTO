@@ -8,6 +8,7 @@
 
 class AttackBase;
 class Physics;
+class SceneGame;
 class CharacterBase : public Collidable
 {
 public:
@@ -46,7 +47,7 @@ public:
 	//現在の気力量を返す
 	float GetNowMp() { return m_nowMp; }
 	//ロックオンしている敵の座標を設定する
-	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
+	void SetTargetPos(MyEngine::Vector3 pos);
 	//攻撃の情報を設定する
 	void SetAttackData(std::map<std::string, DataManager::AttackInfo> data) { m_attackData = data; }
 	//動けない時間を設定する
@@ -83,6 +84,8 @@ protected:
 	int m_modelHandle;
 	//登録したPhysicsを持っておく
 	std::shared_ptr<Physics> m_pPhysics;
+	//シーンのポインタを持っておく
+	std::shared_ptr<SceneGame> m_pScene;
 
 	//攻撃のデータ
 	std::map<std::string, DataManager::AttackInfo> m_attackData;

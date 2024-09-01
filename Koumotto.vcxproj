@@ -156,6 +156,7 @@
     <ClCompile Include="MyEngine\Physics\Physics.cpp" />
     <ClCompile Include="Character\Player.cpp" />
     <ClCompile Include="MyEngine\Physics\Rigidbody.cpp" />
+    <ClCompile Include="PlayerStateAttack.cpp" />
     <ClCompile Include="PlayerStateDodge.cpp" />
     <ClCompile Include="PlayerStateGuard.cpp" />
     <ClCompile Include="PlayerStateHitAttack.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="MyEngine\Physics\Physics.h" />
     <ClInclude Include="Character\Player.h" />
     <ClInclude Include="MyEngine\Physics\Rigidbody.h" />
+    <ClInclude Include="PlayerStateAttack.h" />
     <ClInclude Include="PlayerStateDodge.h" />
     <ClInclude Include="PlayerStateGuard.h" />
     <ClInclude Include="PlayerStateHitAttack.h" />

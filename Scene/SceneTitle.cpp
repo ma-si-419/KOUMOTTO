@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "SceneTitle.h"
 #include "SceneSelect.h"
+#include "SceneGame.h"
 #include "TitleCamera.h"
 
 namespace
@@ -92,7 +93,10 @@ void SceneTitle::Update(MyEngine::Input input)
 			if (m_selectItem == static_cast<int>(ItemKind::kStart))
 			{
 				//セレクトシーンに飛ぶ
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+//				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+				
+				//ゲームシーンに直接飛ぶ
+				m_sceneManager.ChangeScene(std::make_shared<SceneGame>(m_sceneManager, m_dataManager));
 				return;
 			}
 			//else if (m_selectItem == static_cast<int>(ItemKind::kOption))

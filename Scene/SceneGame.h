@@ -40,5 +40,9 @@ private:
 	bool m_isGameOver;
 	//ゲームオーバー時の選択しているアイテム
 	int m_gameOverSelectItemNum;
+	//バトルが開始しているかどうか
+	bool m_isStartBattle;
+	//待機時間を計測
+	int m_standByTime;
 };
 

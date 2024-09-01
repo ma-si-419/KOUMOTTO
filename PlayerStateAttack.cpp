@@ -1,0 +1,175 @@
+#include "PlayerStateAttack.h"
+#include "PlayerStateIdle.h"
+namespace
+{
+	//気弾を出しているときの移動速度
+	constexpr float kEnergyAttackMoveSpeed = 80.0f;
+	//攻撃を出しているときの移動速度
+	constexpr float kPhysicalAttackMoveSpeed = 150;
+	//敵が近くにいる判定になる距離
+	constexpr float kNearEnemyLength = 200;
+	//敵に近づく時間の最大
+	constexpr int kGoEnemyTime = 60;
+	//通常攻撃のコンボ入力受付時間
+	constexpr int kComboTime = 40;
+	//気弾攻撃の最大コンボ数
+	constexpr int kEnergyComboMax = 3;
+	//格闘攻撃の最大コンボ数
+	constexpr int kPhysicalComboMax = 2;
+}
+
+void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+{
+    DataManager::AttackInfo attackData = player->GetAttackData(m_attackId);
+	//経過時間を計測する
+	m_time++;
+	//移動ベクトル
+	MyEngine::Vector3 velo;
+	//スティック入力
+	MyEngine::Input::StickInfo stick = input.GetStickInfo();
+	//移動方向
+	MyEngine::Vector3 dir(stick.leftStickX, 0, -stick.leftStickY);
+
+    //気弾攻撃のみ出しながら移動できる
+    if (attackData.attackTime = 0)
+    {
+		//移動入力がされているとき
+		if (dir.sqLength() != 0)
+		{
+			dir = dir.Normalize();
+
+			//Y軸を中心とした回転をするので
+			MyEngine::Vector3 rotationShaftPos = player->GetTargetPos();
+			//Y座標が関係しないようにプレイヤーと同じ座標にする
+			rotationShaftPos.y = player->GetPos().y;
+
+			MyEngine::Vector3 toShaftPosVec = rotationShaftPos - player->GetPos();
+
+			//回転速度(横移動の速さ)
+			float hMoveSpeed = 0;
+
+			if (dir.x != 0.0f)
+			{
+				hMoveSpeed = (dir.x * kEnergyAttackMoveSpeed) / toShaftPosVec.Length();
+			}
+
+			player->SetRota(player->GetRota() + hMoveSpeed);
+
+			//左右移動は敵の周囲を回る
+
+			//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
+			//現在の座標からその座標に向かうベクトルを作成する
+			velo.x = (rotationShaftPos.x + cosf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().x;
+			velo.z = (rotationShaftPos.z + sinf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().z;
+
+			//上下移動入力されていたら
+			if (input.IsPress(Game::InputId::kLb))
+			{
+				//前後入力を上下のベクトルに変換
+				velo.y += dir.z * kEnergyAttackMoveSpeed;
+			}
+			//されていなかった場合
+			else
+			{
+				//前後入力を回転の中心に向かうベクトルに変換
+				MyEngine::Vector3 toCenterVec = player->GetTargetPos() - player->GetPos();
+				toCenterVec.y = 0;
+				velo += toCenterVec.Normalize() * (dir.z * kEnergyAttackMoveSpeed);
+			}
+		}
+    }
+	//格闘攻撃だったら相手に向かっていく
+	if (!attackData.isEnergy)
+	{
+		//移動ベクトルの生成
+		MyEngine::Vector3 moveVec = player->GetTargetPos() - player->GetPos();
+		velo = moveVec.Normalize() * kPhysicalAttackMoveSpeed;
+
+		//敵が近くにいるかどうかを調べる
+		float length = (player->GetTargetPos() - player->GetPos()).Length();
+		//敵が近くにいるか、経過時間が一定時間を超えたら
+		if (length < kNearEnemyLength || m_time > kGoEnemyTime)
+		{
+			//敵が近くにいるフラグを立てる
+			m_isNearEnemy = true;
+		}
+		//敵が近くにいたら移動をやめて攻撃を出す
+		if (m_isNearEnemy)
+		{
+			//移動をやめる処理
+			velo = MyEngine::Vector3(0, 0, 0);
+			//TODO : 攻撃を行う処理を作る
+			//攻撃の処理をする時間をへらしていく
+			m_actionTime--;
+			if (m_actionTime < 0)
+			{
+				//攻撃の処理をする時間が終わったら
+				m_nextState = std::make_shared<PlayerStateIdle>();
+				return;
+			}
+
+		}
+	}
+	//通常攻撃のコンボの入力
+	if (!input.IsPress(Game::InputId::kLb))
+	{
+		//気弾攻撃をした場合
+		if (attackData.isEnergy && input.IsTrigger(Game::InputId::kX))
+		{
+			//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
+			m_isAttackInput = true;
+		}
+		//格闘攻撃をした場合
+		if (!attackData.isEnergy && input.IsTrigger(Game::InputId::kB))
+		{
+			//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
+			m_isAttackInput = true;
+		}
+	}
+
+	//入力待機時間を超えたら
+	if (m_time > kComboTime)
+	{
+		//通常攻撃を出す
+		player->Attack(attackData.name);
+
+		//攻撃の入力がされていたら
+		if (m_isAttackInput)
+		{
+			//次段の攻撃に移行する
+			m_normalAttackNum++;
+			//いまだした気弾攻撃が最終段だったら
+			if (attackData.isEnergy && m_normalAttackNum > kEnergyComboMax)
+			{
+				//アイドル状態に戻る
+				m_nextState = std::make_shared<PlayerStateIdle>();
+				return;
+			}
+			//いまだした格闘攻撃が最終段だったら
+			else if (!attackData.isEnergy && m_normalAttackNum > kPhysicalComboMax)
+			{
+				//アイドル状態に戻る
+				m_nextState = std::make_shared<PlayerStateIdle>();
+				return;
+			}
+			//攻撃の入力をリセットする
+			m_isAttackInput = false;
+		}
+		//攻撃の入力がされていなかったら
+		else
+		{
+			//アイドル状態に戻る
+			m_nextState = std::make_shared<PlayerStateIdle>();
+			return;
+		}
+	}
+	//移動ベクトルを入れる
+	player->SetVelo(velo);
+
+	m_nextState = shared_from_this();
+}
+
+int PlayerStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
+{
+    return 0;
+}

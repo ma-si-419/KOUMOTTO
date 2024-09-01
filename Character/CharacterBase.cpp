@@ -32,6 +32,12 @@ CharacterBase::~CharacterBase()
 	MV1DeleteModel(m_modelHandle);
 }
 
+void CharacterBase::SetTargetPos(MyEngine::Vector3 pos)
+{
+	m_targetPos = pos;
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+}
+
 void CharacterBase::LoadAnimationData(bool isPlayer)
 {
 	LoadCsv loadCsv;

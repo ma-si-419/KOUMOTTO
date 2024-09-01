@@ -24,6 +24,11 @@ public:
 
 	MyEngine::Vector3 GetTargetPos() { return m_targetPos; }
 
+	DataManager::AttackInfo GetAttackData(std::string id) { return m_attackData[id]; }
+	
+	bool GetIsOpenSpecialPallet() { return m_isOpenSpecialPallet; }
+
+	void Attack(std::string id);
 
 	/// <summary>
 	/// 攻撃の種類を取得する
@@ -36,7 +41,10 @@ public:
 
 	std::map<std::string, std::string> GetSetSpecialAttack() { return m_setSpecialAttack; };
 
+	std::map<std::string, std::string> GetSetSpecialAttackName();
+
 private:
+
 	/// <summary>
 	/// 移動処理の計算をする
 	/// </summary>
@@ -56,6 +64,8 @@ private:
 	int m_lastAttackTime;
 	//前のフレームの入力を保存しておく
 	MyEngine::Vector3 m_lastInput;
+	//必殺技パレットを開いているかどうか
+	bool m_isOpenSpecialPallet;
 
 	void ChangeState(std::shared_ptr<PlayerStateBase> state);
 

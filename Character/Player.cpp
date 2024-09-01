@@ -20,7 +20,8 @@ namespace
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
 	m_rota(0),
-	m_lastAttackTime(0)
+	m_lastAttackTime(0),
+	m_isOpenSpecialPallet(false)
 {
 	LoadAnimationData(true);
 
@@ -63,6 +64,15 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	colData->m_radius = kColScale;
+	//当たり判定の縦幅
+	MyEngine::Vector3 colPos = m_rigidbody.GetPos();
+	colPos.y += kColScale;
+	//当たり判定の座標調整
+	colData->m_startPos = colPos;
+	//ハンドルの座標を設定する
+	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	//エネミーのほうを向くようにする
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 
 }
 
@@ -87,7 +97,22 @@ void Player::RetryInit()
 	pos.y = 0;
 	pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
 
+
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
+
+	//当たり判定の縦幅
+	MyEngine::Vector3 colPos = m_rigidbody.GetPos();
+	colPos.y += kColScale;
+	//当たり判定の座標調整
+	colData->m_startPos = colPos;
+
 	m_rigidbody.SetPos(pos);
+
+	//ハンドルの座標を設定する
+	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+
 }
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
@@ -205,6 +230,9 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			}
 		}
 	}
+	//必殺技パレットを開いているかどうかを保存する
+	m_isOpenSpecialPallet = input.IsPress(Game::InputId::kLb);
+
 
 	//前のフレームとStateを比較して違うStateだったら
 	if (m_pState->m_nextState->GetKind() != m_pState->GetKind())
@@ -255,6 +283,20 @@ void Player::Draw()
 	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%f,MP:%f", m_nowHp, m_nowMp);
 	MV1DrawModel(m_modelHandle);
 }
+void Player::Attack(std::string id)
+{
+	std::shared_ptr<AttackBase> ans = std::make_shared<AttackBase>(ObjectTag::kPlayerAttack);
+
+	//攻撃を出す座標を作成
+	MyEngine::Vector3 toTargetVec = m_attackTarget - m_rigidbody.GetPos();
+	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
+
+	ans->Init(m_pPhysics, attackPos);
+	//ステータス設定
+	ans->SetStatus(m_attackData[id], m_attackTarget, m_rigidbody.GetPos(), m_status.atk);
+
+	m_pScene->AddAttack(ans);
+}
 bool Player::GetAttackKind(std::string attackId)
 {
 	return m_attackData[attackId].isEnergy;
@@ -273,6 +315,18 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 
 		m_nowHp -= damage;
 	}
+}
+
+std::map<std::string, std::string> Player::GetSetSpecialAttackName()
+{
+	std::map<std::string, std::string> ans;
+
+	ans[Game::InputId::kA] = m_attackData[m_setSpecialAttack[Game::InputId::kA]].name;
+	ans[Game::InputId::kB] = m_attackData[m_setSpecialAttack[Game::InputId::kB]].name;
+	ans[Game::InputId::kX] = m_attackData[m_setSpecialAttack[Game::InputId::kX]].name;
+	ans[Game::InputId::kY] = m_attackData[m_setSpecialAttack[Game::InputId::kY]].name;
+
+	return ans;
 }
 
 MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)

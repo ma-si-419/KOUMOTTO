@@ -17,7 +17,7 @@ void DataManager::Init()
 void DataManager::LoadAttackFile()
 {
 	//UŒ‚‚Ìƒf[ƒ^“Ç‚Ýž‚Ý
-	m_LoadAttackData = m_pLoadCsv->LoadFile("data/attackData.csv");
+	m_LoadAttackData = m_pLoadCsv->LoadFile("data/_attackData.csv");
 
 	for (auto& item : m_LoadAttackData)
 	{

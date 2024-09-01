@@ -13,11 +13,16 @@ namespace
 {
 	//ゲームオーバー時の選択肢の数
 	constexpr int kGameOverItemNum = 1;
+	//バトル開始までの時間
+	constexpr int kStandByTime = 120;
 }
 
 SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
 	SceneBase(sceneManager, dataManager),
-	m_isGameOver(false)
+	m_isGameOver(false),
+	m_gameOverSelectItemNum(0),
+	m_isStartBattle(false),
+	m_standByTime(0)
 {
 	handle = MV1LoadModel("data/model/Dome.mv1");
 	//当たり判定管理クラスのポインタ
@@ -50,12 +55,15 @@ void SceneGame::Init()
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
 	//プレイヤーの初期化(当たり判定を登録する)
 	m_pPlayer->Init(m_pPhysics);
-	//
+	//エネミーにプレイヤーの座標を渡す
+	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 
 	//カメラにプレイヤーの座標を渡す
 	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
 	m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
+	//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
+	m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
 	//カメラの初期化
 	m_pGameCamera->Init();
 
@@ -71,114 +79,158 @@ void SceneGame::RetryInit()
 {
 	m_pPlayer->RetryInit();
 	m_pEnemy->RetryInit();
-	m_isGameOver = false;
-}
-
-void SceneGame::Update(MyEngine::Input input)
-{
-	//ゲームオーバー時の処理
-	if (m_isGameOver)
-	{
-		//上入力
-		if (input.IsTrigger(Game::InputId::kUp))
-		{
-			m_gameOverSelectItemNum--;
-			if (m_gameOverSelectItemNum < 0)
-			{
-				m_gameOverSelectItemNum = 0;
-			}
-		}
-		//下入力
-		if (input.IsTrigger(Game::InputId::kDown))
-		{
-			m_gameOverSelectItemNum++;
-			if (m_gameOverSelectItemNum > static_cast<int>(Ui::GameOverItem::kItemNum))
-			{
-				m_gameOverSelectItemNum = static_cast<int>(Ui::GameOverItem::kItemNum);
-			}
-		}
-		//決定入力
-		if (input.IsTrigger(Game::InputId::kOk))
-		{
-			if (m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kRetry))
-			{
-				RetryInit();
-			}
-			else if(m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kEnd))
-			{
-				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
-				return;
-			}
-		}
-	}
-	//ゲームオーバーしていないときの処理
-	else
-	{
-		//当たり判定の更新
-		m_pPhysics->Update();
-		//プレイヤーの更新
-		m_pPlayer->Update(shared_from_this(), input);
-		//エネミーの更新
-		m_pEnemy->Update(shared_from_this());
-	}
-	//プレイヤーにエネミーの座標を渡す
-	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
-	//エネミーにプレイヤーの座標を渡す
-	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 	//カメラにプレイヤーの座標を渡す
 	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
 	m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
 	//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
 	m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
-	//カメラの更新
-	m_pGameCamera->Update();
+	//カメラの初期化
+	m_pGameCamera->Init();
+	m_isGameOver = false;
+	m_isStartBattle = false;
+	m_standByTime = 0;
+}
 
-	for (auto& attack : m_pAttacks)
+void SceneGame::Update(MyEngine::Input input)
+{
+	//バトルが開始していないときの処理
+	if (!m_isStartBattle)
 	{
-		//攻撃の更新
-		attack->Update(m_pEnemy->GetPos());
-		//処理をしない攻撃だったら
-		if (!attack->GetIsExist())
+		m_standByTime++;
+		//一定時間待機したら
+		if (m_standByTime > kStandByTime)
 		{
-			//当たり判定を消す
-			attack->Final(m_pPhysics);
+			//バトルを開始する
+			m_isStartBattle = true;
 		}
-	}
 
-	for (int i = 0; i < m_pAttacks.size(); i++)
-	{
-		//攻撃が消えていたら
-		if (!m_pAttacks[i]->GetIsExist())
-		{
-			//配列から消す
-			m_pAttacks.erase(m_pAttacks.begin() + i);
-			i--;
-		}
 	}
+	//バトル開始後の処理
+	else
+	{
+
+		//ゲームオーバー時の処理
+		if (m_isGameOver)
+		{
+			//上入力
+			if (input.IsTrigger(Game::InputId::kUp))
+			{
+				m_gameOverSelectItemNum--;
+				if (m_gameOverSelectItemNum < 0)
+				{
+					m_gameOverSelectItemNum = 0;
+				}
+			}
+			//下入力
+			if (input.IsTrigger(Game::InputId::kDown))
+			{
+				m_gameOverSelectItemNum++;
+				if (m_gameOverSelectItemNum > static_cast<int>(Ui::GameOverItem::kItemNum))
+				{
+					m_gameOverSelectItemNum = static_cast<int>(Ui::GameOverItem::kItemNum);
+				}
+			}
+			//決定入力
+			if (input.IsTrigger(Game::InputId::kOk))
+			{
+				if (m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kRetry))
+				{
+					RetryInit();
+				}
+				else if (m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kEnd))
+				{
+					m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+					return;
+				}
+			}
+		}
+		//ゲームオーバーしていないときの処理
+		else
+		{
+			//当たり判定の更新
+			m_pPhysics->Update();
+			//プレイヤーの更新
+			m_pPlayer->Update(shared_from_this(), input);
+			//エネミーの更新
+			m_pEnemy->Update(shared_from_this());
+		}
+		//プレイヤーにエネミーの座標を渡す
+		m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
+		//エネミーにプレイヤーの座標を渡す
+		m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
+		//カメラにプレイヤーの座標を渡す
+		m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
+		//カメラにエネミーの座標を渡す
+		m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
+		//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
+		m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
+		//カメラの更新
+		m_pGameCamera->Update();
+
+		for (auto& attack : m_pAttacks)
+		{
+			//攻撃の更新
+			attack->Update(m_pEnemy->GetPos());
+			//処理をしない攻撃だったら
+			if (!attack->GetIsExist())
+			{
+				//当たり判定を消す
+				attack->Final(m_pPhysics);
+			}
+		}
+
+		for (int i = 0; i < m_pAttacks.size(); i++)
+		{
+			//攻撃が消えていたら
+			if (!m_pAttacks[i]->GetIsExist())
+			{
+				//配列から消す
+				m_pAttacks.erase(m_pAttacks.begin() + i);
+				i--;
+			}
+		}
 
 #ifdef _DEBUG
-	if (input.IsTrigger(Game::InputId::kPause))
-	{
-		m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
-		return;
-	}
+		if (input.IsTrigger(Game::InputId::kPause))
+		{
+			m_sceneManager.ChangeScene(std::make_shared<SceneGame>(m_sceneManager, m_dataManager));
+			return;
+		}
 #endif
+	}
 }
 
 void SceneGame::Draw()
 {
+
+	//スカイドームの描画(仮処理)
 	MV1DrawModel(handle);
 
+	//プレイヤーの描画
 	m_pPlayer->Draw();
+	//エネミーの描画
 	m_pEnemy->Draw();
+#ifdef _DEBUG
+	//当たり判定の描画
 	m_pPhysics->DebugDraw();
+#endif
+	//プレイヤーとエネミーの体力バーを表示する
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
+	//与えたダメージの表示
 	m_pUi->DrawDamage();
+	//コマンドの表示
+	m_pUi->DrawCommand(m_pPlayer->GetIsOpenSpecialPallet(),m_pPlayer->GetSetSpecialAttackName());
+	//コンボ数の表示
+	m_pUi->DrawComboCount();
+
+	//ゲームオーバー時のUIの表示
 	if (m_isGameOver)
 	{
 		m_pUi->DrawGameOver(m_gameOverSelectItemNum);
 	}
+	//ゲーム開始時のReadyやFightの表示
+	m_pUi->DrawStartSign(m_isStartBattle);
 	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 

@@ -13,12 +13,15 @@ namespace
 	constexpr float kMaxStanPoint = 500;
 	//スタンゲージが回復するまでの時間
 	constexpr int kHealStanPointTime = 200;
+	//コンボがつながらなくなるまでの時間
+	constexpr int kComboTime = 240;
 }
 Enemy::Enemy() :
 	CharacterBase("data/model/Enemy.mv1", ObjectTag::kEnemy),
 	debug(),
 	m_stanPoint(kMaxStanPoint),
-	m_lastHitDamageTime(0)
+	m_lastHitDamageTime(0),
+	m_comboCount(0)
 {
 }
 
@@ -46,8 +49,17 @@ void Enemy::RetryInit()
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
-	m_rigidbody.SetPos(kInitPos);
+	MyEngine::Vector3 pos = kInitPos;
+
+	m_rigidbody.SetPos(pos);
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
+	//当たり判定の縦幅
+	pos.y += kColScale;
+	//当たり判定の座標調整
+	colData->m_startPos = pos;
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+
 }
 
 void Enemy::Update(std::shared_ptr<SceneGame> scene)
@@ -66,6 +78,13 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 			m_stanPoint = kMaxStanPoint;
 		}
 	}
+	//ダメージを受けてから一定時間たったらコンボ数を減らす
+	if (m_lastHitDamageTime > kComboTime)
+	{
+		m_comboCount = 0;
+	}
+	//コンボ数をUIに渡し続ける
+	m_pUi->SetComboCount(m_comboCount);
 
 	debug.x += 0.01f;
 	//debug.y += 0.01f;
@@ -113,8 +132,15 @@ void Enemy::OnCollide(std::shared_ptr<Collidable> collider)
 		{
 			m_stanPoint = 0;
 		}
+		//コンボをカウントするタイミングだったら
+		if (m_pUi->GetIsCountCombo())
+		{
+			//コンボ数を増やす
+			m_comboCount++;
+		}
 		//ダメージを受けてからの時間を数える
 		m_lastHitDamageTime = 0;
+		//UIに受けたダメージを送る
 		m_pUi->AddShowDamage(m_rigidbody.GetPos(), damage);
 	}
 }

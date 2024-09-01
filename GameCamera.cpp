@@ -25,7 +25,43 @@ GameCamera::~GameCamera()
 
 void GameCamera::Init()
 {
-	m_cameraPos = MyEngine::Vector3(300, 500, -500);
+
+
+	//エネミーから見てプレイヤーの角度を参照し座標を決定する
+	//回転の中心とする座標
+	MyEngine::Vector3 rotationShaftPos = m_targetPos;
+	//回転の中心からプレイヤーに向かうベクトルを作成し
+	//プレイヤーの後ろにカメラを持ってくる
+	MyEngine::Vector3 centerToPlayer = (m_playerPos - rotationShaftPos);
+	//自分がどのくらい回転しているかの調整
+	float margin = kRotaMargin / centerToPlayer.Length();
+
+	if (m_rota > m_playerRota + margin)
+	{
+		m_rota -= m_rota - m_playerRota - margin;
+	}
+	else if (m_rota < m_playerRota - margin)
+	{
+		m_rota += m_playerRota - m_rota - margin;
+	}
+	rotationShaftPos.y = m_playerPos.y + kCameraHeight;
+	//次に向かう座標
+	MyEngine::Vector3 pos;
+	//回転の中心から今の座標を計算する
+	pos.x = rotationShaftPos.x + cosf(m_rota) * centerToPlayer.Length();
+	pos.y = rotationShaftPos.y;
+	pos.z = rotationShaftPos.z + sinf(m_rota) * centerToPlayer.Length();
+
+
+	//中心からプレイヤーの距離によってカメラの距離を変える
+	pos += centerToPlayer.Normalize() * kPlayerDistance;
+	//カメラ座標を設定
+	m_cameraPos = pos;
+	//カメラのターゲット座標を作成
+	MyEngine::Vector3 cameraTarget = m_playerPos - (m_playerPos - m_targetPos) / 2;
+
+	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(), cameraTarget.CastVECTOR());
+
 }
 
 void GameCamera::Update()

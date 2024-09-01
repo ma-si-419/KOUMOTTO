@@ -29,6 +29,8 @@ private:
 	float m_stanPoint;
 	//最後に攻撃を受けてから立った時間
 	int m_lastHitDamageTime;
+	//間隔を開けずに攻撃を受けた数
+	int m_comboCount;
 	//受けたダメージを表示するためにUi管理クラスの参照を持つ
 	std::shared_ptr<Ui> m_pUi;
 };
