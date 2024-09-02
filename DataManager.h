@@ -42,18 +42,21 @@ public:
 
 	void LoadAttackFile();
 	void LoadUiFile();
+	void LoadAiFile();
 
 	//攻撃のデータを取得
 	std::map<std::string, AttackInfo> GetAttackData() { return m_attackData; };
 	//ゲームシーンのUIのパス取得
 	std::vector<UiInfo> GetUiData(Game::SceneNum sceneNum);
+	//エネミーのAI取得
+	std::map<std::string, std::map<Game::AiInfoSort, int>> GetAiData() { return m_aiData; };
 
 private:
-
 
 	//ファイルから読み込んだデータ保存先
 	std::vector<std::vector<std::string>> m_LoadAttackData;
 	std::vector<std::vector<std::string>> m_LoadUiData;
+	std::vector<std::vector<std::string>> m_LoadAiData;
 
 	//攻撃のデータ
 	std::map<std::string, AttackInfo> m_attackData;
@@ -62,6 +65,9 @@ private:
 	std::vector<UiInfo> m_sceneGameUiData;
 	std::vector<UiInfo> m_sceneTitleUiData;
 	std::vector<UiInfo> m_sceneSelectUiData;
+
+	//Aiのデータ
+	std::map<std::string, std::map<Game::AiInfoSort, int>> m_aiData;
 
 	//ファイルロードできるクラス
 	std::shared_ptr<LoadCsv> m_pLoadCsv;

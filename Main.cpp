@@ -44,6 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DataManager data;
 	data.LoadAttackFile();
 	data.LoadUiFile();
+	data.LoadAiFile();
 	MyEngine::Input input;
 	scene.ChangeScene(std::make_shared<SceneTitle>(scene, data));
 

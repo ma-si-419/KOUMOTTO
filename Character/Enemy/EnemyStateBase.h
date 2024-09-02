@@ -31,5 +31,7 @@ public:
 	std::shared_ptr<Enemy> m_pEnemy;
 	//ゲームシーンのポインターを持っておく
 	std::shared_ptr<SceneGame> m_pScene;
+	//次どのStateに行くかの確率のデータ
+	std::map<std::string, std::map<Game::AiInfoSort, int>> m_aiData;
 };
 

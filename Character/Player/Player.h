@@ -28,6 +28,8 @@ public:
 	
 	bool GetIsOpenSpecialPallet() { return m_isOpenSpecialPallet; }
 
+	PlayerStateBase::PlayerStateKind GetStateKind() { return m_pState->GetKind(); }
+
 	void Attack(std::string id);
 
 	/// <summary>

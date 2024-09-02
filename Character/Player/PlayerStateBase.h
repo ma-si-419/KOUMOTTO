@@ -14,15 +14,14 @@ public:
 		kMove,
 		kDash,
 		kDodge,
+		kAttack,
+		kGuard,
 		kCharge,
-		kBoostAttack,
+		kHitAttack,
 		kSpecialEnergyAttack,
 		kNormalEnergyAttack,
 		kSpecialPhysicalAttack,
-		kNormalPhysicalAttack,
-		kGuard,
-		kDown,
-		kHitAttack
+		kNormalPhysicalAttack
 	};
 	PlayerStateBase(std::shared_ptr<Player> player) { m_pPlayer = player; };
 

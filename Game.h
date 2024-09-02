@@ -46,6 +46,18 @@ namespace Game
 		kPosY,
 		kScene
 	};
+	enum class AiInfoSort
+	{
+		kPlayerState,
+		kIdle,
+		kMove,
+		kDash,
+		kDodge,
+		kAttack,
+		kGuard,
+		kCharge
+	};
+
 	enum class SceneNum
 	{
 		kTitle,

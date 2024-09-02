@@ -3,6 +3,7 @@
 #include "AttackBase.h"
 #include "CapsuleColliderData.h"
 #include "Ui.h"
+#include "EnemyStateIdle.h"
 namespace
 {
 	//当たり判定の大きさ
@@ -31,6 +32,7 @@ Enemy::~Enemy()
 
 void Enemy::Init(std::shared_ptr<Physics> physics)
 {
+
 	MV1SetScale(m_modelHandle, VGet(300, 300, 300));
 	Collidable::Init(physics);
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
@@ -64,6 +66,8 @@ void Enemy::RetryInit()
 
 void Enemy::Update(std::shared_ptr<SceneGame> scene)
 {
+	//StateにAiの情報をわたす
+	m_pState->m_aiData = m_aiStateData;
 
 	//ダメージを受けてからの時間をカウントする
 	m_lastHitDamageTime++;
@@ -90,8 +94,10 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	//debug.y += 0.01f;
 	MyEngine::Vector3 pos(sinf(debug.x) * 3000, sinf(debug.y) * 3000, 1000.0f);
 
+
 	m_rigidbody.SetPos(pos);
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	//当たり判定の縦幅
 	pos.y += kColScale;
@@ -150,7 +156,17 @@ void Enemy::SetUi(std::shared_ptr<Ui> pUi)
 	m_pUi = pUi;
 }
 
+void Enemy::InitAiState(std::shared_ptr<SceneGame> scene)
+{
+	m_pState = std::make_shared<EnemyStateIdle>(std::dynamic_pointer_cast<Enemy>(shared_from_this()), scene);
+}
+
 float Enemy::GetStanPointRate()
 {
 	return m_stanPoint / kMaxStanPoint;
+}
+
+void Enemy::StateUpdate(PlayerStateBase::PlayerStateKind playerState)
+{
+	m_pState->CheckSituation(playerState);
 }

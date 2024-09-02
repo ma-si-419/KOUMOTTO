@@ -49,6 +49,8 @@ void SceneGame::Init()
 
 	//エネミーの初期化(当たり判定を登録する)
 	m_pEnemy->Init(m_pPhysics);
+	//エネミーのStateパターンの初期化
+	m_pEnemy->InitAiState(shared_from_this());
 	m_pEnemy->SetUi(m_pUi);
 
 	//エネミーの座標をプレイヤーに渡す
@@ -71,6 +73,9 @@ void SceneGame::Init()
 	m_pPlayer->SetAttackData(m_dataManager.GetAttackData());
 	//エネミーに必殺技のデータを入れる
 	m_pEnemy->SetAttackData(m_dataManager.GetAttackData());
+	//エネミーにAIのデータを入れる
+	m_pEnemy->SetAiData(m_dataManager.GetAiData());
+
 	//UIに画像のデータを入れる
 	m_pUi->LoadUiHandle(m_dataManager.GetUiData(Game::SceneNum::kGame));
 }
@@ -154,6 +159,7 @@ void SceneGame::Update(MyEngine::Input input)
 			m_pPlayer->Update(shared_from_this(), input);
 			//エネミーの更新
 			m_pEnemy->Update(shared_from_this());
+			m_pEnemy->StateUpdate(m_pPlayer->GetStateKind());
 		}
 		//プレイヤーにエネミーの座標を渡す
 		m_pPlayer->SetTargetPos(m_pEnemy->GetPos());

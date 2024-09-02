@@ -80,6 +80,28 @@ void DataManager::LoadUiFile()
 	}
 }
 
+void DataManager::LoadAiFile()
+{
+	m_LoadAiData = m_pLoadCsv->LoadFile("data/enemyAiData.csv");
+	//ì¸ÇÍÇÈÉfÅ[É^
+	std::map<std::string, std::map<Game::AiInfoSort, int>> pushData;
+	for (auto& item : m_LoadAiData)
+	{
+		std::map<Game::AiInfoSort, int> inputData;
+
+		inputData[Game::AiInfoSort::kIdle] = stoi(item[static_cast<int>(Game::AiInfoSort::kIdle)]);
+		inputData[Game::AiInfoSort::kMove] = stoi(item[static_cast<int>(Game::AiInfoSort::kMove)]);
+		inputData[Game::AiInfoSort::kDash] = stoi(item[static_cast<int>(Game::AiInfoSort::kDash)]);
+		inputData[Game::AiInfoSort::kDodge] = stoi(item[static_cast<int>(Game::AiInfoSort::kDodge)]);
+		inputData[Game::AiInfoSort::kAttack] = stoi(item[static_cast<int>(Game::AiInfoSort::kAttack)]);
+		inputData[Game::AiInfoSort::kGuard] = stoi(item[static_cast<int>(Game::AiInfoSort::kGuard)]);
+		inputData[Game::AiInfoSort::kCharge] = stoi(item[static_cast<int>(Game::AiInfoSort::kCharge)]);
+
+		pushData[item[static_cast<int>(Game::AiInfoSort::kPlayerState)]] = inputData;
+	}
+	m_aiData = pushData;
+}
+
 std::vector<DataManager::UiInfo> DataManager::GetUiData(Game::SceneNum sceneNum)
 {
 	if (sceneNum == Game::SceneNum::kTitle)
