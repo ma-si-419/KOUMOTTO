@@ -12,17 +12,17 @@ namespace
 	constexpr int kGoEnemyTime = 60;
 }
 
-void PlayerStateSpecialPhysicalAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateSpecialPhysicalAttack::Update(MyEngine::Input input)
 {
 	//経過時間を計測する
 	m_time++;
 
 	//移動ベクトルの生成
-	MyEngine::Vector3 moveVec = player->GetTargetPos() - player->GetPos();
+	MyEngine::Vector3 moveVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 	MyEngine::Vector3 velo = moveVec.Normalize() * kMoveSpeed;
 
 	//敵が近くにいるかどうかを調べる
-	float length = (player->GetTargetPos() - player->GetPos()).Length();
+	float length = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Length();
 	//敵が近くにいるか、経過時間が一定時間を超えたら
 	if (length < kNearEnemyLength || m_time > kGoEnemyTime)
 	{
@@ -40,13 +40,13 @@ void PlayerStateSpecialPhysicalAttack::Update(std::shared_ptr<Player> player, My
 		if (m_actionTime < 0)
 		{
 			//攻撃の処理をする時間が終わったら
-			m_nextState = std::make_shared<PlayerStateIdle>();
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 		}
 		
 	}
 
 	//移動ベクトルを入れる
-	player->SetVelo(velo);
+	m_pPlayer->SetVelo(velo);
 	m_nextState = shared_from_this();
 }
 

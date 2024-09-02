@@ -18,9 +18,9 @@ namespace
 	constexpr int kPhysicalComboMax = 2;
 }
 
-void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateAttack::Update(MyEngine::Input input)
 {
-    DataManager::AttackInfo attackData = player->GetAttackData(m_attackId);
+    DataManager::AttackInfo attackData = m_pPlayer->GetAttackData(m_attackId);
 	//経過時間を計測する
 	m_time++;
 	//移動ベクトル
@@ -39,11 +39,11 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 			dir = dir.Normalize();
 
 			//Y軸を中心とした回転をするので
-			MyEngine::Vector3 rotationShaftPos = player->GetTargetPos();
+			MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
 			//Y座標が関係しないようにプレイヤーと同じ座標にする
-			rotationShaftPos.y = player->GetPos().y;
+			rotationShaftPos.y = m_pPlayer->GetPos().y;
 
-			MyEngine::Vector3 toShaftPosVec = rotationShaftPos - player->GetPos();
+			MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
 			//回転速度(横移動の速さ)
 			float hMoveSpeed = 0;
@@ -53,14 +53,14 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 				hMoveSpeed = (dir.x * kEnergyAttackMoveSpeed) / toShaftPosVec.Length();
 			}
 
-			player->SetRota(player->GetRota() + hMoveSpeed);
+			m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
 
 			//左右移動は敵の周囲を回る
 
 			//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
 			//現在の座標からその座標に向かうベクトルを作成する
-			velo.x = (rotationShaftPos.x + cosf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().x;
-			velo.z = (rotationShaftPos.z + sinf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().z;
+			velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
+			velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 
 			//上下移動入力されていたら
 			if (input.IsPress(Game::InputId::kLb))
@@ -72,7 +72,7 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 			else
 			{
 				//前後入力を回転の中心に向かうベクトルに変換
-				MyEngine::Vector3 toCenterVec = player->GetTargetPos() - player->GetPos();
+				MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 				toCenterVec.y = 0;
 				velo += toCenterVec.Normalize() * (dir.z * kEnergyAttackMoveSpeed);
 			}
@@ -82,11 +82,11 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 	if (!attackData.isEnergy)
 	{
 		//移動ベクトルの生成
-		MyEngine::Vector3 moveVec = player->GetTargetPos() - player->GetPos();
+		MyEngine::Vector3 moveVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 		velo = moveVec.Normalize() * kPhysicalAttackMoveSpeed;
 
 		//敵が近くにいるかどうかを調べる
-		float length = (player->GetTargetPos() - player->GetPos()).Length();
+		float length = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Length();
 		//敵が近くにいるか、経過時間が一定時間を超えたら
 		if (length < kNearEnemyLength || m_time > kGoEnemyTime)
 		{
@@ -104,7 +104,7 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 			if (m_actionTime < 0)
 			{
 				//攻撃の処理をする時間が終わったら
-				m_nextState = std::make_shared<PlayerStateIdle>();
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 				return;
 			}
 
@@ -131,7 +131,7 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 	if (m_time > kComboTime)
 	{
 		//通常攻撃を出す
-		player->Attack(attackData.name);
+		m_pPlayer->Attack(attackData.name);
 
 		//攻撃の入力がされていたら
 		if (m_isAttackInput)
@@ -142,14 +142,14 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 			if (attackData.isEnergy && m_normalAttackNum > kEnergyComboMax)
 			{
 				//アイドル状態に戻る
-				m_nextState = std::make_shared<PlayerStateIdle>();
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 				return;
 			}
 			//いまだした格闘攻撃が最終段だったら
 			else if (!attackData.isEnergy && m_normalAttackNum > kPhysicalComboMax)
 			{
 				//アイドル状態に戻る
-				m_nextState = std::make_shared<PlayerStateIdle>();
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 				return;
 			}
 			//攻撃の入力をリセットする
@@ -159,12 +159,12 @@ void PlayerStateAttack::Update(std::shared_ptr<Player> player, MyEngine::Input i
 		else
 		{
 			//アイドル状態に戻る
-			m_nextState = std::make_shared<PlayerStateIdle>();
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 			return;
 		}
 	}
 	//移動ベクトルを入れる
-	player->SetVelo(velo);
+	m_pPlayer->SetVelo(velo);
 
 	m_nextState = shared_from_this();
 }

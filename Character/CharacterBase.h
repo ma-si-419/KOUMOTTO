@@ -58,10 +58,12 @@ public:
 	void LoadAnimationData(bool isPlayer);
 	//必殺技を出している状態に変化させる
 	void PlaySpecialAttack(std::string id);
-	//アニメーションを増やす
+	//向く方向を設定する
+	void SetModelFront(MyEngine::Vector3 pos);
+	//アニメーションを変更する
 	void ChangeAnim(std::string animName);
-	//アニメーションブレンド
-	void MoveAnim(MyEngine::Vector3 moveDir);
+	//アニメーションを再生する
+	void PlayAnim();
 protected:
 	enum class AnimationInfoSort
 	{
@@ -104,7 +106,7 @@ protected:
 	//ターゲットが近くにいるかどうか
 	bool m_isNearTarget;
 	//今再生しているアニメーション
-	std::vector<std::pair<int, int>> m_playAnims;
+	int m_playAnim;
 	//アニメーションの再生速度
 	float m_animPlaySpeed;
 	//アニメーションの総再生時間
@@ -127,7 +129,7 @@ protected:
 	/// <returns>攻撃のポインタ</returns>
 	std::shared_ptr<AttackBase> CreateAttack(std::shared_ptr<Physics> physics, std::string id, bool isPlayer);
 
-	
+
 
 
 	//通常攻撃を出してる状態に変化させる

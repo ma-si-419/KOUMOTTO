@@ -14,7 +14,7 @@ namespace
 	//スタン攻撃を受けた時の動けない時間
 	constexpr int kStunHitStunTime = 40;
 }
-void PlayerStateHitAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateHitAttack::Update(MyEngine::Input input)
 {
 	//経過時間を計測する
 	m_time++;
@@ -29,7 +29,7 @@ void PlayerStateHitAttack::Update(std::shared_ptr<Player> player, MyEngine::Inpu
 		if (m_time > kLightHitStunTime)
 		{
 			//アイドル状態に戻す
-			m_nextState = std::make_shared<PlayerStateIdle>();
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 			return;
 		}
 	}
@@ -41,7 +41,7 @@ void PlayerStateHitAttack::Update(std::shared_ptr<Player> player, MyEngine::Inpu
 		if (m_time > kBurstHitStunTime)
 		{
 			//アイドル状態に戻す
-			m_nextState = std::make_shared<PlayerStateIdle>();
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 			return;
 		}
 	}
@@ -53,11 +53,11 @@ void PlayerStateHitAttack::Update(std::shared_ptr<Player> player, MyEngine::Inpu
 		if (m_time > kStunHitStunTime)
 		{
 			//アイドル状態に戻す
-			m_nextState = std::make_shared<PlayerStateIdle>();
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 			return;
 		}
 	}
-	player->SetVelo(velo);
+	m_pPlayer->SetVelo(velo);
 	//現在の状態を返す
 	m_nextState = shared_from_this();
 }
@@ -71,10 +71,33 @@ int PlayerStateHitAttack::OnDamage(std::shared_ptr<Collidable> collider)
 	//ダメージをそのまま渡す
 	damage = attack->GetDamage();
 	//状態を変化させる
-	m_nextState = std::make_shared<PlayerStateHitAttack>();
+	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer);
 	//受けた攻撃の種類を設定する
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->SetEffect(attack->GetHitEffect());
 
 	return damage;
+}
+
+void PlayerStateHitAttack::SetEffect(int effect)
+{
+	//エフェクトを保存する
+	m_hitEffect = static_cast<HitEffect>(effect);
+	//受けた攻撃によってアニメーションを変化させる
+	if (m_hitEffect == HitEffect::kLightHit)
+	{
+		m_pPlayer->ChangeAnim("LightHit");
+	}
+	else if (m_hitEffect == HitEffect::kStun)
+	{
+		m_pPlayer->ChangeAnim("Stun");
+	}
+	else if (m_hitEffect == HitEffect::kBurst)
+	{
+		m_pPlayer->ChangeAnim("Burst");
+	}
+	else
+	{
+		m_pPlayer->ChangeAnim("Guard");
+	}
 }

@@ -13,7 +13,7 @@ namespace
 	constexpr int kComboMax = 3;
 }
 
-void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateNormalEnergyAttack::Update(MyEngine::Input input)
 {
 	//移動ベクトル
 	MyEngine::Vector3 velo;
@@ -26,7 +26,8 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 	if (input.IsPress(Game::InputId::kRb))
 	{
 		//StateをGuardに変更する
-		m_nextState = std::make_shared<PlayerStateGuard>();
+		m_nextState = std::make_shared<PlayerStateGuard>(m_pPlayer);
+		m_pPlayer->ChangeAnim("Guard");
 		return;
 	}
 
@@ -36,11 +37,11 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 		dir = dir.Normalize();
 
 		//Y軸を中心とした回転をするので
-		MyEngine::Vector3 rotationShaftPos = player->GetTargetPos();
+		MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
 		//Y座標が関係しないようにプレイヤーと同じ座標にする
-		rotationShaftPos.y = player->GetPos().y;
+		rotationShaftPos.y = m_pPlayer->GetPos().y;
 
-		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - player->GetPos();
+		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
 		//回転速度(横移動の速さ)
 		float hMoveSpeed = 0;
@@ -50,14 +51,14 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 			hMoveSpeed = (dir.x * kMoveSpeed) / toShaftPosVec.Length();
 		}
 
-		player->SetRota(player->GetRota() + hMoveSpeed);
+		m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
 
 		//左右移動は敵の周囲を回る
 
 		//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
 		//現在の座標からその座標に向かうベクトルを作成する
-		velo.x = (rotationShaftPos.x + cosf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().x;
-		velo.z = (rotationShaftPos.z + sinf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().z;
+		velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
+		velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 
 		//上下移動入力されていたら
 		if (input.IsPress(Game::InputId::kLb))
@@ -69,7 +70,7 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 		else
 		{
 			//前後入力を回転の中心に向かうベクトルに変換
-			MyEngine::Vector3 toCenterVec = player->GetTargetPos() - player->GetPos();
+			MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 			toCenterVec.y = 0;
 			velo += toCenterVec.Normalize() * (dir.z * kMoveSpeed);
 		}
@@ -106,7 +107,7 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 			if (m_attackNum > kComboMax)
 			{
 				//アイドル状態に戻る
-				m_nextState = std::make_shared<PlayerStateIdle>();
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 				return;
 			}
 			//攻撃の入力をリセットする
@@ -116,11 +117,11 @@ void PlayerStateNormalEnergyAttack::Update(std::shared_ptr<Player> player, MyEng
 		else
 		{
 			//アイドル状態に戻る
-			m_nextState = std::make_shared<PlayerStateIdle>();
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 			return;
 		}
 	}
-	player->SetVelo(velo);
+	m_pPlayer->SetVelo(velo);
 	//上で状態に変化がなければ今の状態を返す
 	m_nextState = shared_from_this();
 }
@@ -134,7 +135,7 @@ int PlayerStateNormalEnergyAttack::OnDamage(std::shared_ptr<Collidable> collider
 	//ダメージをそのまま渡す
 	damage = attack->GetDamage();
 	//状態を変化させる
-	m_nextState = std::make_shared<PlayerStateHitAttack>();
+	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer);
 	//受けた攻撃の種類を設定する
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->SetEffect(attack->GetHitEffect());

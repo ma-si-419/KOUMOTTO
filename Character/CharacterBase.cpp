@@ -35,7 +35,6 @@ CharacterBase::~CharacterBase()
 void CharacterBase::SetTargetPos(MyEngine::Vector3 pos)
 {
 	m_targetPos = pos;
-	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 }
 
 void CharacterBase::LoadAnimationData(bool isPlayer)
@@ -95,122 +94,31 @@ void CharacterBase::ChangeAnim(std::string animName)
 {
 
 	//前のアニメーションをデタッチする
-	for (auto item : m_playAnims)
-	{
-		MV1DetachAnim(m_modelHandle, item.first);
-	}
-	//再生していたアニメーションの配列を削除する
-	m_playAnims.clear();
+	MV1DetachAnim(m_modelHandle, m_playAnim);
 	//アニメの再生速度を設定
 	m_animPlaySpeed = m_animData[animName].playSpeed;
 	//アニメの再生時間をリセット
 	m_animTime = 0;
+	//アニメーションのループするフレームを設定
+	m_animLoopTime = m_animData[animName].loopFrame;
 	//新しいアニメーションをアタッチする
-	std::pair<int, int> pushData;
-	pushData.first = MV1AttachAnim(m_modelHandle, m_animData[animName].number);
-	pushData.second = m_animData[animName].number;
-	m_playAnims.push_back(pushData);
+	m_playAnim = MV1AttachAnim(m_modelHandle, m_animData[animName].number);
 	//アニメーションの総再生時間を設定する
 	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData[animName].endFrame);
 }
 
-void CharacterBase::MoveAnim(MyEngine::Vector3 moveDir)
+void CharacterBase::PlayAnim()
 {
-	std::vector<std::pair<int, int>> playAnims;
-
-	//スティックの傾きに併せてアニメーションを追加する
-	if (moveDir.x > 0.0f)
+	//アニメーションの再生フレームを進める
+	m_animTime += m_animPlaySpeed;
+	//アニメーションの総再生フレームを超えたら
+	if (m_animTime > m_totalAnimTime)
 	{
-		std::pair<int, int> pushData;
-		pushData.first = m_playAnims.size();
-		pushData.second = m_animData["MoveRight"].number;
-		playAnims.push_back(pushData);
-		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
+		//ループするフレームに戻す
+		m_animTime = m_animLoopTime;
 	}
-	else if (moveDir.x < 0.0f)
-	{
-		std::pair<int, int> pushData;
-		pushData.first = m_playAnims.size();
-		pushData.second = m_animData["MoveLeft"].number;
-		playAnims.push_back(pushData);
-		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
-	}
-	if (moveDir.z > 0.0f)
-	{
-		std::pair<int, int> pushData;
-		pushData.first = m_playAnims.size();
-		pushData.second = m_animData["MoveFront"].number;
-		playAnims.push_back(pushData);
-		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
-	}
-	else if (moveDir.z < 0.0f)
-	{
-		std::pair<int, int> pushData;
-		pushData.first = m_playAnims.size();
-		pushData.second = m_animData["MoveBack"].number;
-		playAnims.push_back(pushData);
-		//MV1SetAttachAnimBlendRate(m_modelHandle, pushData.first, moveDir.x);
-	}
-	if (moveDir.sqLength() == 0)
-	{
-		std::pair<int, int> pushData;
-		pushData.first = m_playAnims.size();
-		pushData.second = m_animData["Idle"].number;
-		playAnims.push_back(pushData);
-	}
-	//デタッチするかどうか判定
-	for (auto item : m_playAnims)
-	{
-		bool detachFlag = true;
-		for (auto item2 : playAnims)
-		{
-			//同じものが存在したらデタッチしない
-			if (item.second == item2.second)
-			{
-				detachFlag = false;
-			}
-		}
-		if (detachFlag)
-		{
-			MV1DetachAnim(m_modelHandle, item.first);
-		}
-	}
-
-	//アタッチするかどうか判定
-	for (auto item : playAnims)
-	{
-		bool attachFlag = true;
-		for (auto item2 : m_playAnims)
-		{
-			//同じものが存在したらアタッチしない
-			if (item.second == item2.second)
-			{
-				attachFlag = false;
-			}
-		}
-		if (attachFlag)
-		{
-			MV1AttachAnim(m_modelHandle, item.second);
-		}
-	}
-
-	m_playAnims = playAnims;
-
-	//アニメーションが複数個あったら
-	if (m_playAnims.size() > 1)
-	{
-		MV1SetAttachAnimBlendRate(m_modelHandle, 0, moveDir.x);
-		MV1SetAttachAnimBlendRate(m_modelHandle, 1, moveDir.z);
-	}
-
-
-	//アニメーションの終了フレームを取得する
-	m_totalAnimTime = m_animData["MoveFront"].endFrame;
-	//アニメーションを繰り返すフレームを取得する
-	m_animLoopTime = m_animData["MoveFront"].loopFrame;
-	//移動の再生速度はすべて同じなのでとりあえずMoveFrontから持ってくる
-	m_animPlaySpeed = m_animData["MoveFront"].playSpeed;
-
+	//再生フレームを反映させる
+	MV1SetAttachAnimTime(m_modelHandle,m_playAnim,m_animTime);
 }
 
 
@@ -228,6 +136,11 @@ void CharacterBase::PlaySpecialAttack(std::string id)
 	m_attackId = id;
 	//敵が近くにいるかどうかをfalseにする
 	m_isNearTarget = false;
+}
+
+void CharacterBase::SetModelFront(MyEngine::Vector3 pos)
+{
+	MV1SetRotationZYAxis(m_modelHandle,(m_rigidbody.GetPos() - pos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 }
 
 void CharacterBase::SetNormalAttack(bool isPhysical, int time)

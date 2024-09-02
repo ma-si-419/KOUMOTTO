@@ -7,16 +7,16 @@ namespace
 	//回避の時間
 	constexpr int kDodgeTime = 10;
 }
-void PlayerStateDodge::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateDodge::Update(MyEngine::Input input)
 {
 
 	MyEngine::Vector3 dir = m_moveDir.Normalize();
 
 	//移動と同じ処理
-	MyEngine::Vector3 rotationShaftPos = player->GetTargetPos();
-	rotationShaftPos.y = player->GetPos().y;
+	MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
+	rotationShaftPos.y = m_pPlayer->GetPos().y;
 
-	MyEngine::Vector3 toShaftPosVec = rotationShaftPos - player->GetPos();
+	MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
 	//回転速度(横移動の速さ)
 	float hMoveSpeed = 0;
@@ -26,22 +26,22 @@ void PlayerStateDodge::Update(std::shared_ptr<Player> player, MyEngine::Input in
 		hMoveSpeed = (dir.x * kDodgeScale) / toShaftPosVec.Length();
 	}
 
-	MyEngine::Vector3 a = rotationShaftPos - player->GetPos();
+	MyEngine::Vector3 a = rotationShaftPos - m_pPlayer->GetPos();
 
 	//m_rota = atan2f(a.z,a.x);
 
-	player->SetRota(player->GetRota() + hMoveSpeed);
+	m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
 
 	MyEngine::Vector3 velo(0, 0, 0);
 
-	velo.x = (rotationShaftPos.x + cosf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().x;
-	velo.z = (rotationShaftPos.z + sinf(player->GetRota()) * toShaftPosVec.Length()) - player->GetPos().z;
+	velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
+	velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 
-	MyEngine::Vector3 toCenterVec = player->GetTargetPos() - player->GetPos();
+	MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 	toCenterVec.y = 0;
 	velo += toCenterVec.Normalize() * (dir.z * kDodgeScale);
 
-	player->SetVelo(velo);
+	m_pPlayer->SetVelo(velo);
 
 	m_time++;
 
@@ -55,7 +55,7 @@ void PlayerStateDodge::Update(std::shared_ptr<Player> player, MyEngine::Input in
 	else
 	{
 		//アイドル状態に戻る
-		m_nextState = std::make_shared<PlayerStateIdle>();
+		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 	}
 	return;
 

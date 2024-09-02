@@ -3,7 +3,9 @@
 class PlayerStateNormalPhysicalAttack : public PlayerStateBase
 {
 public:
-	virtual void Update(std::shared_ptr<Player> player, MyEngine::Input input) override;
+	PlayerStateNormalPhysicalAttack(std::shared_ptr<Player> player) : PlayerStateBase(player) {}
+
+	virtual void Update(MyEngine::Input input) override;
 
 	virtual PlayerStateKind GetKind()override { return PlayerStateKind::kNormalPhysicalAttack; }
 

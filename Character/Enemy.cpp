@@ -14,7 +14,7 @@ namespace
 	//スタンゲージが回復するまでの時間
 	constexpr int kHealStanPointTime = 200;
 	//コンボがつながらなくなるまでの時間
-	constexpr int kComboTime = 240;
+	constexpr int kComboTime = 180;
 }
 Enemy::Enemy() :
 	CharacterBase("data/model/Enemy.mv1", ObjectTag::kEnemy),

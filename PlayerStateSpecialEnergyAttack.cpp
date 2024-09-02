@@ -1,7 +1,7 @@
 #include "PlayerStateSpecialEnergyAttack.h"
 #include "PlayerStateIdle.h"
 
-void PlayerStateSpecialEnergyAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateSpecialEnergyAttack::Update(MyEngine::Input input)
 {
 	//TODO : 攻撃を出す処理を作成する
 
@@ -11,11 +11,11 @@ void PlayerStateSpecialEnergyAttack::Update(std::shared_ptr<Player> player, MyEn
 	if (m_actionTime < 0)
 	{
 		//状態を元に戻す
-		m_nextState = std::make_shared<PlayerStateIdle>();
+		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 		return;
 	}
 	//移動しない
-	player->SetVelo(MyEngine::Vector3(0,0,0));
+	m_pPlayer->SetVelo(MyEngine::Vector3(0,0,0));
 
 	//上で状態が変化しなかったら自身のポインタを返す
 	m_nextState = shared_from_this();

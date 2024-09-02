@@ -14,10 +14,10 @@ namespace
 	constexpr int kMaxCombo = 2;
 }
 
-void PlayerStateNormalPhysicalAttack::Update(std::shared_ptr<Player> player, MyEngine::Input input)
+void PlayerStateNormalPhysicalAttack::Update(MyEngine::Input input)
 {
 	//移動ベクトルの生成
-	MyEngine::Vector3 moveVec = player->GetTargetPos() - player->GetPos();
+	MyEngine::Vector3 moveVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 	MyEngine::Vector3 velo = moveVec.Normalize() * kMoveSpeed;
 
 	//必殺技パレットを開いていないとき
@@ -31,7 +31,7 @@ void PlayerStateNormalPhysicalAttack::Update(std::shared_ptr<Player> player, MyE
 	}
 
 	//敵が近くにいるかどうかを調べる
-	float length = (player->GetTargetPos() - player->GetPos()).Length();
+	float length = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Length();
 	if (length < kNearEnemyLength)
 	{
 		m_isNearEnemy = true;
@@ -61,7 +61,7 @@ void PlayerStateNormalPhysicalAttack::Update(std::shared_ptr<Player> player, MyE
 			if (m_attackNum > kMaxCombo)
 			{
 				//アイドル状態に戻す
-				m_nextState = std::make_shared<PlayerStateIdle>();
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 				return;
 			}
 			//敵が近くにいるフラグをfalseにする
@@ -71,13 +71,13 @@ void PlayerStateNormalPhysicalAttack::Update(std::shared_ptr<Player> player, MyE
 		else
 		{
 			//アイドル状態に戻す
-			m_nextState = std::make_shared<PlayerStateIdle>();
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
 			return;
 		}
 	}
 
 	//移動ベクトルを入れる
-	player->SetVelo(velo);
+	m_pPlayer->SetVelo(velo);
 	//上で状態の変化がなかったら今の状態を返す
 	m_nextState = shared_from_this();
 }
@@ -91,7 +91,7 @@ int PlayerStateNormalPhysicalAttack::OnDamage(std::shared_ptr<Collidable> collid
 	//ダメージをそのまま渡す
 	damage = attack->GetDamage();
 	//状態を変化させる
-	m_nextState = std::make_shared<PlayerStateHitAttack>();
+	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer);
 	//受けた攻撃の種類を設定する
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->SetEffect(attack->GetHitEffect());

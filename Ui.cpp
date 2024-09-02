@@ -689,8 +689,6 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 
 	//必殺技コマンドの表示
 
-
-
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_specialCommandAlpha);
 	//フレームを表示する
 	DrawGraph(m_specialCommandPosX, kCommandPosY[static_cast<int>(CommandSort::kSpecialA)],

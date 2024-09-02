@@ -25,9 +25,8 @@ Player::Player() :
 {
 	LoadAnimationData(true);
 
-	m_pState = std::make_shared<PlayerStateIdle>();
+	m_pState = std::make_shared<PlayerStateIdle>(std::static_pointer_cast<Player>(shared_from_this()));
 	m_pState->m_nextState = m_pState;
-	//ChangeAnim("Idle");
 }
 
 Player::~Player()
@@ -62,6 +61,10 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 	m_rigidbody.SetPos(pos);
 
+	//アニメーション
+	ChangeAnim("Idle");
+
+	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	colData->m_radius = kColScale;
 	//当たり判定の縦幅
@@ -71,9 +74,6 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	colData->m_startPos = colPos;
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
-	//エネミーのほうを向くようにする
-	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
-
 }
 
 void Player::RetryInit()
@@ -98,6 +98,10 @@ void Player::RetryInit()
 	pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
 
 
+	//アニメーションの初期化
+	ChangeAnim("Idle");
+
+	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 
 	//当たり判定の縦幅
@@ -136,13 +140,10 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		//攻撃処理
 		Attack(input);
 
+		//最後に攻撃した時間を計測する
 		m_lastAttackTime++;
 
-		//スタンしていない時は常に敵の方向を向き続ける
-		//プレイヤーを常にエネミーの方向に向ける
-		//TODO：ターゲットがずれた時に一瞬で向くようになってるからそれを
-		//一瞬ではなく向いている感じを出す
-		MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+//		MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 	}
 	//操作できない時間
 	else
@@ -240,23 +241,16 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		//Stateを変更する
 		m_pState = m_pState->m_nextState;
 		m_pState->m_nextState = m_pState;
-		printfDx("変更\n");
 	}
 
 	printfDx("%d", m_pState->GetKind());
 	//Stateの更新
-	m_pState->Update(std::static_pointer_cast<Player>(shared_from_this()), input);
+	m_pState->Update(input);
 
 	//アニメーションを進める
-	m_animTime += m_animPlaySpeed;
-	if (m_animTime > m_totalAnimTime)
-	{
-		m_animTime = m_animLoopTime;
-	}
-	for (auto item : m_playAnims)
-	{
-		MV1SetAttachAnimTime(m_modelHandle, item.first, m_animTime);
-	}
+	PlayAnim();
+
+	//当たり判定の更新
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	//当たり判定の縦幅
 	MyEngine::Vector3 colPos = m_rigidbody.GetPos();
@@ -265,6 +259,7 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	colData->m_startPos = colPos;
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	//体力が0以下になるとゲームオーバー
 	if (m_nowHp <= 0)
 	{
 		scene->GameOver();
@@ -442,8 +437,6 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 
 	//	}
 	//}
-
-	MoveAnim(stickDir);
 
 	return velo;
 }
