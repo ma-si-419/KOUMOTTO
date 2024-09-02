@@ -24,9 +24,6 @@ Player::Player() :
 	m_isOpenSpecialPallet(false)
 {
 	LoadAnimationData(true);
-
-	m_pState = std::make_shared<PlayerStateIdle>(std::static_pointer_cast<Player>(shared_from_this()));
-	m_pState->m_nextState = m_pState;
 }
 
 Player::~Player()
@@ -35,6 +32,11 @@ Player::~Player()
 
 void Player::Init(std::shared_ptr<Physics> physics)
 {
+	std::shared_ptr<Collidable> p = shared_from_this();
+	auto p2 = std::dynamic_pointer_cast<Player>(p);
+	m_pState = std::make_shared<PlayerStateIdle>(p2);
+	m_pState->m_nextState = m_pState;
+
 	SetSpecialAttack();
 
 	MV1SetScale(m_modelHandle, VGet(3, 3, 3));

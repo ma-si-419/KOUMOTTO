@@ -29,10 +29,10 @@ private:
 	MyEngine::Vector3 m_moveDir;
 
 	//ƒAƒjƒ‚Ì•ûŒü
-	MoveDir m_animDir;
+	MoveDir m_animDir = MoveDir::kFront;
 	
 	//Œo‰ßŠÔ
-	int m_time;
+	int m_time = 0;
 
 };
 

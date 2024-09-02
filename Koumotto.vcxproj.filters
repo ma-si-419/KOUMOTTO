@@ -43,6 +43,18 @@
     <Filter Include="ヘッダー ファイル\Character">
       <UniqueIdentifier>{ddd521c4-f68e-459b-a065-22db8425b0bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Character\Player">
+      <UniqueIdentifier>{d07ada55-a4b4-4fd7-b44c-ebe279229e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Character\Player">
+      <UniqueIdentifier>{d9d8b61a-0109-44dc-96dc-c94964bbb4b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Character\Enemy">
+      <UniqueIdentifier>{c40345a5-faa3-4f06-8a6d-dda30bf5adb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Character\Enemy">
+      <UniqueIdentifier>{31db2b38-2175-4bce-b77b-47fcc171f787}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -87,17 +99,11 @@
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp">
       <Filter>ソース ファイル\MyEngine\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Character\Player.cpp">
-      <Filter>ソース ファイル\Character</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\SceneSelect.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="GameCamera.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Character\Enemy.cpp">
-      <Filter>ソース ファイル\Character</Filter>
     </ClCompile>
     <ClCompile Include="AttackBase.cpp">
       <Filter>ソース ファイル</Filter>
@@ -114,37 +120,70 @@
     <ClCompile Include="TitleCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateBase.cpp">
+    <ClCompile Include="Character\Player\Player.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateAttack.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateBase.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateDodge.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateGuard.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateHitAttack.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateIdle.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateMove.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateNormalEnergyAttack.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateNormalPhysicalAttack.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateSpecialEnergyAttack.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Player\PlayerStateSpecialPhysicalAttack.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Enemy\Enemy.cpp">
+      <Filter>ソース ファイル\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\Enemy\EnemyStateBase.cpp">
+      <Filter>ソース ファイル\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyStateIdle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateIdle.cpp">
+    <ClCompile Include="EnemyStateMove.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateMove.cpp">
+    <ClCompile Include="EnemyStateDash.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateGuard.cpp">
+    <ClCompile Include="EnemyStateDodge.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateDodge.cpp">
+    <ClCompile Include="EnemyStateAttack.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateNormalEnergyAttack.cpp">
+    <ClCompile Include="EnemyStateGuard.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateNormalPhysicalAttack.cpp">
+    <ClCompile Include="EnemyStateCharge.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateSpecialEnergyAttack.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerStateSpecialPhysicalAttack.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerStateHitAttack.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerStateAttack.cpp">
+    <ClCompile Include="EnemyStateHitAttack.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,9 +233,6 @@
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h">
       <Filter>ヘッダー ファイル\MyEngine\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Character\Player.h">
-      <Filter>ヘッダー ファイル\Character</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\SceneSelect.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
@@ -205,9 +241,6 @@
     </ClInclude>
     <ClInclude Include="GameCamera.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Character\Enemy.h">
-      <Filter>ヘッダー ファイル\Character</Filter>
     </ClInclude>
     <ClInclude Include="AttackBase.h">
       <Filter>ヘッダー ファイル</Filter>
@@ -227,40 +260,73 @@
     <ClInclude Include="TitleCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateBase.h">
+    <ClInclude Include="Character\Player\Player.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateAll.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateAttack.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateBase.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateDodge.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateGuard.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateHitAttack.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateIdle.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateMove.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateNormalEnergyAttack.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateNormalPhysicalAttack.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateSpecialEnergyAttack.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Player\PlayerStateSpecialPhysicalAttack.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Enemy\Enemy.h">
+      <Filter>ヘッダー ファイル\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Enemy\EnemyStateBase.h">
+      <Filter>ヘッダー ファイル\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyStateIdle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateIdle.h">
+    <ClInclude Include="EnemyStateMove.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateMove.h">
+    <ClInclude Include="EnemyStateDash.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateGuard.h">
+    <ClInclude Include="EnemyStateDodge.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateDodge.h">
+    <ClInclude Include="EnemyStateAttack.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateNormalEnergyAttack.h">
+    <ClInclude Include="EnemyStateGuard.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateNormalPhysicalAttack.h">
+    <ClInclude Include="EnemyStateCharge.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateSpecialEnergyAttack.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerStateSpecialPhysicalAttack.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerStateHitAttack.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerStateAll.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerStateAttack.h">
+    <ClInclude Include="EnemyStateHitAttack.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

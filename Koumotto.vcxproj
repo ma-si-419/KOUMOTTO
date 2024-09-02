@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;$(ProjectDir)MyEngine/Utility;$(ProjectDir)Character</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;$(ProjectDir)MyEngine/Utility;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -144,8 +144,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AttackBase.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateBase.cpp" />
+    <ClCompile Include="EnemyStateAttack.cpp" />
+    <ClCompile Include="EnemyStateCharge.cpp" />
+    <ClCompile Include="EnemyStateDash.cpp" />
+    <ClCompile Include="EnemyStateDodge.cpp" />
+    <ClCompile Include="EnemyStateGuard.cpp" />
+    <ClCompile Include="EnemyStateHitAttack.cpp" />
+    <ClCompile Include="EnemyStateIdle.cpp" />
+    <ClCompile Include="EnemyStateMove.cpp" />
     <ClCompile Include="GameCamera.cpp" />
-    <ClCompile Include="Character\Enemy.cpp" />
+    <ClCompile Include="Character\Enemy\Enemy.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp" />
     <ClCompile Include="MyEngine\Physics\CapsuleColliderData.cpp" />
@@ -154,17 +163,17 @@
     <ClCompile Include="MyEngine\Utility\Input.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyEngine\Physics\Physics.cpp" />
-    <ClCompile Include="Character\Player.cpp" />
+    <ClCompile Include="Character\Player\Player.cpp" />
     <ClCompile Include="MyEngine\Physics\Rigidbody.cpp" />
-    <ClCompile Include="PlayerStateAttack.cpp" />
-    <ClCompile Include="PlayerStateDodge.cpp" />
-    <ClCompile Include="PlayerStateGuard.cpp" />
-    <ClCompile Include="PlayerStateHitAttack.cpp" />
-    <ClCompile Include="PlayerStateMove.cpp" />
-    <ClCompile Include="PlayerStateNormalEnergyAttack.cpp" />
-    <ClCompile Include="PlayerStateNormalPhysicalAttack.cpp" />
-    <ClCompile Include="PlayerStateSpecialEnergyAttack.cpp" />
-    <ClCompile Include="PlayerStateSpecialPhysicalAttack.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateAttack.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateDodge.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateGuard.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateHitAttack.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateMove.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateNormalEnergyAttack.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateNormalPhysicalAttack.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateSpecialEnergyAttack.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateSpecialPhysicalAttack.cpp" />
     <ClCompile Include="Scene\SceneSelect.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneGame.cpp" />
@@ -173,16 +182,25 @@
     <ClCompile Include="MyEngine\Utility\Vector2.cpp" />
     <ClCompile Include="MyEngine\Utility\Vector3.cpp" />
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp" />
-    <ClCompile Include="PlayerStateBase.cpp" />
-    <ClCompile Include="PlayerStateIdle.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateBase.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateIdle.cpp" />
     <ClCompile Include="TitleCamera.cpp" />
     <ClCompile Include="Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackBase.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateBase.h" />
+    <ClInclude Include="EnemyStateAttack.h" />
+    <ClInclude Include="EnemyStateCharge.h" />
+    <ClInclude Include="EnemyStateDash.h" />
+    <ClInclude Include="EnemyStateDodge.h" />
+    <ClInclude Include="EnemyStateGuard.h" />
+    <ClInclude Include="EnemyStateHitAttack.h" />
+    <ClInclude Include="EnemyStateIdle.h" />
+    <ClInclude Include="EnemyStateMove.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="CommandIdList.h" />
-    <ClInclude Include="Character\Enemy.h" />
+    <ClInclude Include="Character\Enemy\Enemy.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="MyEngine\Utility\LoadCsv.h" />
@@ -193,17 +211,17 @@
     <ClInclude Include="MyEngine\Utility\Input.h" />
     <ClInclude Include="MyEngine\Physics\ObjectTag.h" />
     <ClInclude Include="MyEngine\Physics\Physics.h" />
-    <ClInclude Include="Character\Player.h" />
+    <ClInclude Include="Character\Player\Player.h" />
     <ClInclude Include="MyEngine\Physics\Rigidbody.h" />
-    <ClInclude Include="PlayerStateAttack.h" />
-    <ClInclude Include="PlayerStateDodge.h" />
-    <ClInclude Include="PlayerStateGuard.h" />
-    <ClInclude Include="PlayerStateHitAttack.h" />
-    <ClInclude Include="PlayerStateMove.h" />
-    <ClInclude Include="PlayerStateNormalEnergyAttack.h" />
-    <ClInclude Include="PlayerStateNormalPhysicalAttack.h" />
-    <ClInclude Include="PlayerStateSpecialEnergyAttack.h" />
-    <ClInclude Include="PlayerStateSpecialPhysicalAttack.h" />
+    <ClInclude Include="Character\Player\PlayerStateAttack.h" />
+    <ClInclude Include="Character\Player\PlayerStateDodge.h" />
+    <ClInclude Include="Character\Player\PlayerStateGuard.h" />
+    <ClInclude Include="Character\Player\PlayerStateHitAttack.h" />
+    <ClInclude Include="Character\Player\PlayerStateMove.h" />
+    <ClInclude Include="Character\Player\PlayerStateNormalEnergyAttack.h" />
+    <ClInclude Include="Character\Player\PlayerStateNormalPhysicalAttack.h" />
+    <ClInclude Include="Character\Player\PlayerStateSpecialEnergyAttack.h" />
+    <ClInclude Include="Character\Player\PlayerStateSpecialPhysicalAttack.h" />
     <ClInclude Include="Scene\SceneSelect.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneGame.h" />
@@ -212,9 +230,9 @@
     <ClInclude Include="MyEngine\Utility\Vector2.h" />
     <ClInclude Include="MyEngine\Utility\Vector3.h" />
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
-    <ClInclude Include="PlayerStateBase.h" />
-    <ClInclude Include="PlayerStateIdle.h" />
-    <ClInclude Include="PlayerStateAll.h" />
+    <ClInclude Include="Character\Player\PlayerStateBase.h" />
+    <ClInclude Include="Character\Player\PlayerStateIdle.h" />
+    <ClInclude Include="Character\Player\PlayerStateAll.h" />
     <ClInclude Include="TitleCamera.h" />
     <ClInclude Include="Ui.h" />
   </ItemGroup>
