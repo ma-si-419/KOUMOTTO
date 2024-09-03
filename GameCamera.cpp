@@ -3,7 +3,7 @@
 namespace
 {
 	//カメラとプレイヤーの距離
-	constexpr float kPlayerDistance = 2000.0f;
+	constexpr float kPlayerDistance = 800.0f;
 	//カメラの移動速度(距離の倍率)
 	constexpr float kCameraSpeed = 0.1f;
 	//カメラの高さ(プレイヤーから見て)
@@ -86,7 +86,7 @@ void GameCamera::Update()
 
 	//中心からプレイヤーの距離によってカメラの距離を変える
 	pos += centerToPlayer.Normalize() * kPlayerDistance;
-	
+
 	//次の座標に向かう移動ベクトルを作成
 	velo = pos - m_cameraPos;
 
@@ -95,6 +95,19 @@ void GameCamera::Update()
 
 	//カメラのターゲット座標を作成
 	MyEngine::Vector3 cameraTarget = m_playerPos - (m_playerPos - m_targetPos) / 2;
+
+	//カメラの座標を設定
+	MyEngine::Vector3 playerToTarget = m_targetPos - m_playerPos;
+
+	if (playerToTarget.Length() < kPlayerDistance)
+	{
+		m_cameraPos = m_playerPos + playerToTarget.Normalize() * (playerToTarget.Length() - 1);
+	}
+	else
+	{
+		m_cameraPos = m_playerPos + playerToTarget.Normalize() * kPlayerDistance;
+	}
+
 
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(), cameraTarget.CastVECTOR());
 

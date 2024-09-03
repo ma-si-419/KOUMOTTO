@@ -29,8 +29,9 @@ public:
 		bool isLaser = false;
 		bool isScatter = false;
 		bool isTrack = false;
-		int attackTime = 0;
-		int actionTime = 0;
+		int attackStartTime = 0;
+		int attackEndTime = 0;
+		int actionTotalTime = 0;
 		bool isEnergy = false;
 		int hitEffect = 0;
 	};

@@ -185,10 +185,30 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		//されていなかった場合
 		else
 		{
-			//前後入力を回転の中心に向かうベクトルに変換
 			MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
-			toCenterVec.y = 0;
-			velo += toCenterVec.Normalize() * (dir.z * kMoveSpeed);
+			//敵に近すぎたら周囲を回るようにする
+			if (toCenterVec.Length() > 2000)
+			{
+				//前後入力を回転の中心に向かうベクトルに変換
+				toCenterVec.y = 0;
+				velo += toCenterVec.Normalize() * (dir.z * kMoveSpeed);
+			}
+			else
+			{
+				//前入力を横移動に後ろ入力を回転の中心から離れるベクトルに変換
+				toCenterVec.y = 0;
+				if (dir.z > 0)
+				{
+					hMoveSpeed = (dir.z * kMoveSpeed) / toShaftPosVec.Length();
+					m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
+					velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
+					velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
+				}
+				else if(dir.z < 0)
+				{
+					velo += toCenterVec.Normalize() * (dir.z * kMoveSpeed);
+				}
+			}
 		}
 
 		//必殺技パレットが開かれていなく

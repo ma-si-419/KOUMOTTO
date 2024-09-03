@@ -31,10 +31,15 @@ public:
 
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
 
+	//攻撃の情報を返す
+	std::map<std::string, DataManager::AttackInfo> GetAttackData() { return m_attackData; }
+
 	void SetVelo(MyEngine::Vector3 velo) { m_rigidbody.SetVelo(velo); }
 
 	//Stateの更新
 	void StateUpdate(std::shared_ptr<Player> player);
+
+	std::shared_ptr<AttackBase> CreateAttack(std::string id);
 private:
 	//スタンゲージ
 	float m_stanPoint;

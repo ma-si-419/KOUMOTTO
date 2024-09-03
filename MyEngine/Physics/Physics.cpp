@@ -69,26 +69,26 @@ void Physics::Update()
 				if (!hasFirstColData)
 				{
 					pushData.push_back({ first,second });
-					if (first->GetTag() == ObjectTag::kPlayer)
-					{
-						printfDx("プレイヤーとぶつかった");
-					}
-					if (first->GetTag() == ObjectTag::kEnemy)
-					{
-						printfDx("エネミーとぶつかった");
-					}
+					//if (first->GetTag() == ObjectTag::kPlayer)
+					//{
+					//	printfDx("プレイヤーとぶつかった");
+					//}
+					//if (first->GetTag() == ObjectTag::kEnemy)
+					//{
+					//	printfDx("エネミーとぶつかった");
+					//}
 				}
 				if (!hasSecondColData)
 				{
 					pushData.push_back({ second,first });
-					if (first->GetTag() == ObjectTag::kPlayer)
-					{
-						printfDx("プレイヤーとぶつかった");
-					}
-					if (first->GetTag() == ObjectTag::kEnemy)
-					{
-						printfDx("エネミーとぶつかった");
-					}
+					//if (first->GetTag() == ObjectTag::kPlayer)
+					//{
+					//	printfDx("プレイヤーとぶつかった");
+					//}
+					//if (first->GetTag() == ObjectTag::kEnemy)
+					//{
+					//	printfDx("エネミーとぶつかった");
+					//}
 				}
 			}
 		}

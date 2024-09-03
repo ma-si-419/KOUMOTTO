@@ -39,6 +39,8 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
+	m_pPhysics = physics;
+
 	m_rigidbody.SetPos(kInitPos);
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 
@@ -96,13 +98,12 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	}
 
 	m_pState->Update();
-	
 
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	MyEngine::Vector3 colPos = m_rigidbody.GetPos();
-	
+
 	//当たり判定の縦幅
 	colPos.y += kColScale;
 	//当たり判定の座標調整
@@ -173,4 +174,21 @@ float Enemy::GetStanPointRate()
 void Enemy::StateUpdate(std::shared_ptr<Player> player)
 {
 	m_pState->CheckSituation(player);
+}
+
+std::shared_ptr<AttackBase> Enemy::CreateAttack(std::string id)
+{
+	//エネミーの攻撃を作成
+	std::shared_ptr<AttackBase> ans = std::make_shared<AttackBase>(ObjectTag::kEnemyAttack);
+
+	//攻撃を出す座標を作成
+	
+	MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
+	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
+
+	ans->Init(m_pPhysics, attackPos);
+	//ステータス設定
+	ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
+
+	return ans;
 }

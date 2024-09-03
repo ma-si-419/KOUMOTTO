@@ -158,11 +158,11 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 			if (m_attackData[m_attackId].attackNum > 1)
 			{
 				//¡UŒ‚‚ğo‚µn‚ß‚Ä‰½•b‚©”‚¦‚é
-				int time = m_attackData[m_attackId].actionTime - m_stanTime;
+				int time = m_attackData[m_attackId].actionTotalTime - m_stanTime;
 				//UŒ‚‚ÌƒXƒpƒ“‚ğæ“¾‚·‚é
-				int span = m_attackData[m_attackId].attackTime / m_attackData[m_attackId].attackNum;
+				int span = m_attackData[m_attackId].attackEndTime / m_attackData[m_attackId].attackNum;
 				//UŒ‚‚ğo‚µØ‚éŠÔ‚Ü‚Å‚µ‚©UŒ‚‚ğo‚¹‚È‚¢‚æ‚¤‚É‚·‚é
-				if (time % span == 0 && time <= m_attackData[m_attackId].attackTime)
+				if (time % span == 0 && time <= m_attackData[m_attackId].attackEndTime)
 				{
 					//UŒ‚‚ğì¬
 					std::shared_ptr<AttackBase> attack = CreateAttack(m_pPhysics, m_attackId, true);
@@ -204,9 +204,9 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 					}
 
 					//UŒ‚ƒ‚[ƒVƒ‡ƒ“‚É“ü‚Á‚Ä‰½•b‚©‹‚ß‚é
-					int time = m_attackData[m_attackId].actionTime - m_stanTime;
+					int time = m_attackData[m_attackId].actionTotalTime - m_stanTime;
 					//UŒ‚‚ğo‚·ŠÔ‚É‚È‚Á‚½‚ç
-					if (time > m_attackData[m_attackId].attackTime)
+					if (time > m_attackData[m_attackId].attackEndTime)
 					{
 						//UŒ‚‚ğo‚·
 						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));
@@ -218,9 +218,9 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 				else
 				{
 					//UŒ‚ƒ‚[ƒVƒ‡ƒ“‚É“ü‚Á‚Ä‰½•b‚©‹‚ß‚é
-					int time = m_attackData[m_attackId].actionTime - m_stanTime;
+					int time = m_attackData[m_attackId].actionTotalTime - m_stanTime;
 					//UŒ‚‚ğo‚·ŠÔ‚É‚È‚Á‚½‚ç
-					if (time > m_attackData[m_attackId].attackTime)
+					if (time > m_attackData[m_attackId].attackEndTime)
 					{
 						//UŒ‚‚ğo‚·
 						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));

@@ -33,8 +33,9 @@ namespace Game
 		kLaser,
 		kScatter,
 		kTrack,
-		kAttackTime,
-		kActionTime,
+		kAttackStartTime,
+		kAttackEndTime,
+		kActionTotalTime,
 		kEnergy,
 		kHitEffect
 	};

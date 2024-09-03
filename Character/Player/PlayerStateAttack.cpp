@@ -32,7 +32,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 	MyEngine::Vector3 dir(stick.leftStickX, 0, -stick.leftStickY);
 
     //‹C’eUŒ‚‚Ì‚İo‚µ‚È‚ª‚çˆÚ“®‚Å‚«‚é
-    if (attackData.attackTime = 0)
+    if (attackData.attackEndTime = 0)
     {
 		//ˆÚ“®“ü—Í‚ª‚³‚ê‚Ä‚¢‚é‚Æ‚«
 		if (dir.sqLength() != 0)

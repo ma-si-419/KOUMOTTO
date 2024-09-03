@@ -74,41 +74,51 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 
 #ifdef _DEBUG
 
-	//stateIndex = static_cast<int>(EnemyStateKind::kDodge);
+	//stateIndex = static_cast<int>(EnemyStateKind::kAttack);
 
 #endif // _DEBUG
 
 	if (m_isChangeState)
 	{
-		//常に次の行動を更新し続け
+		//常に次の行動を更新し続ける
+
+		//何もしない
 		if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kIdle)
 		{
 			m_nextState = std::make_shared<EnemyStateIdle>(m_pEnemy, m_pScene);
 		}
+		//攻撃
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kAttack)
 		{
 			m_nextState = std::make_shared<EnemyStateAttack>(m_pEnemy, m_pScene);
+			auto state = std::dynamic_pointer_cast<EnemyStateAttack>(m_nextState);
+			state->Init(player);
 		}
+		//ダッシュ
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kDash)
 		{
 			m_nextState = std::make_shared<EnemyStateDash>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateDash>(m_nextState);
 			state->Init(player->GetPos());
 		}
+		//回避
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kDodge)
 		{
 			m_nextState = std::make_shared<EnemyStateDodge>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateDodge>(m_nextState);
 			state->Init();
 		}
+		//気をためる(アニメーションだけで待機する)
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kCharge)
 		{
 			m_nextState = std::make_shared<EnemyStateCharge>(m_pEnemy, m_pScene);
 		}
+		//ガード
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kGuard)
 		{
 			m_nextState = std::make_shared<EnemyStateGuard>(m_pEnemy, m_pScene);
 		}
+		//移動
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kMove)
 		{
 			m_nextState = std::make_shared<EnemyStateMove>(m_pEnemy, m_pScene);

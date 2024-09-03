@@ -37,8 +37,9 @@ void DataManager::LoadAttackFile()
 		pushData.isLaser = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kLaser)]));
 		pushData.isScatter = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kScatter)]));
 		pushData.isTrack = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kTrack)]));
-		pushData.attackTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kAttackTime)]);
-		pushData.actionTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kActionTime)]);
+		pushData.attackStartTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kAttackStartTime)]);
+		pushData.attackEndTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kAttackEndTime)]);
+		pushData.actionTotalTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kActionTotalTime)]);
 		pushData.isEnergy = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kEnergy)]));
 		pushData.hitEffect = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kHitEffect)]);
 

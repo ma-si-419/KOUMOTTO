@@ -124,7 +124,7 @@ void CharacterBase::PlayAnim()
 void CharacterBase::PlaySpecialAttack(std::string id)
 {
 	//技で動けない時間を設定する
-	m_stanTime = m_attackData[id].actionTime;
+	m_stanTime = m_attackData[id].actionTotalTime;
 	//技の消費気力分、現在の気力を減らす
 	m_nowMp -= m_attackData[id].cost;
 	//攻撃のターゲット座標をロックする
@@ -221,7 +221,7 @@ void CharacterBase::SetNormalAttack(bool isPhysical, int time)
 	//攻撃のターゲット座標をロックする
 	m_attackTarget = m_targetPos;
 	//技で動けない時間を設定する
-	m_stanTime = m_attackData[m_attackId].actionTime;
+	m_stanTime = m_attackData[m_attackId].actionTotalTime;
 	//攻撃を出している状態に変える
 	m_isAttack = true;
 

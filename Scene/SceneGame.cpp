@@ -177,7 +177,14 @@ void SceneGame::Update(MyEngine::Input input)
 		for (auto& attack : m_pAttacks)
 		{
 			//攻撃の更新
-			attack->Update(m_pEnemy->GetPos());
+			if (attack->GetTag() == ObjectTag::kPlayerAttack)
+			{
+				attack->Update(m_pEnemy->GetPos());
+			}
+			else if (attack->GetTag() == ObjectTag::kEnemyAttack)
+			{
+				attack->Update(m_pPlayer->GetPos());
+			}
 			//処理をしない攻撃だったら
 			if (!attack->GetIsExist())
 			{
@@ -226,7 +233,7 @@ void SceneGame::Draw()
 	//与えたダメージの表示
 	m_pUi->DrawDamage();
 	//コマンドの表示
-	m_pUi->DrawCommand(m_pPlayer->GetIsOpenSpecialPallet(),m_pPlayer->GetSetSpecialAttackName());
+	m_pUi->DrawCommand(m_pPlayer->GetIsOpenSpecialPallet(), m_pPlayer->GetSetSpecialAttackName());
 	//コンボ数の表示
 	m_pUi->DrawComboCount();
 

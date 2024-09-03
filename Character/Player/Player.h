@@ -21,7 +21,7 @@ public:
 	void SetVelo(MyEngine::Vector3 velo) { m_rigidbody.SetVelo(velo); }
 
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
-
+	
 	MyEngine::Vector3 GetTargetPos() { return m_targetPos; }
 
 	DataManager::AttackInfo GetAttackData(std::string id) { return m_attackData[id]; }

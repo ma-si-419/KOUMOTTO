@@ -7,6 +7,9 @@ namespace
 	constexpr float kTrackLengthRate = 0.9f;
 	//‚Ç‚±‚©‚ç’Ç”ö‚·‚é‚©
 	constexpr float kTrackStartPosRate = 0.3f;
+	//‚Ç‚Ì‚­‚ç‚¢’e‚ðŽU‚ç‚Î‚ç‚¹‚é‚©
+	constexpr int kScatterPower = 50;
+	constexpr int kScatterPowerHalf = kScatterPower * 0.5;
 }
 
 AttackBase::AttackBase(ObjectTag tag) :
@@ -47,9 +50,9 @@ void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 tar
 	if (status.isScatter)
 	{
 		//XŽ²‚Éƒ‰ƒ“ƒ_ƒ€‚Å‰ñ“]‚³‚¹‚é
-		MATRIX randomX = MGetRotX(static_cast<float>(GetRand(200) - 100) * 0.01f);
+		MATRIX randomX = MGetRotX(static_cast<float>(GetRand(kScatterPower) - kScatterPowerHalf) * 0.01f);
 		//YŽ²‚Éƒ‰ƒ“ƒ_ƒ€‚Å‰ñ“]‚³‚¹‚é
-		MATRIX randomY = MGetRotY(static_cast<float>(GetRand(200) - 100) * 0.01f);
+		MATRIX randomY = MGetRotY(static_cast<float>(GetRand(kScatterPower) - kScatterPowerHalf) * 0.01f);
 
 		MATRIX mat = MMult(randomX, randomY);
 
