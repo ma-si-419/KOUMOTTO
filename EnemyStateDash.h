@@ -24,5 +24,9 @@ private:
 	bool m_isMoveVertical = false;
 	//移動ベクトル
 	MyEngine::Vector3 m_velo;
+	//プレイヤーの座標
+	MyEngine::Vector3 m_targetPos;
+	//初期座標
+	MyEngine::Vector3 m_initPos;
 };
 

@@ -3,15 +3,17 @@
 namespace
 {
 	//最低何フレームこのStateでいるか
-	constexpr int kShortestTime = 240;
+	constexpr int kShortestTime = 120;
+	//MoveBack時何フレームこのStateでいるか
+	constexpr int kMoveBackTime = 60;
 	//上下移動を優先するY座標のずれの大きさ
 	constexpr float kYGapScale = 300;
 	//近づくことを優先し始める距離
-	constexpr float kMoveFrontDistance = 2000;
+	constexpr float kMoveFrontDistance = 5000;
 	//離れることを優先し始める距離
-	constexpr float kMoveBackDistance = 500;
+	constexpr float kMoveBackDistance = 800;
 	//離れている距離のまま優先度を上げないように、距離に割合をかけて優先度に変換する
-	constexpr float kDistanceRate = 0.1;
+	constexpr float kDistanceRate = 0.005f;
 	//基本的な移動方向の割合
 	constexpr int kMoveDirRate[3] = { 30,20,20 };
 	//移動速度
@@ -20,6 +22,8 @@ namespace
 	constexpr int kMoveDirNum = 8;
 	//動きの方向の数の半分
 	constexpr int kMoveDirNumHalf = kMoveDirNum * 0.5;
+	//プレイヤーに近づきすぎないように
+	constexpr float kPlayerDistance = 500.0f;
 
 }
 
@@ -28,7 +32,7 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 	//playerの座標に合わせて動く方向を決定する
 
 	//移動方向の割合
-	int moveRate[static_cast<int>(MoveKind::kMoveKindNum)];
+	int moveRate[static_cast<int>(MoveKind::kMoveKindNum)] = {};
 	//割合を初期化する
 	moveRate[static_cast<int>(MoveKind::kFront)] = kMoveDirRate[static_cast<int>(MoveKind::kFront)];
 	moveRate[static_cast<int>(MoveKind::kBack)] = kMoveDirRate[static_cast<int>(MoveKind::kBack)];
@@ -48,7 +52,7 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 	if (distance > kMoveFrontDistance)
 	{
 		//優先度の増加量
-		int addRate = static_cast<int>((kMoveFrontDistance - distance) * kDistanceRate);
+		int addRate = static_cast<int>((distance - kMoveFrontDistance) * kDistanceRate);
 
 		moveRate[static_cast<int>(MoveKind::kFront)] += addRate;
 	}
@@ -76,20 +80,28 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 	for (auto item : moveRate)
 	{
 		ans -= item;
-		if (item <= 0)
+		if (ans <= 0)
 		{
 			break;
 		}
 		moveKind++;
 	}
-
+	if (moveKind > static_cast<int>(MoveKind::kRandom))
+	{
+		moveKind = static_cast<int>(MoveKind::kRandom);
+	}
 	//移動方向
 	MyEngine::Vector3 moveDir;
+
+	printfDx("kind  :  %d\n", moveKind);
+
 
 	//プレイヤーに向かっていく
 	if (moveKind == static_cast<int>(MoveKind::kFront))
 	{
 		moveDir = (playerPos - m_pEnemy->GetPos()).Normalize();
+
+		m_moveKind = MoveKind::kFront;
 	}
 	//プレイヤーから離れる
 	else if (moveKind == static_cast<int>(MoveKind::kBack))
@@ -101,6 +113,7 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 			//プレイヤーとY座標を合わせに行く
 			moveDir.y *= -1;
 		}
+		m_moveKind = MoveKind::kBack;
 	}
 	//ランダムな方向に移動する
 	else if (moveKind == static_cast<int>(MoveKind::kRandom))
@@ -119,8 +132,15 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 			//上下移動成分のみの方向ベクトルを作成
 			moveDir = (targetPos - m_pEnemy->GetPos()).Normalize();
 		}
-	
+
+		m_moveKind = MoveKind::kRandom;	
 	}
+
+	//最初の座標を保存する
+	m_initPos = m_pEnemy->GetPos();
+	//ターゲット座標を保存する
+	m_targetPos = playerPos;
+
 
 	//移動ベクトル
 	m_velo = moveDir * kMoveSpeed;
@@ -132,12 +152,33 @@ void EnemyStateMove::Update()
 	//経過時間を計る
 	m_time++;
 
+	printfDx("\nmax : %.2f\n", (m_targetPos - m_initPos).Length() - kPlayerDistance);
+	printfDx("now : %.2f\n", (m_pEnemy->GetPos() - m_initPos).Length());
+
+	//最初の座標からターゲット座標まで移動したら
+	if (m_moveKind == MoveKind::kFront && (m_targetPos - m_initPos).Length() - kPlayerDistance < (m_pEnemy->GetPos() - m_initPos).Length())
+	{
+		//移動をやめて別のStateに行く
+		m_velo = MyEngine::Vector3(0, 0, 0);
+		m_isChangeState = true;
+	}
+
+
 	//Initで決定したベクトルで移動する
 	m_pEnemy->SetVelo(m_velo);
 
-	//このフレームにいる最低時間を超えたら確率で別のフレームに行く
-	int random = GetRand(m_time) - kShortestTime;
+	int random = 0;
 
+	//このフレームにいる最低時間を超えたら確率で別のフレームに行く
+
+	if (m_moveKind == MoveKind::kBack)
+	{
+		random = GetRand(m_time) - kMoveBackTime;
+	}
+	else
+	{
+		random = GetRand(m_time) - kShortestTime;
+	}
 	if (random > 0)
 	{
 		m_isChangeState = true;

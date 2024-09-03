@@ -244,7 +244,6 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		m_pState->m_nextState = m_pState;
 	}
 
-	printfDx("%d", m_pState->GetKind());
 	//State‚ÌXV
 	m_pState->Update(input);
 

@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "SceneGame.h"
-#include "SceneSelect.h"
+#include "SceneTitle.h"
 #include "Physics.h"
 #include "Player.h"
 #include "GameCamera.h"
@@ -145,7 +145,7 @@ void SceneGame::Update(MyEngine::Input input)
 				}
 				else if (m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kEnd))
 				{
-					m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
+					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
 					return;
 				}
 			}
@@ -237,7 +237,6 @@ void SceneGame::Draw()
 	}
 	//ゲーム開始時のReadyやFightの表示
 	m_pUi->DrawStartSign(m_isStartBattle);
-	DrawString(0, 0, "SceneGame", GetColor(255, 255, 255));
 }
 
 void SceneGame::End()
