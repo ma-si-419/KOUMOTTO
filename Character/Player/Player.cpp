@@ -4,7 +4,6 @@
 #include "AttackBase.h"
 #include "CommandIdList.h"
 #include "CapsuleColliderData.h"
-#include "PlayerStateBase.h"
 #include "PlayerStateAll.h"
 namespace
 {

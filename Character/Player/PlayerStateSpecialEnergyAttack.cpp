@@ -1,5 +1,6 @@
 #include "PlayerStateSpecialEnergyAttack.h"
 #include "PlayerStateIdle.h"
+#include "Player.h"
 
 void PlayerStateSpecialEnergyAttack::Update(MyEngine::Input input)
 {

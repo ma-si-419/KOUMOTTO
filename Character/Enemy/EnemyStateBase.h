@@ -21,17 +21,23 @@ public:
 	EnemyStateBase(std::shared_ptr<Enemy> enemy, std::shared_ptr<SceneGame> scene) { m_pEnemy = enemy; m_pScene = scene; }
 	//状況を把握し続ける更新
 	void CheckSituation(PlayerStateBase::PlayerStateKind playerState);
-	//プレイヤーのStateを見て次の動きを決定する
+	// Stateそれぞれの処理を行い、つぎのStateに変わるタイミングでtrueを返す	
 	virtual void Update() abstract;
 	//ダメージを受けた時の処理を行う
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) abstract;
 	//次移行するStateを保存する
-	std::shared_ptr<PlayerStateBase> m_nextState;
+	std::shared_ptr<EnemyStateBase> m_nextState;
 	//エネミーのポインターを持っておく
 	std::shared_ptr<Enemy> m_pEnemy;
 	//ゲームシーンのポインターを持っておく
 	std::shared_ptr<SceneGame> m_pScene;
 	//次どのStateに行くかの確率のデータ
-	std::map<std::string, std::map<Game::AiInfoSort, int>> m_aiData;
+	std::map<std::string, std::vector<int>> m_aiData;
+	//Stateの切り替えを行うflag
+	bool m_isChangeState = false;
+	//どんなダメージを受けたか
+	int m_hitEffect = -1;
+	//Stateが切り替わってから何フレーム立ったか計測する
+	int m_time = 0;
 };
 

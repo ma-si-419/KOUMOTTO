@@ -7,6 +7,7 @@
 #include "PlayerStateSpecialEnergyAttack.h"
 #include "PlayerStateSpecialPhysicalAttack.h"
 #include "PlayerStateHitAttack.h"
+#include "Player.h"
 
 namespace
 {

@@ -2,6 +2,7 @@
 #include "PlayerStateIdle.h"
 #include "PlayerStateHitAttack.h"
 #include "PlayerStateGuard.h"
+#include "Player.h"
 
 namespace
 {

@@ -1,6 +1,7 @@
 #include "PlayerStateNormalPhysicalAttack.h"
 #include "PlayerStateHitAttack.h"
 #include "PlayerStateIdle.h"
+#include "Player.h"
 
 namespace
 {

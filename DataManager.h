@@ -49,7 +49,7 @@ public:
 	//ゲームシーンのUIのパス取得
 	std::vector<UiInfo> GetUiData(Game::SceneNum sceneNum);
 	//エネミーのAI取得
-	std::map<std::string, std::map<Game::AiInfoSort, int>> GetAiData() { return m_aiData; };
+	std::map<std::string, std::vector<int>> GetAiData() { return m_aiData; };
 
 private:
 
@@ -67,7 +67,7 @@ private:
 	std::vector<UiInfo> m_sceneSelectUiData;
 
 	//Aiのデータ
-	std::map<std::string, std::map<Game::AiInfoSort, int>> m_aiData;
+	std::map<std::string, std::vector<int>> m_aiData;
 
 	//ファイルロードできるクラス
 	std::shared_ptr<LoadCsv> m_pLoadCsv;

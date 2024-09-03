@@ -2,6 +2,7 @@
 #include "EnemyStateBase.h"
 class EnemyStateAttack : public EnemyStateBase
 {
+public:
 	EnemyStateAttack(std::shared_ptr<Enemy> enemy, std::shared_ptr<SceneGame> scene) : EnemyStateBase(enemy,scene) {}
 	//ƒvƒŒƒCƒ„[‚ÌState‚ğŒ©‚ÄŸ‚Ì“®‚«‚ğŒˆ’è‚·‚é
 	virtual void Update() override;

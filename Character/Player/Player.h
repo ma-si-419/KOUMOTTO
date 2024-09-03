@@ -1,8 +1,8 @@
 #pragma once
 #include "CharacterBase.h"
 #include "Input.h"
+#include "PlayerStateBase.h"
 class SceneGame;
-class PlayerStateBase;
 class Player : public CharacterBase
 {
 public:

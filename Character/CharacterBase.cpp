@@ -92,7 +92,6 @@ std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics>
 
 void CharacterBase::ChangeAnim(std::string animName)
 {
-
 	//前のアニメーションをデタッチする
 	MV1DetachAnim(m_modelHandle, m_playAnim);
 	//アニメの再生速度を設定

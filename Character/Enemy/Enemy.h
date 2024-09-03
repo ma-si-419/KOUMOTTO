@@ -22,9 +22,9 @@ public:
 
 	void InitAiState(std::shared_ptr<SceneGame> scene);
 
-	void SetAiData(std::map<std::string, std::map<Game::AiInfoSort, int>> data) { m_aiStateData = data; }
+	void SetAiData(std::map<std::string, std::vector<int>> data) { m_aiStateData = data; }
 
-	std::map<std::string, std::map<Game::AiInfoSort, int>> GetAiData() { return m_aiStateData; }
+	std::map<std::string, std::vector<int>> GetAiData() { return m_aiStateData; }
 
 	//スタンゲージが今全体の何割あるかを返す
 	float GetStanPointRate();
@@ -47,5 +47,5 @@ private:
 	//Stateパターン
 	std::shared_ptr<EnemyStateBase> m_pState;
 	//敵のStateによって動きの確率を変化させる
-	std::map<std::string, std::map<Game::AiInfoSort, int>> m_aiStateData;
+	std::map<std::string, std::vector<int>> m_aiStateData;
 };

@@ -1,5 +1,7 @@
 #include "PlayerStateDodge.h"
 #include "PlayerStateIdle.h"
+#include "Player.h"
+
 
 namespace
 {

@@ -435,7 +435,8 @@ void Ui::DrawDamage()
 		//ブレンドモードを変更
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 		//ダメージの表示
-		DrawFormatStringToHandle(item.pos.x - shiftSize, item.pos.y + kDamageShowPosShiftY, GetColor(255, 255, 255), m_damageFontHandle, item.damage.c_str());
+		DrawFormatStringToHandle(static_cast<int>(item.pos.x - shiftSize), static_cast<int>(item.pos.y + kDamageShowPosShiftY),
+			GetColor(255, 255, 255), m_damageFontHandle, item.damage.c_str());
 		//ブレンドモードを元に戻す
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		//表示時間を減らす
@@ -451,7 +452,8 @@ void Ui::DrawGameOver(int arrowPos)
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	//ゲームオーバーの画像データ
 	std::string logo = "GameOverLogo";
-	DrawGraph(m_showUi[logo].drawPos.x, m_showUi[logo].drawPos.y, m_showUi[logo].handle, true);
+	DrawGraph(static_cast<int>(m_showUi[logo].drawPos.x), static_cast<int>(m_showUi[logo].drawPos.y),
+		m_showUi[logo].handle, true);
 
 	DrawStringToHandle(kGameOverStringPosX[static_cast<int>(GameOverItem::kRetry)], kGameOverStringPosY[static_cast<int>(GameOverItem::kRetry)], "リトライ", GetColor(0, 0, 0), m_gameOverFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(kGameOverStringPosX[static_cast<int>(GameOverItem::kEnd)], kGameOverStringPosY[static_cast<int>(GameOverItem::kEnd)], "やめる", GetColor(0, 0, 0), m_gameOverFontHandle, GetColor(255, 255, 255));
@@ -461,12 +463,12 @@ void Ui::DrawGameOver(int arrowPos)
 	//矢印の表示
 	if (arrowPos == 0)
 	{
-		MyEngine::Vector2 pos(kGameOverStringPosX[static_cast<int>(GameOverItem::kRetry)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance, kGameOverStringPosY[static_cast<int>(GameOverItem::kRetry)]);
+		MyEngine::Vector2 pos(static_cast<int>(kGameOverStringPosX[static_cast<int>(GameOverItem::kRetry)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance),static_cast<int>(kGameOverStringPosY[static_cast<int>(GameOverItem::kRetry)]));
 		DrawStringToHandle(pos.x, pos.y, "→", GetColor(0, 0, 0), m_gameOverFontHandle, GetColor(255, 255, 255));
 	}
 	else
 	{
-		MyEngine::Vector2 pos(kGameOverStringPosX[static_cast<int>(GameOverItem::kEnd)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance, kGameOverStringPosY[static_cast<int>(GameOverItem::kEnd)]);
+		MyEngine::Vector2 pos(static_cast<int>(kGameOverStringPosX[static_cast<int>(GameOverItem::kEnd)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance), static_cast<int>(kGameOverStringPosY[static_cast<int>(GameOverItem::kEnd)]));
 		DrawStringToHandle(pos.x, pos.y, "→", GetColor(0, 0, 0), m_gameOverFontHandle, GetColor(255, 255, 255));
 	}
 }

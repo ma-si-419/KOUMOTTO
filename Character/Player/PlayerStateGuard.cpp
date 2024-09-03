@@ -1,6 +1,7 @@
 #include "PlayerStateGuard.h"
 #include "PlayerStateIdle.h"
 #include "PlayerStateHitAttack.h"
+#include "Player.h"
 
 void PlayerStateGuard::Update(MyEngine::Input input)
 {
