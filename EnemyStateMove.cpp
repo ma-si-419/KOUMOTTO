@@ -3,7 +3,7 @@
 namespace
 {
 	//最低何フレームこのStateでいるか
-	constexpr int kShortestTime = 180;
+	constexpr int kShortestTime = 240;
 	//上下移動を優先するY座標のずれの大きさ
 	constexpr float kYGapScale = 300;
 	//近づくことを優先し始める距離
@@ -15,7 +15,7 @@ namespace
 	//基本的な移動方向の割合
 	constexpr int kMoveDirRate[3] = { 30,20,20 };
 	//移動速度
-	constexpr float kMoveSpeed = 100.0f;
+	constexpr float kMoveSpeed = 50.0f;
 	//動きの方向の数
 	constexpr int kMoveDirNum = 8;
 	//動きの方向の数の半分

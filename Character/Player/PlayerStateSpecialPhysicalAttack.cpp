@@ -15,6 +15,8 @@ namespace
 
 void PlayerStateSpecialPhysicalAttack::Update(MyEngine::Input input)
 {
+	m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
+	return;
 	//Œo‰ßŽžŠÔ‚ðŒv‘ª‚·‚é
 	m_time++;
 

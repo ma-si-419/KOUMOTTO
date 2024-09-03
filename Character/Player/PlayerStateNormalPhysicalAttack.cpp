@@ -17,6 +17,9 @@ namespace
 
 void PlayerStateNormalPhysicalAttack::Update(MyEngine::Input input)
 {
+	m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
+	return;
+
 	//ˆÚ“®ƒxƒNƒgƒ‹‚Ì¶¬
 	MyEngine::Vector3 moveVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 	MyEngine::Vector3 velo = moveVec.Normalize() * kMoveSpeed;

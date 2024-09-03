@@ -2,7 +2,7 @@
 namespace
 {
 	//Å’á‰½ƒtƒŒ[ƒ€‚±‚ÌState‚Å‚¢‚é‚©
-	constexpr int kShortestTime = 10;
+	constexpr int kShortestTime = 5;
 	//ˆÚ“®‘¬“x
 	constexpr float kMoveSpeed = 300.0f;
 	//“®‚«‚Ì•ûŒü‚Ì”
