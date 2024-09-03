@@ -19,7 +19,6 @@ namespace
 }
 Enemy::Enemy() :
 	CharacterBase("data/model/Enemy.mv1", ObjectTag::kEnemy),
-	debug(),
 	m_stanPoint(kMaxStanPoint),
 	m_lastHitDamageTime(0),
 	m_comboCount(0)
@@ -90,19 +89,24 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	//コンボ数をUIに渡し続ける
 	m_pUi->SetComboCount(m_comboCount);
 
-	debug.x += 0.01f;
-	//debug.y += 0.01f;
-	MyEngine::Vector3 pos(sinf(debug.x) * 3000, sinf(debug.y) * 3000, 1000.0f);
+	//State変更フラグが立っていたらStateを変更する
+	if (m_pState->m_isChangeState)
+	{
+		m_pState = m_pState->m_nextState;
+	}
 
+	m_pState->Update();
+	
 
-	m_rigidbody.SetPos(pos);
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
+	MyEngine::Vector3 colPos = m_rigidbody.GetPos();
+	
 	//当たり判定の縦幅
-	pos.y += kColScale;
+	colPos.y += kColScale;
 	//当たり判定の座標調整
-	colData->m_startPos = pos;
+	colData->m_startPos = colPos;
 
 	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 
@@ -166,7 +170,7 @@ float Enemy::GetStanPointRate()
 	return m_stanPoint / kMaxStanPoint;
 }
 
-void Enemy::StateUpdate(PlayerStateBase::PlayerStateKind playerState)
+void Enemy::StateUpdate(std::shared_ptr<Player> player)
 {
-	m_pState->CheckSituation(playerState);
+	m_pState->CheckSituation(player);
 }

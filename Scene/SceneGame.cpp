@@ -159,7 +159,7 @@ void SceneGame::Update(MyEngine::Input input)
 			m_pPlayer->Update(shared_from_this(), input);
 			//エネミーの更新
 			m_pEnemy->Update(shared_from_this());
-			m_pEnemy->StateUpdate(m_pPlayer->GetStateKind());
+			m_pEnemy->StateUpdate(m_pPlayer);
 		}
 		//プレイヤーにエネミーの座標を渡す
 		m_pPlayer->SetTargetPos(m_pEnemy->GetPos());

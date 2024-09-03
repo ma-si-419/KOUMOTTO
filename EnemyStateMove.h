@@ -15,11 +15,13 @@ private:
 	{
 		kFront,//プレイヤーに向かっていく
 		kBack,//プレイヤーから離れる
-		kRight,//右方向に移動
-		kLeft//左方向に移動
+		kRandom,//ランダムに移動
+		kMoveKindNum
 	};
 	MoveKind m_moveKind = MoveKind::kFront;
 
 	//上下移動するか
 	bool m_isMoveVertical = false;
+	//移動ベクトル
+	MyEngine::Vector3 m_velo;
 };

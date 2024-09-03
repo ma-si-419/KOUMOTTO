@@ -31,11 +31,11 @@ public:
 
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
 
-	//Stateの更新
-	void StateUpdate(PlayerStateBase::PlayerStateKind playerState);
-private:
-	MyEngine::Vector3 debug;
+	void SetVelo(MyEngine::Vector3 velo) { m_rigidbody.SetVelo(velo); }
 
+	//Stateの更新
+	void StateUpdate(std::shared_ptr<Player> player);
+private:
 	//スタンゲージ
 	float m_stanPoint;
 	//最後に攻撃を受けてから立った時間

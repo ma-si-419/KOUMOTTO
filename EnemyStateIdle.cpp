@@ -12,7 +12,8 @@ void EnemyStateIdle::Update()
 	m_time++;
 
 	//Idle状態は何もしない
-	
+	m_pEnemy->SetVelo(MyEngine::Vector3(0,0,0));
+
 	//このフレームにいる最低時間を超えたら確率で別のフレームに行く
 	int random = GetRand(m_time) - kShortestTime;
 

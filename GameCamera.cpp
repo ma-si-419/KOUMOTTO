@@ -86,10 +86,11 @@ void GameCamera::Update()
 
 	//中心からプレイヤーの距離によってカメラの距離を変える
 	pos += centerToPlayer.Normalize() * kPlayerDistance;
+	
 	//次の座標に向かう移動ベクトルを作成
 	velo = pos - m_cameraPos;
-	//移動ベクトルを現在の座標に足す
 
+	//移動ベクトルを現在の座標に足す
 	m_cameraPos += velo;
 
 	//カメラのターゲット座標を作成

@@ -9,40 +9,40 @@
 #include "EnemyStateHitAttack.h"
 
 
-void EnemyStateBase::CheckSituation(PlayerStateBase::PlayerStateKind playerState)
+void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 {
 
 	//プレイヤーのStateによって使うデータを変える
 	std::string data;
-	if (playerState == PlayerStateBase::PlayerStateKind::kIdle)
+	if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kIdle)
 	{
 		data = "Idle";
 	}
-	else if (playerState == PlayerStateBase::PlayerStateKind::kMove)
+	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kMove)
 	{
 		data = "Move";
 	}
-	else if (playerState == PlayerStateBase::PlayerStateKind::kDash)
+	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kDash)
 	{
 		data = "Dash";
 	}
-	else if (playerState == PlayerStateBase::PlayerStateKind::kDodge)
+	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kDodge)
 	{
 		data = "Dodge";
 	}
-	else if (playerState == PlayerStateBase::PlayerStateKind::kAttack)
+	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kAttack)
 	{
 		data = "Attack";
 	}
-	else if (playerState == PlayerStateBase::PlayerStateKind::kGuard)
+	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kGuard)
 	{
 		data = "Guard";
 	}
-	else if (playerState == PlayerStateBase::PlayerStateKind::kCharge)
+	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kCharge)
 	{
 		data = "Charge";
 	}
-	else if (playerState == PlayerStateBase::PlayerStateKind::kHitAttack)
+	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kHitAttack)
 	{
 		data = "HitAttack";
 	}
@@ -65,13 +65,20 @@ void EnemyStateBase::CheckSituation(PlayerStateBase::PlayerStateKind playerState
 	for (auto item : m_aiData[data])
 	{	
 		ans -= item;
-		if (ans < 0)
+		if (ans <= 0)
 		{
 			break;
 		}
 		stateIndex++;
 	}
 	
+#ifdef _DEBUG
+
+	stateIndex = static_cast<int>(EnemyStateKind::kDodge);
+
+#endif // _DEBUG
+
+
 	//常に次の行動を更新し続け
 	if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kIdle)
 	{
@@ -84,10 +91,14 @@ void EnemyStateBase::CheckSituation(PlayerStateBase::PlayerStateKind playerState
 	else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kDash)
 	{
 		m_nextState = std::make_shared<EnemyStateDash>(m_pEnemy, m_pScene);
+		auto state = std::dynamic_pointer_cast<EnemyStateDash>(m_nextState);
+		state->Init(player->GetPos());
 	}
 	else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kDodge)
 	{
 		m_nextState = std::make_shared<EnemyStateDodge>(m_pEnemy, m_pScene);
+		auto state = std::dynamic_pointer_cast<EnemyStateDodge>(m_nextState);
+		state->Init();
 	}
 	else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kCharge)
 	{
@@ -100,11 +111,14 @@ void EnemyStateBase::CheckSituation(PlayerStateBase::PlayerStateKind playerState
 	else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kMove)
 	{
 		m_nextState = std::make_shared<EnemyStateMove>(m_pEnemy, m_pScene);
+		auto state = std::dynamic_pointer_cast<EnemyStateMove>(m_nextState);
+		state->Init(player->GetPos());
 	}
 
 	//ダメージを受けていたらそれに応じたStateに変化させる
-	if (m_hitEffect == 0)
+	if (m_hitEffect >= 0)
 	{
 		m_nextState = std::make_shared<EnemyStateHitAttack>(m_pEnemy, m_pScene);
+		//ダメージの種類を設定する
 	}
 }

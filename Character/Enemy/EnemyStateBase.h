@@ -1,7 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "SceneGame.h"
-#include "PlayerStateBase.h"
+#include "Player.h"
 
 class EnemyStateBase
 {
@@ -20,7 +20,7 @@ public:
 	};
 	EnemyStateBase(std::shared_ptr<Enemy> enemy, std::shared_ptr<SceneGame> scene) { m_pEnemy = enemy; m_pScene = scene; }
 	//状況を把握し続ける更新
-	void CheckSituation(PlayerStateBase::PlayerStateKind playerState);
+	void CheckSituation(std::shared_ptr<Player> player);
 	// Stateそれぞれの処理を行い、つぎのStateに変わるタイミングでtrueを返す	
 	virtual void Update() abstract;
 	//ダメージを受けた時の処理を行う

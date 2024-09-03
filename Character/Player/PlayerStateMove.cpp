@@ -13,9 +13,6 @@ namespace
 {
 	//移動速度
 	constexpr float kMoveSpeed = 100.0f;
-	//ダメージの軽減率
-	constexpr float kDamageCutRate = 0.25f;
-
 }
 
 void PlayerStateMove::Update(MyEngine::Input input)

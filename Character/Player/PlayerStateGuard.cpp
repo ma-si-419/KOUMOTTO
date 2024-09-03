@@ -2,7 +2,11 @@
 #include "PlayerStateIdle.h"
 #include "PlayerStateHitAttack.h"
 #include "Player.h"
-
+namespace
+{
+	//ダメージの軽減率
+	constexpr float kDamageCutRate = 0.25f;
+}
 void PlayerStateGuard::Update(MyEngine::Input input)
 {
 	//敵の方向を向くようにする
@@ -31,13 +35,8 @@ int PlayerStateGuard::OnDamage(std::shared_ptr<Collidable> collider)
 	int damage = 0;
 	//攻撃のポインタ
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
-	//ダメージをそのまま渡す
-	damage = attack->GetDamage();
-	//状態を変化させる
-	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer);
-	//受けた攻撃の種類を設定する
-	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
-	state->SetEffect(attack->GetHitEffect());
+	//ダメージをそカットして返す
+	damage = attack->GetDamage() * kDamageCutRate;
 
 	return damage;
 }
