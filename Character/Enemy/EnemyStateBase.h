@@ -39,5 +39,7 @@ public:
 	int m_hitEffect = -1;
 	//Stateが切り替わってから何フレーム立ったか計測する
 	int m_time = 0;
+	//プレイヤーの方を向くかどうか
+	bool m_isLookPlayer = true;
 };
 

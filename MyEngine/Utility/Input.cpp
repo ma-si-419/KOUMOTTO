@@ -76,6 +76,10 @@ void Input::Update()
 	//スティックの入力を取得する
 	GetJoypadAnalogInput(&m_stickInfo.leftStickX, &m_stickInfo.leftStickY, DX_INPUT_PAD1);
 	GetJoypadAnalogInputRight(&m_stickInfo.rightStickX, &m_stickInfo.rightStickY, DX_INPUT_PAD1);
+	XINPUT_STATE* xInputState = new XINPUT_STATE;
+	GetJoypadXInputState(DX_INPUT_PAD1, xInputState);
+	m_triggerInfo.left = xInputState->LeftTrigger;
+	m_triggerInfo.right = xInputState->RightTrigger;
 }
 
 bool Input::IsPress(const std::string& action) const

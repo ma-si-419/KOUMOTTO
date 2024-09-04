@@ -1,6 +1,7 @@
 #include "DataManager.h"
 #include "LoadCsv.h"
 #include <cassert>
+#include "EffekseerForDXLib.h"
 
 DataManager::DataManager()
 {
@@ -42,9 +43,20 @@ void DataManager::LoadAttackFile()
 		pushData.actionTotalTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kActionTotalTime)]);
 		pushData.isEnergy = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kEnergy)]));
 		pushData.hitEffect = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kHitEffect)]);
+		pushData.effekseerName = item[static_cast<int>(Game::AttackInfoSort::kEffekseerName)];
 
 		//ÉfÅ[É^Çì¸ÇÍÇÈ
 		m_attackData[item[static_cast<int>(Game::AttackInfoSort::kId)]] = pushData;
+	}
+}
+
+void DataManager::LoadEffekseerHandle()
+{
+	for (auto item : m_attackData)
+	{
+		std::string name = "data/effekseer/" + item.second.effekseerName + ".efk";
+
+		m_effekseerHandle[item.second.effekseerName] = LoadEffekseerEffect(name.c_str());
 	}
 }
 
@@ -100,6 +112,11 @@ void DataManager::LoadAiFile()
 		pushData[item[static_cast<int>(Game::AiInfoSort::kPlayerState)]] = inputData;
 	}
 	m_aiData = pushData;
+}
+
+void DataManager::LoadAnimationFile()
+{
+	m_LoadAnimationData = m_pLoadCsv->LoadFile("data/animationData.csv");
 }
 
 std::vector<DataManager::UiInfo> DataManager::GetUiData(Game::SceneNum sceneNum)

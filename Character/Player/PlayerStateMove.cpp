@@ -13,6 +13,8 @@ namespace
 {
 	//移動速度
 	constexpr float kMoveSpeed = 100.0f;
+	//トリガーが反応する
+	constexpr int kTriggerReaction = 200;
 }
 
 void PlayerStateMove::Update(MyEngine::Input input)
@@ -177,7 +179,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 
 		//上下移動入力されていたら
-		if (input.IsPress(Game::InputId::kLb))
+		if (input.GetTriggerInfo().left > kTriggerReaction)
 		{
 			//前後入力を上下のベクトルに変換
 			velo.y += dir.z * kMoveSpeed;

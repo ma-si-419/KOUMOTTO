@@ -1,5 +1,6 @@
 #include "AttackBase.h"
 #include "CapsuleColliderData.h"
+#include "EffekseerForDXLib.h"
 
 namespace
 {
@@ -27,15 +28,24 @@ AttackBase::~AttackBase()
 {
 }
 
-void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos)
+void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle)
 {
 	//当たり判定の初期化＆登録
 	Collidable::Init(physics);
 	//座標を設定する
 	m_rigidbody.SetPos(pos);
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(Collidable::m_pColData);
+	colData->m_startPos = m_rigidbody.GetPos() + (m_dir * m_status.radius);
+
+	//エフェクトの設定
+	m_effectHandle = effekseerHandle;
+	m_playEffectHandle = PlayEffekseer3DEffect(m_effectHandle);
+	MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
+	SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+
 }
 
-void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos,float power)
+void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos, float power)
 {
 	//コライダーデータをダウンキャストしデータを設定する
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(Collidable::m_pColData);
@@ -45,7 +55,35 @@ void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 tar
 	m_status.damage = static_cast<int>(m_status.damageRate * power);
 	//プレイヤーからターゲットに向かっての方向を入れる
 	m_dir = (target - playerPos).Normalize();
-	
+
+	auto vMat = MGetTranslate(playerPos.CastVECTOR());
+	auto rMat = MGetRotVec2(VGet(0, 0, 1), m_dir.CastVECTOR());
+	auto axis = VGet(1, 0, 0);
+	if (m_dir.z < 0)
+	{
+		axis = VGet(-1, 0, 0);
+	}
+	float dot = m_dir.Dot(axis);
+	rMat = MGetRotAxis(m_dir.Cross(axis).CastVECTOR(), dot);
+	MATRIX mat = MMult(vMat, rMat);
+	if (status.isLaser)
+	{
+		bool i = 0;
+	}
+
+	Effekseer::Matrix43 ret;
+
+	for (int y = 0; y < 4; ++y)
+	{
+		for (int x = 0; x < 3; ++x)
+		{
+			ret.Value[y][x] = mat.m[y][x];
+		}
+	}
+
+	auto effMgr = GetEffekseer3DManager();
+	effMgr->SetBaseMatrix(m_playEffectHandle, ret);
+
 	//打ち出す方向をちらばらせる技であれば
 	if (status.isScatter)
 	{
@@ -61,7 +99,6 @@ void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 tar
 	//当たり判定の情報を入れる
 	colData->m_radius = m_status.radius;
 	colData->m_isMoveStartPos = status.isLaser;
-	colData->m_startPos = m_rigidbody.GetPos() + (m_dir * status.radius);
 	m_targetLength = (target - playerPos).Length();
 }
 
@@ -76,6 +113,15 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 	m_rigidbody.SetVelo(velo);
 
 	m_moveLength += velo.Length();
+
+	//エフェクトの更新
+	MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
+
+	if (!m_status.isLaser)
+	{
+		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+	}
+
 
 	//ライフタイムをカウントする
 	m_lifeTime++;
@@ -99,6 +145,7 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 	if (m_lifeTime > m_status.lifeTime)
 	{
 		m_isExist = false;
+		StopEffekseer3DEffect(m_playEffectHandle);
 	}
 }
 
@@ -109,6 +156,7 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 		if (GetTag() == ObjectTag::kEnemyAttack)
 		{
 			m_isExist = false;
+			StopEffekseer3DEffect(m_playEffectHandle);
 		}
 	}
 	else if (collider->GetTag() == ObjectTag::kEnemy)
@@ -116,6 +164,7 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 		if (GetTag() == ObjectTag::kPlayerAttack)
 		{
 			m_isExist = false;
+			StopEffekseer3DEffect(m_playEffectHandle);
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace
 	//基本的な移動方向の割合
 	constexpr int kMoveDirRate[3] = { 35,10,30 };
 	//移動速度
-	constexpr float kMoveSpeed = 80.0f;
+	constexpr float kMoveSpeed = 120.0f;
 	//動きの方向の数
 	constexpr int kMoveDirNum = 8;
 	//動きの方向の数の半分
@@ -139,6 +139,8 @@ void EnemyStateDash::Init(MyEngine::Vector3 playerPos)
 	//移動ベクトル
 	m_velo = moveDir * kMoveSpeed;
 
+	m_pEnemy->ChangeAnim("Move");
+
 }
 
 void EnemyStateDash::Update()
@@ -156,6 +158,11 @@ void EnemyStateDash::Update()
 		m_velo = MyEngine::Vector3(0, 0, 0);
 		m_isChangeState = true;
 	}
+
+	m_pEnemy->SetModelFront(m_velo + m_pEnemy->GetPos());
+	m_isLookPlayer = false;
+
+	m_pEnemy->PlayAnim();
 
 	//Initで決定したベクトルで移動する
 	m_pEnemy->SetVelo(m_velo);
@@ -186,7 +193,7 @@ int EnemyStateDash::OnDamage(std::shared_ptr<Collidable> collider)
 	//攻撃のポインタ
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
 	//ダメージをそのまま渡す
-	damage = attack->GetDamage();
+	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
 

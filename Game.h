@@ -37,7 +37,8 @@ namespace Game
 		kAttackEndTime,
 		kActionTotalTime,
 		kEnergy,
-		kHitEffect
+		kHitEffect,
+		kEffekseerName
 	};
 
 	enum class UiInfoSort

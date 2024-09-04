@@ -93,9 +93,6 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 	//移動方向
 	MyEngine::Vector3 moveDir;
 
-	printfDx("kind  :  %d\n", moveKind);
-
-
 	//プレイヤーに向かっていく
 	if (moveKind == static_cast<int>(MoveKind::kFront))
 	{
@@ -145,6 +142,8 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 	//移動ベクトル
 	m_velo = moveDir * kMoveSpeed;
 
+	m_pEnemy->ChangeAnim("Move");
+
 }
 
 void EnemyStateMove::Update()
@@ -163,6 +162,10 @@ void EnemyStateMove::Update()
 		m_isChangeState = true;
 	}
 
+	m_pEnemy->SetModelFront(m_velo + m_pEnemy->GetPos());
+	m_isLookPlayer = false;
+
+	m_pEnemy->PlayAnim();
 
 	//Initで決定したベクトルで移動する
 	m_pEnemy->SetVelo(m_velo);
@@ -192,7 +195,7 @@ int EnemyStateMove::OnDamage(std::shared_ptr<Collidable> collider)
 	//攻撃のポインタ
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
 	//ダメージをそのまま渡す
-	damage = attack->GetDamage();
+	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
 

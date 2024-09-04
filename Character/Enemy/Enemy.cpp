@@ -108,8 +108,11 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	colPos.y += kColScale;
 	//当たり判定の座標調整
 	colData->m_startPos = colPos;
-
-	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+	//プレイヤーの方を向くStateかどうか判断する
+	if (m_pState->m_isLookPlayer)
+	{
+		MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+	}
 
 }
 
@@ -126,7 +129,7 @@ void Enemy::OnCollide(std::shared_ptr<Collidable> collider)
 	if (collider->GetTag() == ObjectTag::kPlayerAttack)
 	{
 		auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
-		int damage = attack->GetDamage() - GetRand(static_cast<int>(m_status.def));
+		int damage = m_pState->OnDamage(attack);
 		if (damage < 0)
 		{
 			damage = 2;
@@ -182,13 +185,13 @@ std::shared_ptr<AttackBase> Enemy::CreateAttack(std::string id)
 	std::shared_ptr<AttackBase> ans = std::make_shared<AttackBase>(ObjectTag::kEnemyAttack);
 
 	//攻撃を出す座標を作成
-	
+
 	MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
 	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
 
-	ans->Init(m_pPhysics, attackPos);
 	//ステータス設定
 	ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
+	ans->Init(m_pPhysics, attackPos,m_effekseerHandle[m_attackData[id].effekseerName]);
 
 	return ans;
 }

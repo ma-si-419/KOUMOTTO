@@ -15,6 +15,8 @@ namespace
 	constexpr float kPhysicalAttackLange = 0.9f;
 	//当たり判定の大きさ
 	constexpr float kColScale = 100.0f;
+	//トリガーが反応する
+	constexpr int kTriggerReaction = 200;
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
@@ -22,7 +24,7 @@ Player::Player() :
 	m_lastAttackTime(0),
 	m_isOpenSpecialPallet(false)
 {
-	LoadAnimationData(true);
+
 }
 
 Player::~Player()
@@ -286,7 +288,7 @@ void Player::Attack(std::string id)
 	MyEngine::Vector3 toTargetVec = m_attackTarget - m_rigidbody.GetPos();
 	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
 
-	ans->Init(m_pPhysics, attackPos);
+	ans->Init(m_pPhysics, attackPos,m_effekseerHandle[m_attackData[id].effekseerName]);
 	//ステータス設定
 	ans->SetStatus(m_attackData[id], m_attackTarget, m_rigidbody.GetPos(), m_status.atk);
 
@@ -334,7 +336,7 @@ MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
 	MyEngine::Vector3 stickDir(stick.leftStickX, 0, -stick.leftStickY);
 
 	//プレイヤーが上下移動するかするかどうか
-	bool isMoveVertical = input.IsPress(Game::InputId::kLb);
+	bool isMoveVertical = input.GetTriggerInfo().left > kTriggerReaction;
 
 	if (stickDir.sqLength() != 0)
 	{

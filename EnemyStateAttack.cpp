@@ -13,7 +13,10 @@ namespace
 	constexpr float kPhysicalAttackDistance = 1500.0f;
 
 	//格闘攻撃を出すときの移動速度
-	constexpr float kMoveSpeed = 100.0f;
+	constexpr float kMoveSpeed = 150.0f;
+
+	//格闘攻撃を離れていても出す時間
+	constexpr int kMaxMoveTime = 120;
 
 	//基本的な攻撃方法の割合
 	constexpr int kAttackKindRate[4] = { 30,30,20,20 };
@@ -99,6 +102,9 @@ void EnemyStateAttack::Init(std::shared_ptr<Player> player)
 			attackKind++;
 		}
 	}
+
+	attackKind = 1;
+
 	//攻撃の種類を見て攻撃を決定する
 	if (attackKind == static_cast<int>(AttackKind::kRepeatedlyEnergy))
 	{
@@ -137,8 +143,8 @@ void EnemyStateAttack::Update()
 	{
 		velo = (m_pPlayer->GetPos() - m_pEnemy->GetPos()).Normalize() * kMoveSpeed;
 	}
-	//一定距離まで近づいたら
-	if ((m_pPlayer->GetPos() - m_pEnemy->GetPos()).Length() < kPhysicalAttackDistance)
+	//一定距離まで近づくか一定時間たったら
+	if ((m_pPlayer->GetPos() - m_pEnemy->GetPos()).Length() < kPhysicalAttackDistance || m_time > kMaxMoveTime)
 	{
 		//動きを止める
 		velo = MyEngine::Vector3(0, 0, 0);
@@ -208,7 +214,7 @@ int EnemyStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 	//攻撃のポインタ
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
 	//ダメージをそのまま渡す
-	damage = attack->GetDamage();
+	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//ダメージは食らうが、Stateを変更しない
 
 	return damage;

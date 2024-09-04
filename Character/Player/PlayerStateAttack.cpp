@@ -120,7 +120,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
 			m_isAttackInput = true;
 		}
-		//格闘攻撃をした場合
+		//格闘攻撃をした場合 
 		if (!attackData.isEnergy && input.IsTrigger(Game::InputId::kB))
 		{
 			//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる

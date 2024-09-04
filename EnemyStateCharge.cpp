@@ -1,9 +1,21 @@
 #include "EnemyStateCharge.h"
+#include "EffekseerForDXLib.h"
 
 namespace
 {
 	//最低何フレームこのStateでいるか
-	constexpr int kShortestTime = 30;
+	constexpr int kShortestTime = 120;
+}
+
+void EnemyStateCharge::Init()
+{
+	//エフェクトの設定
+	m_effectHandle = LoadEffekseerEffect("data/effekseer/charge.efk");
+	m_playEffectHandle = PlayEffekseer3DEffect(m_effectHandle);
+	MyEngine::Vector3 pos = m_pEnemy->GetPos();
+	SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+	//アニメーションの設定
+	m_pEnemy->ChangeAnim("Charge");
 }
 
 void EnemyStateCharge::Update()
@@ -14,12 +26,17 @@ void EnemyStateCharge::Update()
 	//Charge状態は中身的には何もしない
 	m_pEnemy->SetVelo(MyEngine::Vector3(0, 0, 0));
 
+	//アニメーションの更新
+	m_pEnemy->PlayAnim();
+
 	//このフレームにいる最低時間を超えたら確率で別のフレームに行く
 	int random = GetRand(m_time) - kShortestTime;
 
 	if (random > 0)
 	{
 		m_isChangeState = true;
+		StopEffekseer3DEffect(m_playEffectHandle);
+		DeleteEffekseerEffect(m_effectHandle);
 	}
 }
 
@@ -30,9 +47,11 @@ int EnemyStateCharge::OnDamage(std::shared_ptr<Collidable> collider)
 	//攻撃のポインタ
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
 	//ダメージをそのまま渡す
-	damage = attack->GetDamage();
+	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
+	StopEffekseer3DEffect(m_playEffectHandle);
+	DeleteEffekseerEffect(m_effectHandle);
 
 	return damage;
 }

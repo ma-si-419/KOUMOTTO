@@ -8,6 +8,7 @@
 #include "Ui.h"
 #include "AttackBase.h"
 #include "LoadCsv.h"
+#include "EffekseerForDXLib.h"
 
 namespace
 {
@@ -35,6 +36,16 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
 	m_pEnemy = std::make_shared<Enemy>();
 	//Uiのポインタ
 	m_pUi = std::make_shared<Ui>();
+
+	m_dataManager.LoadAnimationFile();
+	m_dataManager.LoadEffekseerHandle();
+
+	m_pPlayer->SetAnimationData(m_dataManager.GetAnimationData(),true);
+	m_pEnemy->SetAnimationData(m_dataManager.GetAnimationData(),false);
+	
+	m_pPlayer->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
+	m_pEnemy->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
+
 }
 
 SceneGame::~SceneGame()
@@ -173,7 +184,6 @@ void SceneGame::Update(MyEngine::Input input)
 		m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
 		//カメラの更新
 		m_pGameCamera->Update();
-
 		for (auto& attack : m_pAttacks)
 		{
 			//攻撃の更新
@@ -203,6 +213,7 @@ void SceneGame::Update(MyEngine::Input input)
 				i--;
 			}
 		}
+		printfDx("%d\n", m_pAttacks.size());
 
 #ifdef _DEBUG
 		if (input.IsTrigger(Game::InputId::kPause))
@@ -212,6 +223,9 @@ void SceneGame::Update(MyEngine::Input input)
 		}
 #endif
 	}
+	//エフェクトを更新する
+	UpdateEffekseer3D();
+
 }
 
 void SceneGame::Draw()
@@ -224,10 +238,13 @@ void SceneGame::Draw()
 	m_pPlayer->Draw();
 	//エネミーの描画
 	m_pEnemy->Draw();
+	//エフェクトを描画する
+
 #ifdef _DEBUG
 	//当たり判定の描画
 	m_pPhysics->DebugDraw();
 #endif
+	DrawEffekseer3D();
 	//プレイヤーとエネミーの体力バーを表示する
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
 	//与えたダメージの表示

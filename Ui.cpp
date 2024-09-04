@@ -681,11 +681,11 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kPhysical)] + kCommandStringGapY,
 		"‚È‚®‚é", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kEnergy)] + kCommandStringGapY,
-		"‚«‚¾‚ñ", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		"‚Ü‚¾‚ñ", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kDodge)] + kCommandStringGapY,
 		"‚©‚¢‚Ð", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kCharge)] + kCommandStringGapY,
-		"‚«‚ð‚½‚ß‚é", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		"‚Ü‚»‚ð‚½‚ß‚é", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 

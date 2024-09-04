@@ -2,9 +2,9 @@
 namespace
 {
 	//Å’á‰½ƒtƒŒ[ƒ€‚±‚ÌState‚Å‚¢‚é‚©
-	constexpr int kShortestTime = 5;
+	constexpr int kShortestTime = 8;
 	//ˆÚ“®‘¬“x
-	constexpr float kMoveSpeed = 300.0f;
+	constexpr float kMoveSpeed = 400.0f;
 	//“®‚«‚Ì•ûŒü‚Ì”
 	constexpr int kMoveDirNum = 8;
 	//“®‚«‚Ì•ûŒü‚Ì”‚Ì”¼•ª
@@ -14,6 +14,7 @@ void EnemyStateDodge::Init()
 {
 	MyEngine::Vector3 moveDir = MyEngine::Vector3(GetRand(kMoveDirNum) - kMoveDirNumHalf, 0, GetRand(kMoveDirNum) - kMoveDirNumHalf).Normalize();
 	m_velo = moveDir * kMoveSpeed;
+	m_pEnemy->ChangeAnim("Move");
 }
 void EnemyStateDodge::Update()
 {
@@ -21,6 +22,12 @@ void EnemyStateDodge::Update()
 	m_time++;
 	//ˆÚ“®
 	m_pEnemy->SetVelo(m_velo);
+
+	m_pEnemy->SetModelFront(m_velo + m_pEnemy->GetPos());
+	m_isLookPlayer = false;
+
+	m_pEnemy->PlayAnim();
+
 	//ŽžŠÔ‚É‚È‚Á‚½‚ç‚·‚®‚É‚±‚ÌState‚ð”²‚¯‚é
 	if (m_time > kShortestTime)
 	{

@@ -8,7 +8,7 @@ public:
 	AttackBase(ObjectTag tag);
 	virtual ~AttackBase();
 
-	void Init(std::shared_ptr<Physics> physics,MyEngine::Vector3 pos);
+	void Init(std::shared_ptr<Physics> physics,MyEngine::Vector3 pos,int effekseerHandle);
 	void SetStatus(DataManager::AttackInfo status,MyEngine::Vector3 target, MyEngine::Vector3 playerPos,float power);
 	void Update(MyEngine::Vector3 targetPos);
 	void Draw() {};
@@ -42,5 +42,9 @@ private:
 	float m_targetLength;
 	//移動した距離
 	float m_moveLength;
+	//エフェクトのハンドル
+	int m_effectHandle;
+	//プレイ中のエフェクトのハンドル
+	int m_playEffectHandle;
 };
 

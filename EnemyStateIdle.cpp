@@ -6,6 +6,11 @@ namespace
 	constexpr int kShortestTime = 30;
 }
 
+void EnemyStateIdle::Init()
+{
+	m_pEnemy->ChangeAnim("Idle");
+}
+
 void EnemyStateIdle::Update()
 {
 	//時間を計測する
@@ -13,6 +18,9 @@ void EnemyStateIdle::Update()
 
 	//Idle状態は何もしない
 	m_pEnemy->SetVelo(MyEngine::Vector3(0,0,0));
+
+	m_pEnemy->PlayAnim();
+
 
 	//このフレームにいる最低時間を超えたら確率で別のフレームに行く
 	int random = GetRand(m_time) - kShortestTime;
@@ -30,7 +38,7 @@ int EnemyStateIdle::OnDamage(std::shared_ptr<Collidable> collider)
 	//攻撃のポインタ
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
 	//ダメージをそのまま渡す
-	damage = attack->GetDamage();
+	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
 

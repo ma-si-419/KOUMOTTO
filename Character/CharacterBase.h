@@ -55,7 +55,9 @@ public:
 	//攻撃に必要な気力量を取得する
 	int GetAttackCost(std::string Id) { return m_attackData[Id].cost; }
 	//アニメーションのデータを取得する
-	void LoadAnimationData(bool isPlayer);
+	void SetAnimationData(std::vector<std::vector<std::string>> data,bool isPlayer);
+	//攻撃のエフェクトのハンドルを設定する
+	void SetEffekseerHandle(std::map<std::string, int> data) { m_effekseerHandle = data; }
 	//必殺技を出している状態に変化させる
 	void PlaySpecialAttack(std::string id);
 	//向く方向を設定する
@@ -69,15 +71,14 @@ protected:
 	{
 		kName,
 		kNumber,
-		kStartFrame,
 		kLoopFrame,
 		kEndFrame,
-		kPlaySpeed
+		kPlaySpeed,
+		kIsPlayer
 	};
 	struct AnimationInfo
 	{
 		int number = 0;
-		int startFrame = 0;
 		int loopFrame = 0;
 		int endFrame = 0;
 		float playSpeed = 0.0f;
@@ -93,6 +94,8 @@ protected:
 	std::map<std::string, DataManager::AttackInfo> m_attackData;
 	//アニメーションのデータ
 	std::map<std::string, AnimationInfo> m_animData;
+	//Effekseerのハンドル
+	std::map<std::string, int> m_effekseerHandle;
 	//基本的なステータス
 	Status m_status;
 	//現在の体力

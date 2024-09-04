@@ -18,6 +18,12 @@ namespace MyEngine
 			int rightStickY;
 		};
 
+		struct TriggerInfo
+		{
+			int left;
+			int right;
+		};
+		
 		Input();
 
 		/// <summary>
@@ -45,6 +51,11 @@ namespace MyEngine
 		/// <returns>スティックがどれだけ倒れているか</returns>
 		StickInfo GetStickInfo() { return m_stickInfo; }
 
+		/// <summary>
+		/// トリガーの押し込み具合を取得する
+		/// </summary>
+		/// <returns>トリガーがどのくらい押し込まれているか</returns>
+		TriggerInfo GetTriggerInfo() { return m_triggerInfo; }
 	private:
 		/// <summary>
 		/// 入力種類
@@ -61,11 +72,14 @@ namespace MyEngine
 			int buttonID;
 		};
 
+
 		std::map<std::string, std::vector<InputMapInfo>> m_inputActionMap;
 
 		std::map<std::string, bool> m_currentInput;
 		std::map<std::string, bool> m_lastInput;
 
 		StickInfo m_stickInfo;
+
+		TriggerInfo m_triggerInfo;
 	};
 }

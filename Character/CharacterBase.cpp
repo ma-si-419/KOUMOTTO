@@ -37,34 +37,23 @@ void CharacterBase::SetTargetPos(MyEngine::Vector3 pos)
 	m_targetPos = pos;
 }
 
-void CharacterBase::LoadAnimationData(bool isPlayer)
+void CharacterBase::SetAnimationData(std::vector<std::vector<std::string>> data, bool isPlayer)
 {
-	LoadCsv loadCsv;
-	std::vector<std::vector<std::string>> data;
-	if (isPlayer)
-	{
-		//プレイヤーのファイルを読み込む
-		data = loadCsv.LoadFile("data/animationData.csv");
-	}
-	else
-	{
-		//エネミーのファイルを読み込む
-	}
-
 	for (auto& item : data)
 	{
 		//入れるデータ
 		AnimationInfo pushData;
+		//プレイヤーかどうかが一致していればデータを入れる
+		if (isPlayer == static_cast<bool>(std::stoi(item[static_cast<int>(AnimationInfoSort::kIsPlayer)])))
+		{
+			pushData.number = std::stoi(item[static_cast<int>(AnimationInfoSort::kNumber)]);
+			pushData.loopFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kLoopFrame)]);
+			pushData.endFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kEndFrame)]);
+			pushData.playSpeed = std::stof(item[static_cast<int>(AnimationInfoSort::kPlaySpeed)]);
 
-		pushData.number = std::stoi(item[static_cast<int>(AnimationInfoSort::kNumber)]);
-		pushData.startFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kStartFrame)]);
-		pushData.loopFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kLoopFrame)]);
-		pushData.endFrame = std::stoi(item[static_cast<int>(AnimationInfoSort::kEndFrame)]);
-		pushData.playSpeed = std::stof(item[static_cast<int>(AnimationInfoSort::kPlaySpeed)]);
-
-		m_animData[item[static_cast<int>(AnimationInfoSort::kName)]] = pushData;
+			m_animData[item[static_cast<int>(AnimationInfoSort::kName)]] = pushData;
+		}
 	}
-
 }
 
 std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics> physics, std::string id, bool isPlayer)
@@ -83,9 +72,9 @@ std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics>
 	MyEngine::Vector3 toTargetVec = m_attackTarget - m_rigidbody.GetPos();
 	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
 
-	ans->Init(physics, attackPos);
-	//ステータス設定
 	ans->SetStatus(m_attackData[id], m_attackTarget, m_rigidbody.GetPos(), m_status.atk);
+	//ステータス設定
+	ans->Init(physics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName]);
 
 	return ans;
 }
@@ -117,7 +106,7 @@ void CharacterBase::PlayAnim()
 		m_animTime = m_animLoopTime;
 	}
 	//再生フレームを反映させる
-	MV1SetAttachAnimTime(m_modelHandle,m_playAnim,m_animTime);
+	MV1SetAttachAnimTime(m_modelHandle, m_playAnim, m_animTime);
 }
 
 
@@ -139,7 +128,7 @@ void CharacterBase::PlaySpecialAttack(std::string id)
 
 void CharacterBase::SetModelFront(MyEngine::Vector3 pos)
 {
-	MV1SetRotationZYAxis(m_modelHandle,(m_rigidbody.GetPos() - pos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - pos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 }
 
 void CharacterBase::SetNormalAttack(bool isPhysical, int time)

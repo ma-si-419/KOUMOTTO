@@ -113,13 +113,13 @@ void Physics::DebugDraw()
 			auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(item->m_pColData);
 
 			DrawCapsule3D(capsuleData->m_startPos.CastVECTOR(), item->m_rigidbody.GetPos().CastVECTOR(),
-				capsuleData->m_radius, 5, GetColor(50, 50, 255), GetColor(255, 255, 255), true);
+				capsuleData->m_radius, 3, GetColor(50, 50, 255), GetColor(255, 255, 255), false);
 		}
 		else if (item->m_pColData->GetKind() == ColliderData::Kind::kSphere)
 		{
 			auto sphereData = std::dynamic_pointer_cast<SphereColliderData>(item->m_pColData);
 
-			DrawSphere3D(item->m_rigidbody.GetPos().CastVECTOR(), sphereData->m_radius, 5, GetColor(255, 255, 0), GetColor(255, 255, 255), false);
+			DrawSphere3D(item->m_rigidbody.GetPos().CastVECTOR(), sphereData->m_radius, 3, GetColor(255, 255, 0), GetColor(255, 255, 255), false);
 		}
 	}
 }

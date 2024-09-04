@@ -1,4 +1,5 @@
 #include "DxLib.h"
+#include "EffekseerForDXLib.h"
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "DataManager.h"
@@ -24,6 +25,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;			// エラーが起きたら直ちに終了
 	}
 
+	Effekseer_Init(16000);
+	//Effekseer_InitDistortion();
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
+	Effekseer_Sync3DSetting();
+	
 	//フォントの読み込み
 	LPCSTR fontPath = "data/toroman.ttf";
 	if (AddFontResourceEx(fontPath, FR_PRIVATE, NULL) > 0)
@@ -38,7 +44,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ChangeFont("アンニャントロマン", DX_CHARSET_DEFAULT);
 
 	SetUseZBuffer3D(true);
+	SetWriteZBuffer3D(true);
 	SetDrawScreen(DX_SCREEN_BACK);
+
 
 	SceneManager scene;
 	DataManager data;
@@ -71,6 +79,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		scene.Update(input);
 		//シーンの描画
 		scene.Draw();
+		Effekseer_Sync3DSetting();
+		DrawEffekseer3D();
 
 		// 画面が切り替わるのを待つ
 		ScreenFlip();
@@ -87,6 +97,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// 16.66ミリ秒(16667マイクロ秒)経過するまで待つ
 		}
 	}
+	
+	Effkseer_End();
 
 	DxLib_End();				// ＤＸライブラリ使用の終了処理
 
