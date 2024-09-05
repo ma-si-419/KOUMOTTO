@@ -43,6 +43,7 @@ void DataManager::LoadAttackFile()
 		pushData.actionTotalTime = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kActionTotalTime)]);
 		pushData.isEnergy = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kEnergy)]));
 		pushData.hitEffect = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kHitEffect)]);
+		pushData.isSpecial = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kIsSpecial)]));
 		pushData.effekseerName = item[static_cast<int>(Game::AttackInfoSort::kEffekseerName)];
 
 		//ÉfÅ[É^Çì¸ÇÍÇÈ

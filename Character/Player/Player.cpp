@@ -4,7 +4,7 @@
 #include "AttackBase.h"
 #include "CommandIdList.h"
 #include "CapsuleColliderData.h"
-#include "PlayerStateAll.h"
+#include "PlayerStateIdle.h"
 namespace
 {
 	//移動速度
@@ -24,7 +24,6 @@ Player::Player() :
 	m_lastAttackTime(0),
 	m_isOpenSpecialPallet(false)
 {
-
 }
 
 Player::~Player()
@@ -33,10 +32,10 @@ Player::~Player()
 
 void Player::Init(std::shared_ptr<Physics> physics)
 {
-	std::shared_ptr<Collidable> p = shared_from_this();
-	auto p2 = std::dynamic_pointer_cast<Player>(p);
-	m_pState = std::make_shared<PlayerStateIdle>(p2);
+	m_pState = std::make_shared<PlayerStateIdle>(std::dynamic_pointer_cast<Player>(shared_from_this()), m_pScene);
 	m_pState->m_nextState = m_pState;
+	auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_pState);
+	state->Init();
 
 	SetSpecialAttack();
 
@@ -63,9 +62,6 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
 
 	m_rigidbody.SetPos(pos);
-
-	//アニメーション
-	ChangeAnim("Idle");
 
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
@@ -100,10 +96,6 @@ void Player::RetryInit()
 	pos.y = 0;
 	pos.z = rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length();
 
-
-	//アニメーションの初期化
-	ChangeAnim("Idle");
-
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 
@@ -115,129 +107,18 @@ void Player::RetryInit()
 
 	m_rigidbody.SetPos(pos);
 
+	//Stateの初期化
+	m_pState = std::make_shared<PlayerStateIdle>(std::dynamic_pointer_cast<Player>(shared_from_this()), m_pScene);
+	m_pState->m_nextState = m_pState;
+	auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_pState);
+	state->Init();
+
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
-
-	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
-
 }
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 {
-	//移動ベクトル
-	MyEngine::Vector3 velo;
-	//スタン中は操作できないようにする
-	if (m_stanTime < 0)
-	{
-
-		//気をためる処理
-		if (input.IsPress("Y"))
-		{
-			//マックスじゃなければ
-			if (m_nowMp < m_status.mp)
-			{
-				m_nowMp++;
-			}
-		}
-
-		//攻撃処理
-		Attack(input);
-
-		//最後に攻撃した時間を計測する
-		m_lastAttackTime++;
-
-//		MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
-	}
-	//操作できない時間
-	else
-	{
-		//動けない時間を減らす
-		m_stanTime--;
-		//攻撃を出している状態だったら
-		if (m_isAttack)
-		{
-			//1操作で攻撃を複数回出す技であれば
-			if (m_attackData[m_attackId].attackNum > 1)
-			{
-				//今攻撃を出し始めて何秒か数える
-				int time = m_attackData[m_attackId].actionTotalTime - m_stanTime;
-				//攻撃のスパンを取得する
-				int span = m_attackData[m_attackId].attackEndTime / m_attackData[m_attackId].attackNum;
-				//攻撃を出し切る時間までしか攻撃を出せないようにする
-				if (time % span == 0 && time <= m_attackData[m_attackId].attackEndTime)
-				{
-					//攻撃を作成
-					std::shared_ptr<AttackBase> attack = CreateAttack(m_pPhysics, m_attackId, true);
-					//レーザー状の攻撃であれば消える時間をそろえる
-					if (m_attackData[m_attackId].isLaser)
-					{
-						//消えるまでの時間
-						int lifeTime = m_attackData[m_attackId].lifeTime - time;
-
-						attack->SetAttackTime(lifeTime);
-					}
-					//攻撃を出す
-					scene->AddAttack(attack);
-					m_lastAttackTime = 0;
-				}
-			}
-			//単発攻撃であれば
-			else
-			{
-				//格闘攻撃だった場合
-				if (m_attackData[m_attackId].isEnergy == false)
-				{
-					//攻撃の当たり判定の距離
-					float attackLange = ((m_targetPos - m_rigidbody.GetPos()).Normalize() * kAttackPos).Length() + m_attackData[m_attackId].radius * kPhysicalAttackLange;
-
-					//敵との距離が近くなったら
-					if ((m_targetPos - m_rigidbody.GetPos()).Length() < attackLange)
-					{
-						m_isNearTarget = true;
-					}
-
-					//まだ敵との距離が遠ければ
-					if (!m_isNearTarget)
-					{
-						//敵に近づく
-						velo = (m_targetPos - m_rigidbody.GetPos()).Normalize() * kMoveSpeed;
-						//敵が近くにいない場合攻撃のカウントを止める
-						m_stanTime++;
-					}
-
-					//攻撃モーションに入って何秒か求める
-					int time = m_attackData[m_attackId].actionTotalTime - m_stanTime;
-					//攻撃を出す時間になったら
-					if (time > m_attackData[m_attackId].attackEndTime)
-					{
-						//攻撃を出す
-						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));
-						m_isAttack = false;
-						m_lastAttackTime = 0;
-					}
-				}
-				//気弾攻撃だった場合
-				else
-				{
-					//攻撃モーションに入って何秒か求める
-					int time = m_attackData[m_attackId].actionTotalTime - m_stanTime;
-					//攻撃を出す時間になったら
-					if (time > m_attackData[m_attackId].attackEndTime)
-					{
-						//攻撃を出す
-						scene->AddAttack(CreateAttack(m_pPhysics, m_attackId, true));
-						m_isAttack = false;
-						m_lastAttackTime = 0;
-					}
-
-				}
-			}
-		}
-	}
-	//必殺技パレットを開いているかどうかを保存する
-	m_isOpenSpecialPallet = input.IsPress(Game::InputId::kLb);
-
-
 	//前のフレームとStateを比較して違うStateだったら
 	if (m_pState->m_nextState->GetKind() != m_pState->GetKind())
 	{
@@ -245,12 +126,45 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 		m_pState = m_pState->m_nextState;
 		m_pState->m_nextState = m_pState;
 	}
+#ifdef _DEBUG
+	std::string stateKind = "empty";
+
+	if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kAttack)
+	{
+		stateKind = "Attack";
+	}
+	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kCharge)
+	{
+		stateKind = "Charge";
+	}
+	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kDodge)
+	{
+		stateKind = "Dodge";
+	}
+	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kGuard)
+	{
+		stateKind = "Guard";
+	}
+	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kHitAttack)
+	{
+		stateKind = "HitAttack";
+	}
+	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kIdle)
+	{
+		stateKind = "Idle";
+	}
+	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kMove)
+	{
+		stateKind = "Move";
+	}
+
+	printfDx(stateKind.c_str());
+#endif // _DEBUG
+
+	m_isOpenSpecialPallet = input.IsPress(Game::InputId::kLb);
 
 	//Stateの更新
 	m_pState->Update(input);
-
-	//アニメーションを進める
-	PlayAnim();
 
 	//当たり判定の更新
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
@@ -276,24 +190,11 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 
 void Player::Draw()
 {
-	DrawFormatString(0, 100, GetColor(255, 255, 255), "%f,%f,%f", m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
+	DrawFormatString(200, 500, GetColor(0, 0, 0), "%f,%f,%f", m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
 	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%f,MP:%f", m_nowHp, m_nowMp);
 	MV1DrawModel(m_modelHandle);
 }
-void Player::Attack(std::string id)
-{
-	std::shared_ptr<AttackBase> ans = std::make_shared<AttackBase>(ObjectTag::kPlayerAttack);
 
-	//攻撃を出す座標を作成
-	MyEngine::Vector3 toTargetVec = m_attackTarget - m_rigidbody.GetPos();
-	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
-
-	ans->Init(m_pPhysics, attackPos,m_effekseerHandle[m_attackData[id].effekseerName]);
-	//ステータス設定
-	ans->SetStatus(m_attackData[id], m_attackTarget, m_rigidbody.GetPos(), m_status.atk);
-
-	m_pScene->AddAttack(ans);
-}
 bool Player::GetAttackKind(std::string attackId)
 {
 	return m_attackData[attackId].isEnergy;
@@ -318,10 +219,27 @@ std::map<std::string, std::string> Player::GetSetSpecialAttackName()
 {
 	std::map<std::string, std::string> ans;
 
-	ans[Game::InputId::kA] = m_attackData[m_setSpecialAttack[Game::InputId::kA]].name;
-	ans[Game::InputId::kB] = m_attackData[m_setSpecialAttack[Game::InputId::kB]].name;
-	ans[Game::InputId::kX] = m_attackData[m_setSpecialAttack[Game::InputId::kX]].name;
-	ans[Game::InputId::kY] = m_attackData[m_setSpecialAttack[Game::InputId::kY]].name;
+	ans[Game::InputId::kA] = m_attackData[m_setSpecialAttackId[Game::InputId::kA]].name;
+	ans[Game::InputId::kB] = m_attackData[m_setSpecialAttackId[Game::InputId::kB]].name;
+	ans[Game::InputId::kX] = m_attackData[m_setSpecialAttackId[Game::InputId::kX]].name;
+	ans[Game::InputId::kY] = m_attackData[m_setSpecialAttackId[Game::InputId::kY]].name;
+
+	return ans;
+}
+
+std::shared_ptr<AttackBase> Player::CreateAttack(std::string id)
+{
+	//エネミーの攻撃を作成
+	std::shared_ptr<AttackBase> ans = std::make_shared<AttackBase>(ObjectTag::kPlayerAttack);
+
+	//攻撃を出す座標を作成
+
+	MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
+	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
+
+	//ステータス設定
+	ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
+	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName]);
 
 	return ans;
 }
@@ -472,36 +390,36 @@ void Player::Attack(MyEngine::Input input)
 		if (input.IsTrigger("Y"))
 		{
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["Y"]))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["Y"]))
 			{
-				PlaySpecialAttack(m_setSpecialAttack["Y"]);
+				PlaySpecialAttack(m_setSpecialAttackId["Y"]);
 			}
 		}
 		//格闘必殺1
 		else if (input.IsTrigger("B"))
 		{
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["B"]))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["B"]))
 			{
-				PlaySpecialAttack(m_setSpecialAttack["B"]);
+				PlaySpecialAttack(m_setSpecialAttackId["B"]);
 			}
 		}
 		//格闘必殺2
 		else if (input.IsTrigger("X"))
 		{
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["X"]))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["X"]))
 			{
-				PlaySpecialAttack(m_setSpecialAttack["X"]);
+				PlaySpecialAttack(m_setSpecialAttackId["X"]);
 			}
 		}
 		//気弾連打
 		else if (input.IsTrigger("A"))
 		{
 			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttack["A"]))
+			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["A"]))
 			{
-				PlaySpecialAttack(m_setSpecialAttack["A"]);
+				PlaySpecialAttack(m_setSpecialAttackId["A"]);
 			}
 		}
 	}
@@ -515,9 +433,9 @@ void Player::ChangeState(std::shared_ptr<PlayerStateBase> state)
 
 void Player::SetSpecialAttack()
 {
-	m_setSpecialAttack["A"] = CommandId::kSpEnergyAttack;
-	m_setSpecialAttack["B"] = CommandId::kSpStanAttack;
-	m_setSpecialAttack["X"] = CommandId::kSpSlamAttack;
-	m_setSpecialAttack["Y"] = CommandId::kSpLaserAttack;
+	m_setSpecialAttackId["A"] = CommandId::kSpEnergyAttack;
+	m_setSpecialAttackId["B"] = CommandId::kSpStanAttack;
+	m_setSpecialAttackId["X"] = CommandId::kSpSlamAttack;
+	m_setSpecialAttackId["Y"] = CommandId::kSpLaserAttack;
 
 }

@@ -1,6 +1,10 @@
 #include "PlayerStateAttack.h"
 #include "PlayerStateIdle.h"
+#include "PlayerStateHitAttack.h"
+#include "PlayerStateDodge.h"
 #include "Player.h"
+#include "SceneGame.h"
+#include "CommandIdList.h"
 namespace
 {
 	//気弾を出しているときの移動速度
@@ -19,9 +23,39 @@ namespace
 	constexpr int kPhysicalComboMax = 2;
 }
 
+void PlayerStateAttack::Init(std::string button, bool isSpecial)
+{
+	//必殺技の場合
+	if (isSpecial)
+	{
+		auto attackDataId = m_pPlayer->GetSetSpecialAttackId();
+
+		m_attackId = attackDataId[button];
+		m_isNormalAttack = false;
+		m_isGoTarget = !m_pPlayer->GetAttackData(m_attackId).isEnergy;
+	}
+	//通常攻撃の場合
+	else
+	{
+		//気弾攻撃
+		if (button == Game::InputId::kX)
+		{
+			m_attackId = CommandId::kEnergyAttack1;
+			m_isGoTarget = false;
+		}
+		//格闘攻撃
+		else if (button == Game::InputId::kB)
+		{
+			m_attackId = CommandId::kPhysicalAttack1;
+			m_isGoTarget = true;
+		}
+		m_isNormalAttack = true;
+	}
+}
+
 void PlayerStateAttack::Update(MyEngine::Input input)
 {
-    DataManager::AttackInfo attackData = m_pPlayer->GetAttackData(m_attackId);
+	DataManager::AttackInfo attackData = m_pPlayer->GetAttackData(m_attackId);
 	//経過時間を計測する
 	m_time++;
 	//移動ベクトル
@@ -31,9 +65,16 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 	//移動方向
 	MyEngine::Vector3 dir(stick.leftStickX, 0, -stick.leftStickY);
 
-    //気弾攻撃のみ出しながら移動できる
-    if (attackData.attackEndTime = 0)
-    {
+	//気弾攻撃かどうか
+	bool isNormalEnergy =
+		m_attackId == CommandId::kEnergyAttack1 ||
+		m_attackId == CommandId::kEnergyAttack2 ||
+		m_attackId == CommandId::kEnergyAttack3 ||
+		m_attackId == CommandId::kEnergyAttack4;
+
+	//気弾攻撃のみ出しながら移動できる
+	if (isNormalEnergy)
+	{
 		//移動入力がされているとき
 		if (dir.sqLength() != 0)
 		{
@@ -77,93 +118,195 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 				toCenterVec.y = 0;
 				velo += toCenterVec.Normalize() * (dir.z * kEnergyAttackMoveSpeed);
 			}
+			//気弾攻撃を行っているときは回避行動にすぐに移行できる
+			if (!input.IsPress(Game::InputId::kLb))
+			{
+				//回避行動の入力がされたら
+				if (input.IsTrigger(Game::InputId::kA))
+				{
+					//StateをDodgeに変更する
+					m_nextState = std::make_shared<PlayerStateDodge>(m_pPlayer, m_pScene);
+					//回避の方向を設定する
+					auto state = std::dynamic_pointer_cast<PlayerStateDodge>(m_nextState);
+					state->Init(dir);
+					return;
+				}
+			}
 		}
-    }
+		//移動入力がされていないときに
+		if (!input.IsPress(Game::InputId::kLb))
+		{
+			//回避行動の入力がされたら
+			if (input.IsTrigger(Game::InputId::kA))
+			{
+				//StateをDodgeに変更する
+				m_nextState = std::make_shared<PlayerStateDodge>(m_pPlayer, m_pScene);
+				//回避の方向を敵に向かっていく方向に変更する
+				auto state = std::dynamic_pointer_cast<PlayerStateDodge>(m_nextState);
+				MyEngine::Vector3 dodgeDir = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Normalize();
+				state->Init(dodgeDir);
+				return;
+			}
+		}
+
+	}
 	//格闘攻撃だったら相手に向かっていく
-	if (!attackData.isEnergy)
+	if (m_isGoTarget)
 	{
 		//移動ベクトルの生成
 		MyEngine::Vector3 moveVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 		velo = moveVec.Normalize() * kPhysicalAttackMoveSpeed;
-
-		//敵が近くにいるかどうかを調べる
-		float length = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Length();
-		//敵が近くにいるか、経過時間が一定時間を超えたら
-		if (length < kNearEnemyLength || m_time > kGoEnemyTime)
-		{
-			//敵が近くにいるフラグを立てる
-			m_isNearEnemy = true;
-		}
-		//敵が近くにいたら移動をやめて攻撃を出す
-		if (m_isNearEnemy)
-		{
-			//移動をやめる処理
-			velo = MyEngine::Vector3(0, 0, 0);
-			//TODO : 攻撃を行う処理を作る
-			//攻撃の処理をする時間をへらしていく
-			m_actionTime--;
-			if (m_actionTime < 0)
-			{
-				//攻撃の処理をする時間が終わったら
-				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
-				return;
-			}
-
-		}
 	}
-	//通常攻撃のコンボの入力
-	if (!input.IsPress(Game::InputId::kLb))
+	//敵が近くにいるかどうかを調べる
+	float length = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Length();
+	//敵が近くにいるか、経過時間が一定時間を超えたら
+	if (length < kNearEnemyLength || m_time > kGoEnemyTime)
 	{
-		//気弾攻撃をした場合
-		if (attackData.isEnergy && input.IsTrigger(Game::InputId::kX))
-		{
-			//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
-			m_isAttackInput = true;
-		}
-		//格闘攻撃をした場合 
-		if (!attackData.isEnergy && input.IsTrigger(Game::InputId::kB))
-		{
-			//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
-			m_isAttackInput = true;
-		}
+		//敵に向かっていくのをやめる
+		m_isGoTarget = false;
+		//移動をしない処理
+		velo = MyEngine::Vector3(0, 0, 0);
 	}
-
-	//入力待機時間を超えたら
-	if (m_time > kComboTime)
+	//敵に向かっていく処理が終わっていたら
+	if (!m_isGoTarget)
 	{
-		//通常攻撃を出す
-		m_pPlayer->Attack(attackData.name);
-
-		//攻撃の入力がされていたら
-		if (m_isAttackInput)
+		//攻撃の処理をする時間をカウントする
+		m_actionTime++;
+	}
+	//攻撃が終わっていなければ
+	if (!m_isAttackEnd)
+	{
+		//攻撃が単発な場合
+		if (attackData.attackNum == 1)
 		{
-			//次段の攻撃に移行する
-			m_normalAttackNum++;
-			//いまだした気弾攻撃が最終段だったら
-			if (attackData.isEnergy && m_normalAttackNum > kEnergyComboMax)
+			//攻撃を出す時間になったら
+			if (m_actionTime > attackData.attackStartTime)
 			{
-				//アイドル状態に戻る
-				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
-				return;
+				//攻撃を出す
+				m_pScene->AddAttack(m_pPlayer->CreateAttack(m_attackId));
+				//攻撃が終了したフラグを立てる
+				m_isAttackEnd = true;
 			}
-			//いまだした格闘攻撃が最終段だったら
-			else if (!attackData.isEnergy && m_normalAttackNum > kPhysicalComboMax)
-			{
-				//アイドル状態に戻る
-				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
-				return;
-			}
-			//攻撃の入力をリセットする
-			m_isAttackInput = false;
 		}
-		//攻撃の入力がされていなかったら
+		//攻撃が複数回の場合
 		else
 		{
-			//アイドル状態に戻る
-			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
-			return;
+			//攻撃のスパンを取得する
+			int span = (attackData.attackEndTime - attackData.attackStartTime) / attackData.attackNum;
+			//攻撃のタイミングが来たら攻撃を出すようにする
+			if (m_actionTime % span == 0)
+			{
+				//攻撃を作成
+				std::shared_ptr<AttackBase> attack = m_pPlayer->CreateAttack(m_attackId);
+				//レーザー状の攻撃であれば消える時間をそろえる
+				if (attackData.isLaser)
+				{
+					//消えるまでの時間
+					int lifeTime = attackData.lifeTime - m_actionTime;
+
+					attack->SetAttackTime(lifeTime);
+				}
+				//攻撃を出す
+				m_pScene->AddAttack(attack);
+			}
+			//攻撃を出すタイミングが終了したら
+			if (m_actionTime > attackData.attackEndTime)
+			{
+				m_isAttackEnd = true;
+			}
 		}
 	}
+	//攻撃が終了した後
+	else
+	{
+		//通常攻撃を出した後の処理
+		if (m_isNormalAttack)
+		{
+			//次の攻撃が入力されていたら
+			if (m_nextAttackId != "empty")
+			{
+				//次の攻撃に移行する
+				m_attackId = m_nextAttackId;
+				m_nextAttackId = "empty";
+				//攻撃の情報を初期化する
+				m_actionTime = 0;
+				m_time = 0;
+				m_isAttackEnd = false;
+				auto attack = m_pPlayer->GetAttackData(m_nextAttackId);
+				m_isNormalAttack = attack.isSpecial;
+				m_isGoTarget = !attack.isEnergy;
+			}
+			//次の攻撃が入力されていなければ
+			else
+			{
+				//攻撃の全体フレームが終わってからIdle状態に戻る
+				if (m_actionTime > attackData.actionTotalTime)
+				{
+					m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
+					auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
+					state->Init();
+					return;
+				}
+			}
+		}
+		//必殺技を出した後の処理
+		else
+		{
+			//攻撃の全体フレームが終わってからIdle状態に戻る
+			if (m_actionTime > attackData.actionTotalTime)
+			{
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
+				auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
+				state->Init();
+				return;
+			}
+		}
+	}
+
+	//攻撃が始まってからコンボの入力の受付を行う
+	if (m_actionTime > 0)
+	{
+		//通常攻撃のコンボの入力
+		if (!input.IsPress(Game::InputId::kLb))
+		{
+			//気弾攻撃をした場合
+			if (input.IsTrigger(Game::InputId::kX) && attackData.isEnergy)
+			{
+				//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
+				m_nextAttackId = GetNextNormalAttack(m_attackId);
+			}
+			//格闘攻撃をした場合 
+			if (input.IsTrigger(Game::InputId::kB) && !attackData.isEnergy)
+			{
+				//時間内に攻撃入力をしていれば次段の攻撃に移行するフラグを立てる
+				m_nextAttackId = GetNextNormalAttack(m_attackId);
+			}
+		}
+		else
+		{
+			//セットしている必殺技のId
+			auto attackDataId = m_pPlayer->GetSetSpecialAttackId();
+			//各種必殺技を入力した場合
+			//通常技を出しているなら続けて必殺技を出す
+			if (input.IsTrigger(Game::InputId::kA))
+			{
+				m_nextAttackId = attackDataId[Game::InputId::kA];
+			}
+			if (input.IsTrigger(Game::InputId::kB))
+			{
+				m_nextAttackId = attackDataId[Game::InputId::kB];
+			}
+			if (input.IsTrigger(Game::InputId::kX))
+			{
+				m_nextAttackId = attackDataId[Game::InputId::kX];
+			}
+			if (input.IsTrigger(Game::InputId::kY))
+			{
+				m_nextAttackId = attackDataId[Game::InputId::kY];
+			}
+		}
+	}
+
 	//移動ベクトルを入れる
 	m_pPlayer->SetVelo(velo);
 
@@ -172,5 +315,49 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 
 int PlayerStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 {
-    return 0;
+	//ダメージ
+	int damage = 0;
+	//攻撃のポインタ
+	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
+	//ダメージをそのまま渡す
+	damage = attack->GetDamage();
+	//状態を変化させる
+	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer,m_pScene);
+	//受けた攻撃の種類を設定する
+	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
+	state->Init(collider);
+
+	return damage;
+}
+
+std::string PlayerStateAttack::GetNextNormalAttack(std::string id)
+{
+	if (id == CommandId::kEnergyAttack1)
+	{
+		return CommandId::kEnergyAttack2;
+	}
+	else if (id == CommandId::kEnergyAttack2)
+	{
+		return CommandId::kEnergyAttack3;
+	}
+	else if (id == CommandId::kEnergyAttack3)
+	{
+		return CommandId::kEnergyAttack4;
+	}
+	else if (id == CommandId::kEnergyAttack4)
+	{
+		return CommandId::kEnergyAttack1;
+	}
+	else if (id == CommandId::kPhysicalAttack1)
+	{
+		return CommandId::kPhysicalAttack2;
+	}
+	else if (id == CommandId::kPhysicalAttack2)
+	{
+		return CommandId::kPhysicalAttack3;
+	}
+	else if (id == CommandId::kPhysicalAttack3)
+	{
+		return CommandId::kPhysicalAttack1;
+	}
 }

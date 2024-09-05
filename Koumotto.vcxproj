@@ -170,10 +170,7 @@
     <ClCompile Include="Character\Player\PlayerStateGuard.cpp" />
     <ClCompile Include="Character\Player\PlayerStateHitAttack.cpp" />
     <ClCompile Include="Character\Player\PlayerStateMove.cpp" />
-    <ClCompile Include="Character\Player\PlayerStateNormalEnergyAttack.cpp" />
-    <ClCompile Include="Character\Player\PlayerStateNormalPhysicalAttack.cpp" />
-    <ClCompile Include="Character\Player\PlayerStateSpecialEnergyAttack.cpp" />
-    <ClCompile Include="Character\Player\PlayerStateSpecialPhysicalAttack.cpp" />
+    <ClCompile Include="PlayerStateCharge.cpp" />
     <ClCompile Include="Scene\SceneSelect.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneGame.cpp" />
@@ -218,10 +215,7 @@
     <ClInclude Include="Character\Player\PlayerStateGuard.h" />
     <ClInclude Include="Character\Player\PlayerStateHitAttack.h" />
     <ClInclude Include="Character\Player\PlayerStateMove.h" />
-    <ClInclude Include="Character\Player\PlayerStateNormalEnergyAttack.h" />
-    <ClInclude Include="Character\Player\PlayerStateNormalPhysicalAttack.h" />
-    <ClInclude Include="Character\Player\PlayerStateSpecialEnergyAttack.h" />
-    <ClInclude Include="Character\Player\PlayerStateSpecialPhysicalAttack.h" />
+    <ClInclude Include="PlayerStateCharge.h" />
     <ClInclude Include="Scene\SceneSelect.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneGame.h" />
@@ -232,7 +226,6 @@
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
     <ClInclude Include="Character\Player\PlayerStateBase.h" />
     <ClInclude Include="Character\Player\PlayerStateIdle.h" />
-    <ClInclude Include="Character\Player\PlayerStateAll.h" />
     <ClInclude Include="TitleCamera.h" />
     <ClInclude Include="Ui.h" />
   </ItemGroup>

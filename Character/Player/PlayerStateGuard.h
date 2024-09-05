@@ -4,7 +4,9 @@ class PlayerStateGuard : public PlayerStateBase
 {
 public:
 
-	PlayerStateGuard(std::shared_ptr<Player> player) : PlayerStateBase(player) {}
+	PlayerStateGuard(std::shared_ptr<Player> player, std::shared_ptr<SceneGame> scene) : PlayerStateBase(player, scene) {};
+
+	void Init();
 
 	virtual void Update(MyEngine::Input input) override;
 

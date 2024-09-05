@@ -40,9 +40,9 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
 	m_dataManager.LoadAnimationFile();
 	m_dataManager.LoadEffekseerHandle();
 
-	m_pPlayer->SetAnimationData(m_dataManager.GetAnimationData(),true);
-	m_pEnemy->SetAnimationData(m_dataManager.GetAnimationData(),false);
-	
+	m_pPlayer->SetAnimationData(m_dataManager.GetAnimationData(), true);
+	m_pEnemy->SetAnimationData(m_dataManager.GetAnimationData(), false);
+
 	m_pPlayer->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
 	m_pEnemy->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
 
@@ -66,6 +66,8 @@ void SceneGame::Init()
 
 	//エネミーの座標をプレイヤーに渡す
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
+	//プレイヤーにシーンのポインタを渡す
+	m_pPlayer->SetGameScene(shared_from_this());
 	//プレイヤーの初期化(当たり判定を登録する)
 	m_pPlayer->Init(m_pPhysics);
 	//エネミーにプレイヤーの座標を渡す
@@ -75,8 +77,8 @@ void SceneGame::Init()
 	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
 	m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
-	//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
-	m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
+	//カメラにプレイヤーの移動量を渡す
+//	m_pGameCamera->SetPlayerVelo(m_pPlayer->GetVelo());
 	//カメラの初期化
 	m_pGameCamera->Init();
 
@@ -100,7 +102,7 @@ void SceneGame::RetryInit()
 	//カメラにエネミーの座標を渡す
 	m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
 	//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
-	m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
+	//m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
 	//カメラの初期化
 	m_pGameCamera->Init();
 	m_isGameOver = false;
@@ -180,8 +182,8 @@ void SceneGame::Update(MyEngine::Input input)
 		m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 		//カメラにエネミーの座標を渡す
 		m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
-		//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
-		m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
+		//カメラにプレイヤーの回転行列を渡す
+		m_pGameCamera->SetPlayerRotaMat(m_pPlayer->GetModelRotaMatrix());
 		//カメラの更新
 		m_pGameCamera->Update();
 		for (auto& attack : m_pAttacks)
@@ -214,6 +216,7 @@ void SceneGame::Update(MyEngine::Input input)
 			}
 		}
 		printfDx("%d\n", m_pAttacks.size());
+
 
 #ifdef _DEBUG
 		if (input.IsTrigger(Game::InputId::kPause))
@@ -253,6 +256,10 @@ void SceneGame::Draw()
 	m_pUi->DrawCommand(m_pPlayer->GetIsOpenSpecialPallet(), m_pPlayer->GetSetSpecialAttackName());
 	//コンボ数の表示
 	m_pUi->DrawComboCount();
+
+	MyEngine::Vector3 pos = m_pGameCamera->GetPos();
+
+	DrawFormatString(200,550,GetColor(0,0,0),"%f,%f,%f",pos.x,pos.y,pos.z);
 
 	//ゲームオーバー時のUIの表示
 	if (m_isGameOver)

@@ -38,6 +38,7 @@ namespace Game
 		kActionTotalTime,
 		kEnergy,
 		kHitEffect,
+		kIsSpecial,
 		kEffekseerName
 	};
 

@@ -3,15 +3,9 @@
 class PlayerStateDodge : public PlayerStateBase
 {
 public:
-	enum class MoveDir
-	{
-		kFront,
-		kBack,
-		kRight,
-		kLeft
-	};
+	PlayerStateDodge(std::shared_ptr<Player> player, std::shared_ptr<SceneGame> scene) : PlayerStateBase(player, scene) {};
 
-	PlayerStateDodge(std::shared_ptr<Player> player) : PlayerStateBase(player) {}
+	void Init(MyEngine::Vector3 dir);
 
 	virtual void Update(MyEngine::Input input) override;
 
@@ -19,17 +13,9 @@ public:
 
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) override;
 
-	void SetAnimDir(MoveDir dir) { m_animDir = dir; }
-
-	void SetMoveDir(MyEngine::Vector3 dir) { m_moveDir = dir; }
 private:
-
-
 	//ˆÚ“®‚Ì•ûŒü
 	MyEngine::Vector3 m_moveDir;
-
-	//ƒAƒjƒ‚Ì•ûŒü
-	MoveDir m_animDir = MoveDir::kFront;
 	
 	//Œo‰ßŠÔ
 	int m_time = 0;

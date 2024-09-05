@@ -14,7 +14,11 @@ public:
 	void Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input);
 	void Draw();
 
+	void SetGameScene(std::shared_ptr<SceneGame> scene) { m_pScene = scene; }
+
 	float GetRota() { return m_rota; }
+
+	MyEngine::Vector3 GetVelo() { return m_rigidbody.GetVelo(); }
 
 	void SetRota(float rota) { m_rota = rota; }
 
@@ -30,7 +34,9 @@ public:
 
 	PlayerStateBase::PlayerStateKind GetStateKind() { return m_pState->GetKind(); }
 
-	void Attack(std::string id);
+	void AddMp(float addPoint) { m_nowMp += addPoint; }
+
+	MATRIX GetModelRotaMatrix() { return MV1GetRotationMatrix(m_modelHandle); }
 
 	/// <summary>
 	/// UŒ‚‚Ìí—Ş‚ğæ“¾‚·‚é
@@ -41,9 +47,12 @@ public:
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
-	std::map<std::string, std::string> GetSetSpecialAttack() { return m_setSpecialAttack; };
-
+	//ƒZƒbƒg‚µ‚Ä‚ ‚é•KE‹Z‚ÌId‚ğ•Ô‚·
+	std::map<std::string, std::string> GetSetSpecialAttackId() { return m_setSpecialAttackId; };
+	//ƒZƒbƒg‚µ‚Ä‚ ‚é•KE‹Z‚Ì–¼‘O‚ğ•Ô‚·
 	std::map<std::string, std::string> GetSetSpecialAttackName();
+	//UŒ‚‚ğì¬‚·‚é
+	std::shared_ptr<AttackBase> CreateAttack(std::string id);
 
 private:
 
@@ -73,8 +82,8 @@ private:
 
 	void SetSpecialAttack();
 
-	//İ’è‚µ‚Ä‚¢‚é‹Z
-	std::map<std::string, std::string> m_setSpecialAttack;
+	//İ’è‚µ‚Ä‚¢‚é‹Z‚ÌId
+	std::map<std::string, std::string> m_setSpecialAttackId;
 
 	//Stateƒpƒ^[ƒ“
 	std::shared_ptr<PlayerStateBase> m_pState;

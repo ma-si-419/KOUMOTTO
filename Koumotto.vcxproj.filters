@@ -144,18 +144,6 @@
     <ClCompile Include="Character\Player\PlayerStateMove.cpp">
       <Filter>ソース ファイル\Character\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Character\Player\PlayerStateNormalEnergyAttack.cpp">
-      <Filter>ソース ファイル\Character\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Character\Player\PlayerStateNormalPhysicalAttack.cpp">
-      <Filter>ソース ファイル\Character\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Character\Player\PlayerStateSpecialEnergyAttack.cpp">
-      <Filter>ソース ファイル\Character\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Character\Player\PlayerStateSpecialPhysicalAttack.cpp">
-      <Filter>ソース ファイル\Character\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Character\Enemy\Enemy.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
@@ -185,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="EnemyStateMove.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerStateCharge.cpp">
+      <Filter>ソース ファイル\Character\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -263,9 +254,6 @@
     <ClInclude Include="Character\Player\Player.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Character\Player\PlayerStateAll.h">
-      <Filter>ヘッダー ファイル\Character\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Character\Player\PlayerStateAttack.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
@@ -285,18 +273,6 @@
       <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="Character\Player\PlayerStateMove.h">
-      <Filter>ヘッダー ファイル\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Character\Player\PlayerStateNormalEnergyAttack.h">
-      <Filter>ヘッダー ファイル\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Character\Player\PlayerStateNormalPhysicalAttack.h">
-      <Filter>ヘッダー ファイル\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Character\Player\PlayerStateSpecialEnergyAttack.h">
-      <Filter>ヘッダー ファイル\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Character\Player\PlayerStateSpecialPhysicalAttack.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="Character\Enemy\Enemy.h">
@@ -328,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="EnemyStateMove.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerStateCharge.h">
+      <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

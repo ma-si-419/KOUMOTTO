@@ -5,6 +5,7 @@
 #include "AttackBase.h"
 
 
+class SceneGame;
 class Player;
 class PlayerStateBase : public std::enable_shared_from_this<PlayerStateBase>
 {
@@ -13,18 +14,13 @@ public:
 	{
 		kIdle,
 		kMove,
-		kDash,
 		kDodge,
 		kAttack,
 		kGuard,
 		kCharge,
-		kHitAttack,
-		kSpecialEnergyAttack,
-		kNormalEnergyAttack,
-		kSpecialPhysicalAttack,
-		kNormalPhysicalAttack
+		kHitAttack
 	};
-	PlayerStateBase(std::shared_ptr<Player> player) { m_pPlayer = player; };
+	PlayerStateBase(std::shared_ptr<Player> player, std::shared_ptr<SceneGame> scene) { m_pPlayer = player; m_pScene = scene; }
 
 	virtual void Update(MyEngine::Input input) abstract;
 	//現在のStateを返す
@@ -35,4 +31,6 @@ public:
 	std::shared_ptr<PlayerStateBase> m_nextState;
 	//プレイヤーのポインタを持っておく
 	std::shared_ptr<Player> m_pPlayer;
+	//シーンのポインタを持っておく
+	std::shared_ptr<SceneGame> m_pScene;
 };

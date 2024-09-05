@@ -3,7 +3,9 @@
 class PlayerStateMove : public PlayerStateBase
 {
 public:
-	PlayerStateMove(std::shared_ptr<Player> player) : PlayerStateBase(player) {}
+	PlayerStateMove(std::shared_ptr<Player> player, std::shared_ptr<SceneGame> scene) : PlayerStateBase(player, scene) {};
+
+	void Init();
 
 	virtual void Update(MyEngine::Input input) override;
 

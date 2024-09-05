@@ -22,10 +22,6 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 	{
 		data = "Move";
 	}
-	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kDash)
-	{
-		data = "Dash";
-	}
 	else if (player->GetStateKind() == PlayerStateBase::PlayerStateKind::kDodge)
 	{
 		data = "Dodge";
@@ -88,6 +84,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			m_nextState = std::make_shared<EnemyStateIdle>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateIdle>(m_nextState);
 			state->Init();
+			return;
 		}
 		//攻撃
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kAttack)
@@ -95,6 +92,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			m_nextState = std::make_shared<EnemyStateAttack>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateAttack>(m_nextState);
 			state->Init(player);
+			return;
 		}
 		//ダッシュ
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kDash)
@@ -102,6 +100,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			m_nextState = std::make_shared<EnemyStateDash>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateDash>(m_nextState);
 			state->Init(player->GetPos());
+			return;
 		}
 		//回避
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kDodge)
@@ -109,6 +108,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			m_nextState = std::make_shared<EnemyStateDodge>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateDodge>(m_nextState);
 			state->Init();
+			return;
 		}
 		//気をためる(アニメーションだけで移動はしない)
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kCharge)
@@ -116,6 +116,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			m_nextState = std::make_shared<EnemyStateCharge>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateCharge>(m_nextState);
 			state->Init();
+			return;
 		}
 		//ガード
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kGuard)
@@ -123,6 +124,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			m_nextState = std::make_shared<EnemyStateGuard>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateGuard>(m_nextState);
 			state->Init();
+			return;
 		}
 		//移動
 		else if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kMove)
@@ -130,6 +132,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			m_nextState = std::make_shared<EnemyStateMove>(m_pEnemy, m_pScene);
 			auto state = std::dynamic_pointer_cast<EnemyStateMove>(m_nextState);
 			state->Init(player->GetPos());
+			return;
 		}
 
 		//ダメージを受けていたらそれに応じたStateに変化させる
@@ -137,6 +140,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 		{
 			m_nextState = std::make_shared<EnemyStateHitAttack>(m_pEnemy, m_pScene);
 			//ダメージの種類を設定する
+			return;
 		}
 	}
 }

@@ -9,11 +9,13 @@ namespace
 	//回避の時間
 	constexpr int kDodgeTime = 10;
 }
+void PlayerStateDodge::Init(MyEngine::Vector3 dir)
+{
+	m_moveDir = dir;
+	m_pPlayer->ChangeAnim("Move");
+}
 void PlayerStateDodge::Update(MyEngine::Input input)
 {
-
-	MyEngine::Vector3 dir = m_moveDir.Normalize();
-
 	//移動と同じ処理
 	MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
 	rotationShaftPos.y = m_pPlayer->GetPos().y;
@@ -23,9 +25,9 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 	//回転速度(横移動の速さ)
 	float hMoveSpeed = 0;
 
-	if (dir.x != 0.0f)
+	if (m_moveDir.x != 0.0f)
 	{
-		hMoveSpeed = (dir.x * kDodgeScale) / toShaftPosVec.Length();
+		hMoveSpeed = (m_moveDir.x * kDodgeScale) / toShaftPosVec.Length();
 	}
 
 	MyEngine::Vector3 a = rotationShaftPos - m_pPlayer->GetPos();
@@ -41,7 +43,7 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 
 	MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 	toCenterVec.y = 0;
-	velo += toCenterVec.Normalize() * (dir.z * kDodgeScale);
+	velo += toCenterVec.Normalize() * (m_moveDir.z * kDodgeScale);
 
 	m_pPlayer->SetVelo(velo);
 
@@ -57,7 +59,8 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 	else
 	{
 		//アイドル状態に戻る
-		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
+		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer,m_pScene);
+		auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
 	}
 	return;
 

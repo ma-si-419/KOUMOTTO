@@ -11,7 +11,9 @@ public:
 		kGuard
 	};
 
-	PlayerStateHitAttack(std::shared_ptr<Player> player) : PlayerStateBase(player) {}
+	PlayerStateHitAttack(std::shared_ptr<Player> player, std::shared_ptr<SceneGame> scene) : PlayerStateBase(player, scene) {};
+
+	void Init(std::shared_ptr<Collidable> collider);
 
 	virtual void Update(MyEngine::Input input) override;
 
@@ -19,9 +21,6 @@ public:
 
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) override;
 
-	void SetEffect(int effect);
-
-	void SetBurstDir(MyEngine::Vector3 dir) { m_burstDir = dir; }
 private:
 	//Œo‰ßŽžŠÔ
 	int m_time = 0;

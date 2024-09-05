@@ -15,6 +15,9 @@ namespace
 	//スタン攻撃を受けた時の動けない時間
 	constexpr int kStunHitStunTime = 40;
 }
+void PlayerStateHitAttack::Init(std::shared_ptr<Collidable> collider)
+{
+}
 void PlayerStateHitAttack::Update(MyEngine::Input input)
 {
 	//経過時間を計測する
@@ -30,7 +33,7 @@ void PlayerStateHitAttack::Update(MyEngine::Input input)
 		if (m_time > kLightHitStunTime)
 		{
 			//アイドル状態に戻す
-			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer,m_pScene);
 			return;
 		}
 	}
@@ -42,7 +45,7 @@ void PlayerStateHitAttack::Update(MyEngine::Input input)
 		if (m_time > kBurstHitStunTime)
 		{
 			//アイドル状態に戻す
-			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
 			return;
 		}
 	}
@@ -54,7 +57,7 @@ void PlayerStateHitAttack::Update(MyEngine::Input input)
 		if (m_time > kStunHitStunTime)
 		{
 			//アイドル状態に戻す
-			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer);
+			m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
 			return;
 		}
 	}
@@ -72,33 +75,10 @@ int PlayerStateHitAttack::OnDamage(std::shared_ptr<Collidable> collider)
 	//ダメージをそのまま渡す
 	damage = attack->GetDamage();
 	//状態を変化させる
-	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer);
+	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer,m_pScene);
 	//受けた攻撃の種類を設定する
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
-	state->SetEffect(attack->GetHitEffect());
+	state->Init(collider);
 
 	return damage;
-}
-
-void PlayerStateHitAttack::SetEffect(int effect)
-{
-	//エフェクトを保存する
-	m_hitEffect = static_cast<HitEffect>(effect);
-	//受けた攻撃によってアニメーションを変化させる
-	if (m_hitEffect == HitEffect::kLightHit)
-	{
-		m_pPlayer->ChangeAnim("LightHit");
-	}
-	else if (m_hitEffect == HitEffect::kStun)
-	{
-		m_pPlayer->ChangeAnim("Stun");
-	}
-	else if (m_hitEffect == HitEffect::kBurst)
-	{
-		m_pPlayer->ChangeAnim("Burst");
-	}
-	else
-	{
-		m_pPlayer->ChangeAnim("Guard");
-	}
 }

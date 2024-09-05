@@ -103,8 +103,6 @@ void EnemyStateAttack::Init(std::shared_ptr<Player> player)
 		}
 	}
 
-	attackKind = 1;
-
 	//UŒ‚‚Ìí—Ş‚ğŒ©‚ÄUŒ‚‚ğŒˆ’è‚·‚é
 	if (attackKind == static_cast<int>(AttackKind::kRepeatedlyEnergy))
 	{

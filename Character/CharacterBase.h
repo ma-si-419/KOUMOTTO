@@ -14,7 +14,7 @@ class CharacterBase : public Collidable
 public:
 	struct Status
 	{
-		float hp = 30000;
+		float hp = 30000000;
 		float mp = 300;
 		float atk = 100;
 		float def = 200;

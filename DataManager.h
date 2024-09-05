@@ -34,6 +34,7 @@ public:
 		int actionTotalTime = 0;
 		bool isEnergy = false;
 		int hitEffect = 0;
+		bool isSpecial = false;
 		std::string effekseerName = "empty";
 	};
 
