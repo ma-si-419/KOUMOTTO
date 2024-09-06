@@ -60,7 +60,13 @@ namespace Game
 		kGuard,
 		kCharge
 	};
-
+	enum class EffeckInfoSort
+	{
+		kName,
+		kFileName,
+		kMag,
+		kLoopFrame
+	};
 	enum class SceneNum
 	{
 		kTitle,

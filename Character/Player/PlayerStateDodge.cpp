@@ -5,9 +5,11 @@
 
 namespace
 {
-	constexpr float kDodgeScale = 200.0f;
+	constexpr float kDodgeSpeed = 200.0f;
 	//‰ñ”ð‚ÌŽžŠÔ
 	constexpr int kDodgeTime = 10;
+	//“G‚Æ‚ÌÅ’Z‹——£
+	constexpr int kShortestEnemyDistance = 1500;
 }
 void PlayerStateDodge::Init(MyEngine::Vector3 dir)
 {
@@ -22,28 +24,43 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 
 	MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
+	MyEngine::Vector3 velo(0, 0, 0);
+
 	//‰ñ“]‘¬“x(‰¡ˆÚ“®‚Ì‘¬‚³)
 	float hMoveSpeed = 0;
 
 	if (m_moveDir.x != 0.0f)
 	{
-		hMoveSpeed = (m_moveDir.x * kDodgeScale) / toShaftPosVec.Length();
+		hMoveSpeed = (m_moveDir.x * kDodgeSpeed) / toShaftPosVec.Length();
 	}
 
-	MyEngine::Vector3 a = rotationShaftPos - m_pPlayer->GetPos();
-
-	//m_rota = atan2f(a.z,a.x);
-
 	m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
-
-	MyEngine::Vector3 velo(0, 0, 0);
 
 	velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
 	velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 
-	MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
-	toCenterVec.y = 0;
-	velo += toCenterVec.Normalize() * (m_moveDir.z * kDodgeScale);
+	//“G‚É‹ß‚·‚¬‚½‚çŽüˆÍ‚ð‰ñ‚é‚æ‚¤‚É‚·‚é
+	if (toShaftPosVec.Length() > kShortestEnemyDistance)
+	{
+		//‘OŒã“ü—Í‚ð‰ñ“]‚Ì’†S‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚É•ÏŠ·
+		toShaftPosVec.y = 0;
+		velo += toShaftPosVec.Normalize() * (m_moveDir.z * kDodgeSpeed);
+	}
+	else
+	{
+		//‘O“ü—Í‚ð‰¡ˆÚ“®‚ÉŒã‚ë“ü—Í‚ð‰ñ“]‚Ì’†S‚©‚ç—£‚ê‚éƒxƒNƒgƒ‹‚É•ÏŠ·
+		if (m_moveDir.z > 0)
+		{
+			hMoveSpeed = (m_moveDir.z * kDodgeSpeed) / toShaftPosVec.Length();
+			m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
+			velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
+			velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
+		}
+		else if (m_moveDir.z < 0)
+		{
+			velo += toShaftPosVec.Normalize() * (m_moveDir.z * kDodgeSpeed);
+		}
+	}
 
 	m_pPlayer->SetVelo(velo);
 

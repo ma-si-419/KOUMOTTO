@@ -9,14 +9,16 @@
 namespace
 {
 	//移動速度
-	constexpr float kMoveSpeed = 5.0f;
+	constexpr float kMoveSpeed = 100.0f;
 	//トリガーが反応する
 	constexpr int kTriggerReaction = 200;
+	//敵との一番近い距離(真上にいかないように)
+	constexpr int kShortestEnemyDistance = 1500;
 }
 
 void PlayerStateMove::Init()
 {
-	m_pPlayer->ChangeAnim("Move");
+	m_pPlayer->ChangeAnim("MoveFront");
 }
 
 void PlayerStateMove::Update(MyEngine::Input input)
@@ -140,10 +142,6 @@ void PlayerStateMove::Update(MyEngine::Input input)
 
 		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", hMoveSpeed);
 
-		MyEngine::Vector3 a = rotationShaftPos - m_pPlayer->GetPos();
-
-		//m_rota = atan2f(a.z,a.x);
-
 		m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
 
 		//左右移動は敵の周囲を回る
@@ -162,18 +160,16 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		//されていなかった場合
 		else
 		{
-			MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
 			//敵に近すぎたら周囲を回るようにする
-			if (toCenterVec.Length() > 2000)
+			if (toShaftPosVec.Length() > kShortestEnemyDistance)
 			{
 				//前後入力を回転の中心に向かうベクトルに変換
-				toCenterVec.y = 0;
-				velo += toCenterVec.Normalize() * (dir.z * kMoveSpeed);
+				toShaftPosVec.y = 0;
+				velo += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
 			}
 			else
 			{
 				//前入力を横移動に後ろ入力を回転の中心から離れるベクトルに変換
-				toCenterVec.y = 0;
 				if (dir.z > 0)
 				{
 					hMoveSpeed = (dir.z * kMoveSpeed) / toShaftPosVec.Length();
@@ -183,7 +179,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 				}
 				else if(dir.z < 0)
 				{
-					velo += toCenterVec.Normalize() * (dir.z * kMoveSpeed);
+					velo += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
 				}
 			}
 		}

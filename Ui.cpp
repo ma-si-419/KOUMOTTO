@@ -534,7 +534,7 @@ void Ui::DrawStartSign(bool startFlag)
 			//アルファ値を設定する
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_fightAlpha);
 			//Fightと表示する
-			DrawRotaGraph(drawPos.x, drawPos.y, m_fightExRate, 0, m_showUi[fight].handle, true);
+			DrawRotaGraph(static_cast<int>(drawPos.x), static_cast<int>(drawPos.y), m_fightExRate, 0, m_showUi[fight].handle, true);
 			//ブレンドモードを元に戻す
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}

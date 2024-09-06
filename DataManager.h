@@ -44,7 +44,7 @@ public:
 	void Init();
 
 	void LoadAttackFile();
-	void LoadEffekseerHandle();
+	void LoadEffekseerFile();
 	void LoadUiFile();
 	void LoadAiFile();
 	void LoadAnimationFile();
@@ -52,7 +52,7 @@ public:
 	//攻撃のデータを取得
 	std::map<std::string, AttackInfo> GetAttackData() { return m_attackData; };
 	//Effekseerのデータを取得
-	std::map<std::string, int> GetEffekseerHandle() { return m_effekseerHandle; };
+	std::map<std::string, std::pair<int, int>> GetEffekseerHandle() { return m_effekseerHandles; };
 
 	//ゲームシーンのUIのパス取得
 	std::vector<UiInfo> GetUiData(Game::SceneNum sceneNum);
@@ -62,17 +62,13 @@ public:
 	std::vector<std::vector<std::string>> GetAnimationData() { return m_LoadAnimationData; }
 private:
 
-	//ファイルから読み込んだデータ保存先
-	std::vector<std::vector<std::string>> m_LoadAttackData;
-	std::vector<std::vector<std::string>> m_LoadUiData;
-	std::vector<std::vector<std::string>> m_LoadAiData;
+	//ファイルから読み込んだアニメーションデータ保存先
 	std::vector<std::vector<std::string>> m_LoadAnimationData;
-
 
 	//攻撃のデータ
 	std::map<std::string, AttackInfo> m_attackData;
 	//Effekseerのロードしたハンドルを保存しておく
-	std::map<std::string, int> m_effekseerHandle;
+	std::map<std::string, std::pair<int,int>> m_effekseerHandles;
 
 	//画像のデータ
 	std::vector<UiInfo> m_sceneGameUiData;

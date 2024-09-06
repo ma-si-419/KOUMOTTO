@@ -27,7 +27,7 @@ public:
 	//ライフタイムを設定する
 	void SetAttackTime(int time) { m_status.lifeTime = time; };
 
-	void Final(std::shared_ptr<Physics> physics) { Collidable::Final(physics); }
+	void Final(std::shared_ptr<Physics> physics);
 	bool GetIsExist() { return m_isExist; }
 private:
 	/*ステータス*/

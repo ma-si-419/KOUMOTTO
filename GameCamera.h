@@ -16,6 +16,7 @@ public:
 
 	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
 
+	void Draw() { DrawSphere3D(m_playerVelo.CastVECTOR(), 500, 3, GetColor(255, 255, 255), GetColor(255, 255, 255), true); }
 	//void SetPlayerVelo(MyEngine::Vector3 velo) { m_playerVelo = velo; }
 
 	void SetPlayerRotaMat(MATRIX mat) { m_playerRotaMat = mat; }

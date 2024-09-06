@@ -26,6 +26,7 @@ AttackBase::AttackBase(ObjectTag tag) :
 
 AttackBase::~AttackBase()
 {
+	StopEffekseer3DEffect(m_playEffectHandle);
 }
 
 void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle)
@@ -38,8 +39,7 @@ void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, i
 	colData->m_startPos = m_rigidbody.GetPos() + (m_dir * m_status.radius);
 
 	//エフェクトの設定
-	m_effectHandle = effekseerHandle;
-	m_playEffectHandle = PlayEffekseer3DEffect(m_effectHandle);
+	m_playEffectHandle = PlayEffekseer3DEffect(effekseerHandle);
 	MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
 	SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
 
@@ -55,34 +55,6 @@ void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 tar
 	m_status.damage = static_cast<int>(m_status.damageRate * power);
 	//プレイヤーからターゲットに向かっての方向を入れる
 	m_dir = (target - playerPos).Normalize();
-
-	auto vMat = MGetTranslate(playerPos.CastVECTOR());
-	auto rMat = MGetRotVec2(VGet(0, 0, 1), m_dir.CastVECTOR());
-	auto axis = VGet(1, 0, 0);
-	if (m_dir.z < 0)
-	{
-		axis = VGet(-1, 0, 0);
-	}
-	float dot = m_dir.Dot(axis);
-	rMat = MGetRotAxis(m_dir.Cross(axis).CastVECTOR(), dot);
-	MATRIX mat = MMult(vMat, rMat);
-	if (status.isLaser)
-	{
-		bool i = 0;
-	}
-
-	Effekseer::Matrix43 ret;
-
-	for (int y = 0; y < 4; ++y)
-	{
-		for (int x = 0; x < 3; ++x)
-		{
-			ret.Value[y][x] = mat.m[y][x];
-		}
-	}
-
-	auto effMgr = GetEffekseer3DManager();
-	effMgr->SetBaseMatrix(m_playEffectHandle, ret);
 
 	//打ち出す方向をちらばらせる技であれば
 	if (status.isScatter)
@@ -121,7 +93,6 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 	{
 		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
 	}
-
 
 	//ライフタイムをカウントする
 	m_lifeTime++;
@@ -167,4 +138,12 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 			StopEffekseer3DEffect(m_playEffectHandle);
 		}
 	}
+}
+
+void AttackBase::Final(std::shared_ptr<Physics> physics)
+{
+	//再生中のエフェクトを消す
+	StopEffekseer3DEffect(m_playEffectHandle);
+	//当たり判定をけす
+	Collidable::Final(physics);
 }

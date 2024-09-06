@@ -34,9 +34,7 @@ public:
 
 	PlayerStateBase::PlayerStateKind GetStateKind() { return m_pState->GetKind(); }
 
-	void AddMp(float addPoint) { m_nowMp += addPoint; }
-
-	MATRIX GetModelRotaMatrix() { return MV1GetRotationMatrix(m_modelHandle); }
+	void AddMp(float addPoint) { if(m_nowMp < m_status.mp)m_nowMp += addPoint; }
 
 	/// <summary>
 	/// 攻撃の種類を取得する
@@ -53,21 +51,11 @@ public:
 	std::map<std::string, std::string> GetSetSpecialAttackName();
 	//攻撃を作成する
 	std::shared_ptr<AttackBase> CreateAttack(std::string id);
-
+	//プレイするエフェクトを設定する
+	void SetPlayEffect(std::pair<int, int> playHandleData);
+	//プレイしているエフェクトをストップする
+	void StopEffect();
 private:
-
-	/// <summary>
-	/// 移動処理の計算をする
-	/// </summary>
-	/// <param name="velo">移動ベクトル</param>
-	/// <param name="input">入力</param>
-	MyEngine::Vector3 Move(MyEngine::Vector3 velo, MyEngine::Input input);
-
-	/// <summary>
-	/// 攻撃関係操作の処理を行う
-	/// </summary>
-	/// <param name="input">入力</param>
-	void Attack(MyEngine::Input input);
 
 	float m_rota;
 

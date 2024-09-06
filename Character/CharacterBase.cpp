@@ -4,6 +4,7 @@
 #include "Physics.h"
 #include "CommandIdList.h"
 #include "LoadCsv.h"
+#include "EffekseerForDXLib.h"
 
 namespace
 {
@@ -21,8 +22,12 @@ CharacterBase::CharacterBase(const TCHAR* model, ObjectTag tag) :
 	m_isAttack(false),
 	m_animTime(0),
 	m_animPlaySpeed(0),
-	m_totalAnimTime(0)
+	m_totalAnimTime(0),
+	m_playEffectFrame(0)
 {
+	m_playEffectData.first = -1;
+	m_playEffectData.second = -1;
+
 	m_modelHandle = MV1LoadModel(model);
 	//auto& coldata = std::dynamic_pointer_cast<CapsuleColliderData>;
 }
@@ -58,25 +63,26 @@ void CharacterBase::SetAnimationData(std::vector<std::vector<std::string>> data,
 
 std::shared_ptr<AttackBase> CharacterBase::CreateAttack(std::shared_ptr<Physics> physics, std::string id, bool isPlayer)
 {
-	std::shared_ptr<AttackBase> ans;
-	//攻撃データの種類を取得
-	if (isPlayer)
-	{
-		ans = std::make_shared<AttackBase>(ObjectTag::kPlayerAttack);
-	}
-	else
-	{
-		ans = std::make_shared<AttackBase>(ObjectTag::kEnemyAttack);
-	}
-	//攻撃を出す座標を作成
-	MyEngine::Vector3 toTargetVec = m_attackTarget - m_rigidbody.GetPos();
-	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
+	//std::shared_ptr<AttackBase> ans;
+	////攻撃データの種類を取得
+	//if (isPlayer)
+	//{
+	//	ans = std::make_shared<AttackBase>(ObjectTag::kPlayerAttack);
+	//}
+	//else
+	//{
+	//	ans = std::make_shared<AttackBase>(ObjectTag::kEnemyAttack);
+	//}
+	////攻撃を出す座標を作成
+	//MyEngine::Vector3 toTargetVec = m_attackTarget - m_rigidbody.GetPos();
+	//MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
 
-	ans->SetStatus(m_attackData[id], m_attackTarget, m_rigidbody.GetPos(), m_status.atk);
-	//ステータス設定
-	ans->Init(physics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName]);
+	//ans->SetStatus(m_attackData[id], m_attackTarget, m_rigidbody.GetPos(), m_status.atk);
+	////ステータス設定
+	//ans->Init(physics, attackPos, m_effekseerHandle);
 
-	return ans;
+	//return ans;
+	return 0;
 }
 
 void CharacterBase::ChangeAnim(std::string animName)
@@ -92,7 +98,7 @@ void CharacterBase::ChangeAnim(std::string animName)
 	//新しいアニメーションをアタッチする
 	m_playAnim = MV1AttachAnim(m_modelHandle, m_animData[animName].number);
 	//アニメーションの総再生時間を設定する
-	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData[animName].endFrame);
+	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData[animName].number);
 }
 
 void CharacterBase::PlayAnim()
@@ -109,6 +115,44 @@ void CharacterBase::PlayAnim()
 	MV1SetAttachAnimTime(m_modelHandle, m_playAnim, m_animTime);
 }
 
+
+void CharacterBase::PlayEffect()
+{
+	//エフェクトのハンドルが入っていてまだ再生していなかったら
+	if (m_playEffectData.first != -1 && m_playEffectHandle == -1)
+	{
+		//エフェクトをプレイする
+		m_playEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
+		//プレイヤーの座標
+		MyEngine::Vector3 pos = m_rigidbody.GetPos();
+		//エフェクトをプレイヤーの座標に設定
+		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+	}
+	//エフェクトを再生しているときの処理
+	if (m_playEffectHandle != -1)
+	{
+		//プレイヤーの座標
+		MyEngine::Vector3 pos = m_rigidbody.GetPos();
+		//エフェクトをプレイヤーの座標に設定
+		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+		//エフェクトの再生時間を更新
+		m_playEffectFrame++;
+	}
+	//エフェクトをループさせる
+	if (m_playEffectFrame > m_playEffectData.second)
+	{
+		//エフェクトの再生時間を0にする
+		m_playEffectFrame = 0;
+		//エフェクトを止める
+		StopEffekseer3DEffect(m_playEffectHandle);
+		//エフェクトを再び再生する
+		m_playEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
+		//プレイヤーの座標
+		MyEngine::Vector3 pos = m_rigidbody.GetPos();
+		//エフェクトをプレイヤーの座標に設定
+		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+	}
+}
 
 void CharacterBase::PlaySpecialAttack(std::string id)
 {

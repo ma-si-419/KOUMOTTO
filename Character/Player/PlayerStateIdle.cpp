@@ -4,6 +4,7 @@
 #include "PlayerStateDodge.h"
 #include "PlayerStateAttack.h"
 #include "PlayerStateHitAttack.h"
+#include "PlayerStateCharge.h"
 #include "Player.h"
 
 
@@ -61,6 +62,15 @@ void PlayerStateIdle::Update(MyEngine::Input input)
 			//StateをGuardに変更する
 			m_nextState =  std::make_shared<PlayerStateGuard>(m_pPlayer,m_pScene);
 			auto state = std::dynamic_pointer_cast<PlayerStateGuard>(m_nextState);
+			state->Init();
+			return;
+		}
+		//チャージ入力されていたら
+		if (input.IsPress(Game::InputId::kY))
+		{
+			//StateをChargeに変更する
+			m_nextState = std::make_shared<PlayerStateCharge>(m_pPlayer, m_pScene);
+			auto state = std::dynamic_pointer_cast<PlayerStateCharge>(m_nextState);
 			state->Init();
 			return;
 		}

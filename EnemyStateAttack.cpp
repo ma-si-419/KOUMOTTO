@@ -106,25 +106,25 @@ void EnemyStateAttack::Init(std::shared_ptr<Player> player)
 	//UŒ‚‚Ìí—Ş‚ğŒ©‚ÄUŒ‚‚ğŒˆ’è‚·‚é
 	if (attackKind == static_cast<int>(AttackKind::kRepeatedlyEnergy))
 	{
-		m_attackId = CommandId::kSpEnergyAttack;
+		m_attackId = CommandId::kEnemyEnergyAttack;
 		m_isNearPlayer = false;
 		m_isStartAttack = true;
 	}
 	else if (attackKind == static_cast<int>(AttackKind::kLaser))
 	{
-		m_attackId = CommandId::kSpLaserAttack;
+		m_attackId = CommandId::kEnemyLaserAttack;
 		m_isNearPlayer = false;
 		m_isStartAttack = true;
 	}
 	else if (attackKind == static_cast<int>(AttackKind::kBreakAttack))
 	{
-		m_attackId = CommandId::kSpSlamAttack;
+		m_attackId = CommandId::kEnemySlamAttack;
 		m_isNearPlayer = true;
 		m_isStartAttack = false;
 	}
 	else if (attackKind == static_cast<int>(AttackKind::kStanAttack))
 	{
-		m_attackId = CommandId::kSpStanAttack;
+		m_attackId = CommandId::kEnemyStanAttack;
 		m_isNearPlayer = true;
 		m_isStartAttack = false;
 	}

@@ -13,4 +13,8 @@ namespace CommandId
 	const char* const kSpStanAttack = "202";
 	const char* const kSpSlamAttack = "203";
 	const char* const kSpEnergyAttack = "204";
+	const char* const kEnemyLaserAttack = "301";
+	const char* const kEnemyStanAttack = "302";
+	const char* const kEnemySlamAttack = "303";
+	const char* const kEnemyEnergyAttack = "304";
 }

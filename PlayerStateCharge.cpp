@@ -2,6 +2,8 @@
 #include "PlayerStateIdle.h"
 #include "PlayerStateHitAttack.h"
 #include "Player.h"
+#include "EffekseerForDXLib.h"
+
 
 namespace
 {
@@ -11,6 +13,7 @@ namespace
 
 void PlayerStateCharge::Init()
 {
+	m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Charge"));
     m_pPlayer->ChangeAnim("Guard");
 }
 
@@ -36,6 +39,7 @@ void PlayerStateCharge::Update(MyEngine::Input input)
 		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
 		auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
 		state->Init();
+		m_pPlayer->StopEffect();
 		return;
 	}
 }

@@ -18,9 +18,9 @@ void DataManager::Init()
 void DataManager::LoadAttackFile()
 {
 	//攻撃のデータ読み込み
-	m_LoadAttackData = m_pLoadCsv->LoadFile("data/attackData.csv");
+	std::vector<std::vector<std::string>> loadAttackData = m_pLoadCsv->LoadFile("data/attackData.csv");
 
-	for (auto& item : m_LoadAttackData)
+	for (auto& item : loadAttackData)
 	{
 		//入れるデータ
 		DataManager::AttackInfo pushData;
@@ -51,21 +51,25 @@ void DataManager::LoadAttackFile()
 	}
 }
 
-void DataManager::LoadEffekseerHandle()
+void DataManager::LoadEffekseerFile()
 {
-	for (auto item : m_attackData)
-	{
-		std::string name = "data/effekseer/" + item.second.effekseerName + ".efk";
+	//エフェクトのデータ読み込み
+	std::vector<std::vector<std::string>> loadEffectData = m_pLoadCsv->LoadFile("data/effekseerHandleData.csv");
 
-		m_effekseerHandle[item.second.effekseerName] = LoadEffekseerEffect(name.c_str());
+	for (auto& item : loadEffectData)
+	{
+		std::string dataName = "data/effekseer/" + item[static_cast<int>(Game::EffeckInfoSort::kFileName)] + ".efk";
+
+		//ハンドルをロードしてマップに登録
+		m_effekseerHandles[item[static_cast<int>(Game::EffeckInfoSort::kName)]].first = LoadEffekseerEffect(dataName.c_str(), stoi(item[static_cast<int>(Game::EffeckInfoSort::kMag)]));
+		m_effekseerHandles[item[static_cast<int>(Game::EffeckInfoSort::kName)]].second = stoi(item[static_cast<int>(Game::EffeckInfoSort::kLoopFrame)]);
 	}
 }
 
 void DataManager::LoadUiFile()
 {
-
-	m_LoadUiData = m_pLoadCsv->LoadFile("data/uiData.csv");
-	for (auto& item : m_LoadUiData)
+	std::vector<std::vector<std::string>> loadUiData = m_pLoadCsv->LoadFile("data/uiData.csv");
+	for (auto& item : loadUiData)
 	{
 		UiInfo pushData;
 
@@ -96,10 +100,10 @@ void DataManager::LoadUiFile()
 
 void DataManager::LoadAiFile()
 {
-	m_LoadAiData = m_pLoadCsv->LoadFile("data/enemyAiData.csv");
+	std::vector<std::vector<std::string>> loadAiData = m_pLoadCsv->LoadFile("data/enemyAiData.csv");
 	//入れるデータ
 	std::map<std::string, std::vector<int>> pushData;
-	for (auto& item : m_LoadAiData)
+	for (auto& item : loadAiData)
 	{
 		std::vector<int> inputData;
 

@@ -14,7 +14,7 @@ class CharacterBase : public Collidable
 public:
 	struct Status
 	{
-		float hp = 30000000;
+		float hp = 30000;
 		float mp = 300;
 		float atk = 100;
 		float def = 200;
@@ -56,8 +56,13 @@ public:
 	int GetAttackCost(std::string Id) { return m_attackData[Id].cost; }
 	//アニメーションのデータを取得する
 	void SetAnimationData(std::vector<std::vector<std::string>> data,bool isPlayer);
-	//攻撃のエフェクトのハンドルを設定する
-	void SetEffekseerHandle(std::map<std::string, int> data) { m_effekseerHandle = data; }
+	//エフェクトのハンドルを設定する
+	void SetEffekseerHandle(std::map<std::string, std::pair<int,int>> data) { m_effekseerHandle = data; }
+	//エフェクトの情報を取得する
+	std::pair<int,int> GetEffekseerData(std::string name) {return m_effekseerHandle[name]; }
+	//エフェクトを再生する
+	void PlayEffect();
+
 	//必殺技を出している状態に変化させる
 	void PlaySpecialAttack(std::string id);
 	//向く方向を設定する
@@ -95,7 +100,7 @@ protected:
 	//アニメーションのデータ
 	std::map<std::string, AnimationInfo> m_animData;
 	//Effekseerのハンドル
-	std::map<std::string, int> m_effekseerHandle;
+	std::map<std::string, std::pair<int,int>> m_effekseerHandle;
 	//基本的なステータス
 	Status m_status;
 	//現在の体力
@@ -118,7 +123,12 @@ protected:
 	float m_animTime;
 	//アニメーションのループするフレーム
 	float m_animLoopTime;
-
+	//再生しているエフェクトとループフレーム
+	std::pair<int,int> m_playEffectData;
+	//再生しているエフェクトのプレイハンドル
+	int m_playEffectHandle;
+	//現在再生しているエフェクトのフレーム
+	int m_playEffectFrame;	
 	//出している攻撃
 	std::string m_attackId;
 	//攻撃を出したタイミングの敵の座標

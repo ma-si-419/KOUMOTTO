@@ -9,10 +9,7 @@ namespace
 }
 void EnemyStateGuard::Init()
 {
-	m_effectHandle = LoadEffekseerEffect("data/effekseer/barrior.efk");
-	m_playEffectHandle = PlayEffekseer3DEffect(m_effectHandle);
-	MyEngine::Vector3 pos = m_pEnemy->GetPos();
-	SetPosPlayingEffekseer3DEffect(m_playEffectHandle,pos.x,pos.y,pos.z);
+	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Guard"));
 	m_pEnemy->ChangeAnim("Guard");
 }
 void EnemyStateGuard::Update()
@@ -33,8 +30,7 @@ void EnemyStateGuard::Update()
 	if (random > 0)
 	{
 		m_isChangeState = true;
-		StopEffekseer3DEffect(m_playEffectHandle);
-		DeleteEffekseerEffect(m_effectHandle);
+		m_pEnemy->StopEffect();
 	}
 }
 

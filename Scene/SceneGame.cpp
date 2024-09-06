@@ -38,7 +38,8 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
 	m_pUi = std::make_shared<Ui>();
 
 	m_dataManager.LoadAnimationFile();
-	m_dataManager.LoadEffekseerHandle();
+	m_dataManager.LoadEffekseerFile();
+
 
 	m_pPlayer->SetAnimationData(m_dataManager.GetAnimationData(), true);
 	m_pEnemy->SetAnimationData(m_dataManager.GetAnimationData(), false);
@@ -95,14 +96,24 @@ void SceneGame::Init()
 
 void SceneGame::RetryInit()
 {
+	m_pPlayer->StopEffect();
+	m_pEnemy->StopEffect();
+	m_pEnemy->InitAiState(shared_from_this());
+	m_pEnemy->InitPos();
+	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
 	m_pPlayer->RetryInit();
+	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 	m_pEnemy->RetryInit();
 	//カメラにプレイヤーの座標を渡す
 	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
 	m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
-	//カメラにプレイヤーが敵を中心にどのくらい回転しているかを渡す
-	//m_pGameCamera->SetPlayerRota(m_pPlayer->GetRota());
+	//残っている攻撃をすべてけす
+	for (auto item : m_pAttacks)
+	{
+		item->Final(m_pPhysics);
+	}
+	m_pAttacks.clear();
 	//カメラの初期化
 	m_pGameCamera->Init();
 	m_isGameOver = false;
@@ -116,6 +127,8 @@ void SceneGame::Update(MyEngine::Input input)
 	if (!m_isStartBattle)
 	{
 		m_standByTime++;
+		m_pPlayer->PlayAnim();
+		m_pEnemy->PlayAnim();
 		//一定時間待機したら
 		if (m_standByTime > kStandByTime)
 		{
@@ -182,8 +195,6 @@ void SceneGame::Update(MyEngine::Input input)
 		m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 		//カメラにエネミーの座標を渡す
 		m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
-		//カメラにプレイヤーの回転行列を渡す
-		m_pGameCamera->SetPlayerRotaMat(m_pPlayer->GetModelRotaMatrix());
 		//カメラの更新
 		m_pGameCamera->Update();
 		for (auto& attack : m_pAttacks)
@@ -221,7 +232,7 @@ void SceneGame::Update(MyEngine::Input input)
 #ifdef _DEBUG
 		if (input.IsTrigger(Game::InputId::kPause))
 		{
-			m_sceneManager.ChangeScene(std::make_shared<SceneGame>(m_sceneManager, m_dataManager));
+			RetryInit();
 			return;
 		}
 #endif
@@ -233,7 +244,6 @@ void SceneGame::Update(MyEngine::Input input)
 
 void SceneGame::Draw()
 {
-
 	//スカイドームの描画(仮処理)
 	MV1DrawModel(handle);
 
@@ -256,7 +266,6 @@ void SceneGame::Draw()
 	m_pUi->DrawCommand(m_pPlayer->GetIsOpenSpecialPallet(), m_pPlayer->GetSetSpecialAttackName());
 	//コンボ数の表示
 	m_pUi->DrawComboCount();
-
 	MyEngine::Vector3 pos = m_pGameCamera->GetPos();
 
 	DrawFormatString(200,550,GetColor(0,0,0),"%f,%f,%f",pos.x,pos.y,pos.z);
@@ -275,7 +284,6 @@ void SceneGame::End()
 	m_pPlayer->Final(m_pPhysics);
 	m_pEnemy->Final(m_pPhysics);
 	MV1DeleteModel(handle);
-
 }
 
 void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)

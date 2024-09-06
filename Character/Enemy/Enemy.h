@@ -39,7 +39,16 @@ public:
 	//Stateの更新
 	void StateUpdate(std::shared_ptr<Player> player);
 
+	//攻撃を作成する
 	std::shared_ptr<AttackBase> CreateAttack(std::string id);
+
+	//プレイするエフェクトを設定する
+	void SetPlayEffect(std::pair<int, int> playHandleData);
+	//プレイしているエフェクトをストップする
+	void StopEffect();
+
+	//初期位置に戻す
+	void InitPos();
 private:
 	//スタンゲージ
 	float m_stanPoint;
@@ -53,4 +62,6 @@ private:
 	std::shared_ptr<EnemyStateBase> m_pState;
 	//敵のStateによって動きの確率を変化させる
 	std::map<std::string, std::vector<int>> m_aiStateData;
+	//エネミーが使用するエフェクトハンドルを所持しておく
+	std::map<std::string, int> m_effectHandles;
 };

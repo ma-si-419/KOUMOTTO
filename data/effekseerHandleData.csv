@@ -1,0 +1,8 @@
+﻿名前,ファイル名,拡大率,総フレーム数
+PlayerEnergy,playerEnergy,150,300
+EnemyEnergy,enemyEnergy,150,300
+PlayerBigEnergy,playerEnergy,300,300
+Guard,barrior,120,250
+Charge,charge,150,25
+PlayerLaser,playerLaser,150,100
+EnemyLaser,enemyLaser,150,100

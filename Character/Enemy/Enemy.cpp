@@ -4,12 +4,13 @@
 #include "CapsuleColliderData.h"
 #include "Ui.h"
 #include "EnemyStateIdle.h"
+#include "EffekseerForDXLib.h"
 namespace
 {
 	//当たり判定の大きさ
 	constexpr float kColScale = 100.0f;
 	//初期位置
-	const MyEngine::Vector3 kInitPos(0, 0, 1000);
+	const MyEngine::Vector3 kInitPos(3000, 0, 3000);
 	//スタンゲージのマックス
 	constexpr float kMaxStanPoint = 500;
 	//スタンゲージが回復するまでの時間
@@ -31,6 +32,7 @@ Enemy::~Enemy()
 
 void Enemy::Init(std::shared_ptr<Physics> physics)
 {
+	ChangeAnim("Idle");
 
 	MV1SetScale(m_modelHandle, VGet(300, 300, 300));
 	Collidable::Init(physics);
@@ -43,7 +45,7 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 
 	m_rigidbody.SetPos(kInitPos);
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
-
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 
 }
 
@@ -62,7 +64,6 @@ void Enemy::RetryInit()
 	colData->m_startPos = pos;
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
-
 }
 
 void Enemy::Update(std::shared_ptr<SceneGame> scene)
@@ -97,8 +98,13 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 		m_pState = m_pState->m_nextState;
 	}
 
+	//Stateの更新処理
 	m_pState->Update();
 
+	//エフェクトの再生
+	PlayEffect();
+
+	//座標の更新
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
@@ -185,13 +191,30 @@ std::shared_ptr<AttackBase> Enemy::CreateAttack(std::string id)
 	std::shared_ptr<AttackBase> ans = std::make_shared<AttackBase>(ObjectTag::kEnemyAttack);
 
 	//攻撃を出す座標を作成
-
 	MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
 	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
 
 	//ステータス設定
 	ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
-	ans->Init(m_pPhysics, attackPos,m_effekseerHandle[m_attackData[id].effekseerName]);
+	ans->Init(m_pPhysics, attackPos,m_effekseerHandle[m_attackData[id].effekseerName].first);
 
 	return ans;
+}
+
+void Enemy::SetPlayEffect(std::pair<int, int> playHandleData)
+{
+	m_playEffectData = playHandleData;
+}
+
+void Enemy::StopEffect()
+{
+	StopEffekseer3DEffect(m_playEffectData.first);
+	m_playEffectData.first = -1;
+	m_playEffectData.second = 0;
+	m_playEffectHandle = -1;
+}
+
+void Enemy::InitPos()
+{
+	m_rigidbody.SetPos(kInitPos);
 }

@@ -5,6 +5,7 @@
 #include "CommandIdList.h"
 #include "CapsuleColliderData.h"
 #include "PlayerStateIdle.h"
+#include "EffekseerForDXLib.h"
 namespace
 {
 	//移動速度
@@ -24,6 +25,7 @@ Player::Player() :
 	m_lastAttackTime(0),
 	m_isOpenSpecialPallet(false)
 {
+	m_playEffectData.first = -1;
 }
 
 Player::~Player()
@@ -73,6 +75,9 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	colData->m_startPos = colPos;
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	//敵の方向を向くようにする
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
+
 }
 
 void Player::RetryInit()
@@ -115,6 +120,8 @@ void Player::RetryInit()
 
 	//ハンドルの座標を設定する
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
+	//敵の方向を向くようにする
+	MV1SetRotationZYAxis(m_modelHandle, (m_rigidbody.GetPos() - m_targetPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 }
 
 void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
@@ -165,6 +172,9 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 
 	//Stateの更新
 	m_pState->Update(input);
+	
+	//エフェクトの再生
+	PlayEffect();
 
 	//当たり判定の更新
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
@@ -239,191 +249,22 @@ std::shared_ptr<AttackBase> Player::CreateAttack(std::string id)
 
 	//ステータス設定
 	ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
-	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName]);
+	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName].first);
 
 	return ans;
 }
 
-MyEngine::Vector3 Player::Move(MyEngine::Vector3 velo, MyEngine::Input input)
+void Player::SetPlayEffect(std::pair<int, int> playHandleData)
 {
-	//スティックでの移動
-
-	//スティックの入力情報
-	MyEngine::Input::StickInfo stick = input.GetStickInfo();
-	//プレイヤーの移動方向ベクトル
-	MyEngine::Vector3 stickDir(stick.leftStickX, 0, -stick.leftStickY);
-
-	//プレイヤーが上下移動するかするかどうか
-	bool isMoveVertical = input.GetTriggerInfo().left > kTriggerReaction;
-
-	if (stickDir.sqLength() != 0)
-	{
-
-		stickDir = stickDir.Normalize();
-
-		//Y軸を中心とした回転をするので
-		MyEngine::Vector3 rotationShaftPos = m_targetPos;
-		//Y座標が関係しないようにプレイヤーと同じ座標にする
-		rotationShaftPos.y = m_rigidbody.GetPos().y;
-
-		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_rigidbody.GetPos();
-
-		//回転速度(横移動の速さ)
-		float hMoveSpeed = 0;
-
-		if (stickDir.x != 0.0f)
-		{
-			hMoveSpeed = (stickDir.x * kMoveSpeed) / toShaftPosVec.Length();
-		}
-
-		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", hMoveSpeed);
-
-		//MyEngine::Vector3 a = rotationShaftPos - m_rigidbody.GetPos();
-
-		//m_rota = atan2f(a.z,a.x);
-
-		m_rota += hMoveSpeed;
-
-		//左右移動は敵の周囲を回る
-
-		//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
-		//現在の座標からその座標に向かうベクトルを作成する
-		velo.x = (rotationShaftPos.x + cosf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().x;
-		velo.z = (rotationShaftPos.z + sinf(m_rota) * toShaftPosVec.Length()) - m_rigidbody.GetPos().z;
-
-		//上下移動入力されていたら
-		if (isMoveVertical)
-		{
-			//前後入力を上下のベクトルに変換
-			velo.y += stickDir.z * kMoveSpeed;
-		}
-		//されていなかった場合
-		else
-		{
-			//前後入力を回転の中心に向かうベクトルに変換
-			MyEngine::Vector3 toCenterVec = m_targetPos - m_rigidbody.GetPos();
-			toCenterVec.y = 0;
-			velo += toCenterVec.Normalize() * (stickDir.z * kMoveSpeed);
-		}
-
-
-		DrawFormatString(400, 0, GetColor(255, 255, 255), "%f", velo.Length());;
-
-	}
-
-
-	//キーボードでの移動
-
-	//スティックでの入力が行われていなかったら
-	//if (velo.sqLength() == 0)
-	//{
-	//	//プレイヤーの移動方向ベクトル
-	//	MyEngine::Vector3 stickDir;
-	//	//上入力
-	//	if (input.IsPress(Game::InputId::kUp))
-	//	{
-	//		stickDir.z = 1;
-	//	}
-	//	//下入力
-	//	else if (input.IsPress(Game::InputId::kDown))
-	//	{
-	//		stickDir.z = -1;
-	//	}
-	//	//右入力
-	//	if (input.IsPress(Game::InputId::kRight))
-	//	{
-	//		stickDir.x = 1;
-	//	}
-	//	//左入力
-	//	else if (input.IsPress(Game::InputId::kLeft))
-	//	{
-	//		stickDir.x = -1;
-	//	}
-	//	//J入力
-	//	if (input.IsPress(Game::InputId::kLb))
-	//	{
-	//		stickDir.y = stickDir.z;
-	//		stickDir.z = 0;
-	//	}
-	//	if (stickDir.sqLength() != 0)
-	//	{
-	//		MATRIX mat = MGetRotY(m_targetPos.y);
-
-	//		stickDir = stickDir.Normalize();
-
-	//		velo = stickDir * kHSpeed;
-
-	//		velo = velo.MatTransform(mat);
-
-	//	}
-	//}
-
-	return velo;
+	m_playEffectData = playHandleData;
 }
 
-void Player::Attack(MyEngine::Input input)
+void Player::StopEffect()
 {
-
-	//必殺技パレットを開いていないとき
-	if (!input.IsPress("LB"))
-	{
-		//気弾攻撃
-		if (input.IsTrigger("X"))
-		{
-			std::string attackId = CommandId::kEnergyAttack1;
-			//消費MPが現在のMPよりも少なかったら
-			if (m_nowMp >= GetAttackCost(attackId))
-			{
-				SetNormalAttack(false, m_lastAttackTime);
-			}
-		}
-		//格闘攻撃
-		else if (input.IsTrigger("B"))
-		{
-			SetNormalAttack(true, m_lastAttackTime);
-		}
-	}
-	//必殺技パレットを開いているとき
-	else
-	{
-		//かめはめ波
-		if (input.IsTrigger("Y"))
-		{
-			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["Y"]))
-			{
-				PlaySpecialAttack(m_setSpecialAttackId["Y"]);
-			}
-		}
-		//格闘必殺1
-		else if (input.IsTrigger("B"))
-		{
-			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["B"]))
-			{
-				PlaySpecialAttack(m_setSpecialAttackId["B"]);
-			}
-		}
-		//格闘必殺2
-		else if (input.IsTrigger("X"))
-		{
-			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["X"]))
-			{
-				PlaySpecialAttack(m_setSpecialAttackId["X"]);
-			}
-		}
-		//気弾連打
-		else if (input.IsTrigger("A"))
-		{
-			//MPが十分にあったら
-			if (m_nowMp >= GetAttackCost(m_setSpecialAttackId["A"]))
-			{
-				PlaySpecialAttack(m_setSpecialAttackId["A"]);
-			}
-		}
-	}
-
+	StopEffekseer3DEffect(m_playEffectData.first);
+	m_playEffectData.first = -1;
+	m_playEffectData.second = 0;
+	m_playEffectHandle = -1;
 }
 
 void Player::ChangeState(std::shared_ptr<PlayerStateBase> state)

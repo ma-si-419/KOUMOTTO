@@ -10,10 +10,8 @@ namespace
 void EnemyStateCharge::Init()
 {
 	//エフェクトの設定
-	m_effectHandle = LoadEffekseerEffect("data/effekseer/charge.efk");
-	m_playEffectHandle = PlayEffekseer3DEffect(m_effectHandle);
-	MyEngine::Vector3 pos = m_pEnemy->GetPos();
-	SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Charge"));
+
 	//アニメーションの設定
 	m_pEnemy->ChangeAnim("Charge");
 }
@@ -36,7 +34,7 @@ void EnemyStateCharge::Update()
 	{
 		m_isChangeState = true;
 		StopEffekseer3DEffect(m_playEffectHandle);
-		DeleteEffekseerEffect(m_effectHandle);
+		m_pEnemy->StopEffect();
 	}
 }
 

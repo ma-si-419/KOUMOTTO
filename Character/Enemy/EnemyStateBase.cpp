@@ -70,7 +70,7 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 
 #ifdef _DEBUG
 
-	stateIndex = static_cast<int>(EnemyStateKind::kAttack);
+	//stateIndex = static_cast<int>(EnemyStateKind::kIdle);
 
 #endif // _DEBUG
 
