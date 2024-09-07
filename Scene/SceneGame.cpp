@@ -104,6 +104,7 @@ void SceneGame::RetryInit()
 	m_pPlayer->RetryInit();
 	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 	m_pEnemy->RetryInit();
+	m_pUi->RetryInit();
 	//カメラにプレイヤーの座標を渡す
 	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す

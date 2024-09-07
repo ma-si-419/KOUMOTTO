@@ -54,6 +54,10 @@ void Enemy::RetryInit()
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
+	m_comboCount = 0;
+
+	m_lastHitDamageTime = kComboTime;
+
 	MyEngine::Vector3 pos = kInitPos;
 
 	m_rigidbody.SetPos(pos);
@@ -208,10 +212,11 @@ void Enemy::SetPlayEffect(std::pair<int, int> playHandleData)
 
 void Enemy::StopEffect()
 {
-	StopEffekseer3DEffect(m_playEffectData.first);
+	StopEffekseer3DEffect(m_playingEffectHandle);
 	m_playEffectData.first = -1;
 	m_playEffectData.second = 0;
-	m_playEffectHandle = -1;
+	m_playingEffectHandle = -1;
+	m_playEffectFrame = 0;
 }
 
 void Enemy::InitPos()

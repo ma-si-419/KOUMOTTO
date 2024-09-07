@@ -23,6 +23,9 @@ public:
 	virtual ~Ui();
 
 	void Init();
+	
+	void RetryInit();
+
 	void DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> enemy);
 
 	void SetUiPos(std::string name, MyEngine::Vector2 pos);

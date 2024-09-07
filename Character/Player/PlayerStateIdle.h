@@ -13,4 +13,3 @@ public:
 	
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) override;
 };
-

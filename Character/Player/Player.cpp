@@ -215,7 +215,7 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 	if (collider->GetTag() == ObjectTag::kEnemyAttack)
 	{
 		auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
-		int damage = attack->GetDamage() - static_cast<int>(m_status.def);
+		int damage = m_pState->OnDamage(collider);
 		if (damage < 0)
 		{
 			damage = 2;
@@ -261,10 +261,11 @@ void Player::SetPlayEffect(std::pair<int, int> playHandleData)
 
 void Player::StopEffect()
 {
-	StopEffekseer3DEffect(m_playEffectData.first);
+	StopEffekseer3DEffect(m_playingEffectHandle);
 	m_playEffectData.first = -1;
 	m_playEffectData.second = 0;
-	m_playEffectHandle = -1;
+	m_playingEffectHandle = -1;
+	m_playEffectFrame = 0;
 }
 
 void Player::ChangeState(std::shared_ptr<PlayerStateBase> state)

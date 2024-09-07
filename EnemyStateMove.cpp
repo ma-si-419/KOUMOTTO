@@ -151,9 +151,6 @@ void EnemyStateMove::Update()
 	//経過時間を計る
 	m_time++;
 
-	printfDx("\nmax : %.2f\n", (m_targetPos - m_initPos).Length() - kPlayerDistance);
-	printfDx("now : %.2f\n", (m_pEnemy->GetPos() - m_initPos).Length());
-
 	//最初の座標からターゲット座標まで移動したら
 	if (m_moveKind == MoveKind::kFront && (m_targetPos - m_initPos).Length() - kPlayerDistance < (m_pEnemy->GetPos() - m_initPos).Length())
 	{

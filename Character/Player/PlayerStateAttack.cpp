@@ -227,7 +227,6 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			{
 				//Ÿ‚ÌUŒ‚‚ÉˆÚs‚·‚é
 				m_attackId = m_nextAttackId;
-				m_nextAttackId = "empty";
 				//UŒ‚‚Ìî•ñ‚ğ‰Šú‰»‚·‚é
 				m_actionTime = 0;
 				m_time = 0;
@@ -235,6 +234,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 				auto attack = m_pPlayer->GetAttackData(m_nextAttackId);
 				m_isNormalAttack = attack.isSpecial;
 				m_isGoTarget = !attack.isEnergy;
+				m_nextAttackId = "empty";
 			}
 			//Ÿ‚ÌUŒ‚‚ª“ü—Í‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
 			else
@@ -322,7 +322,7 @@ int PlayerStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 	//ƒ_ƒ[ƒW‚ğ‚»‚Ì‚Ü‚Ü“n‚·
 	damage = attack->GetDamage();
 	//ó‘Ô‚ğ•Ï‰»‚³‚¹‚é
-	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer,m_pScene);
+	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer, m_pScene);
 	//ó‚¯‚½UŒ‚‚Ìí—Ş‚ğİ’è‚·‚é
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->Init(collider);
@@ -344,10 +344,6 @@ std::string PlayerStateAttack::GetNextNormalAttack(std::string id)
 	{
 		return CommandId::kEnergyAttack4;
 	}
-	else if (id == CommandId::kEnergyAttack4)
-	{
-		return CommandId::kEnergyAttack1;
-	}
 	else if (id == CommandId::kPhysicalAttack1)
 	{
 		return CommandId::kPhysicalAttack2;
@@ -359,5 +355,9 @@ std::string PlayerStateAttack::GetNextNormalAttack(std::string id)
 	else if (id == CommandId::kPhysicalAttack3)
 	{
 		return CommandId::kPhysicalAttack1;
+	}
+	else
+	{
+		return "empty";
 	}
 }

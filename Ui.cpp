@@ -163,6 +163,30 @@ void Ui::Init()
 	m_fightShakeTime = 0;
 	m_showFightTime = 0;
 	m_isFightChangeExRate = true;
+	m_comboPraiseCommentPosX = kComboPraiseCommentInitPosX;
+}
+
+void Ui::RetryInit()
+{
+	m_fightExRate = kFightInitExRate;
+	m_fightAlpha = kFightInitAlpha;
+	m_fightShakeTime = 0;
+	m_showFightTime = 0;
+	m_isFightChangeExRate = true;
+	//ダメージ表示をすべて消す
+	for (int i = 0; i < m_showDamage.size(); i++)
+	{
+		m_showDamage.erase(m_showDamage.begin() + i);
+		i--;
+	}
+	//コンボをすべて消す
+	m_comboCount = 0;
+	m_lastComboCount = 0;
+	//コンボのカウントを再開する
+	m_isCountCombo = true;
+	//途切れた時間カウントを初期化する
+	m_comboEndTime = 0;
+	m_comboUiAlpha = 255;
 }
 
 void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> enemy)
@@ -463,7 +487,7 @@ void Ui::DrawGameOver(int arrowPos)
 	//矢印の表示
 	if (arrowPos == 0)
 	{
-		MyEngine::Vector2 pos(static_cast<int>(kGameOverStringPosX[static_cast<int>(GameOverItem::kRetry)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance),static_cast<int>(kGameOverStringPosY[static_cast<int>(GameOverItem::kRetry)]));
+		MyEngine::Vector2 pos(static_cast<int>(kGameOverStringPosX[static_cast<int>(GameOverItem::kRetry)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance), static_cast<int>(kGameOverStringPosY[static_cast<int>(GameOverItem::kRetry)]));
 		DrawStringToHandle(pos.x, pos.y, "→", GetColor(0, 0, 0), m_gameOverFontHandle, GetColor(255, 255, 255));
 	}
 	else
@@ -801,7 +825,7 @@ void Ui::DrawComboCount()
 			if (m_comboUiAlpha < 0)
 			{
 				//前のフレームのコンボ数を元に戻す
-				m_lastComboCount = 0;				
+				m_lastComboCount = 0;
 				//コンボのカウントを再開する
 				m_isCountCombo = true;
 				//途切れた時間カウントを初期化する
@@ -809,7 +833,7 @@ void Ui::DrawComboCount()
 			}
 		}
 		//アルファ値の設定をする
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA,m_comboUiAlpha);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_comboUiAlpha);
 		//文字列を左揃えにするための処理
 		std::string comboString = std::to_string(m_lastComboCount);
 		//数字の文字数を取得しその分左に座標ずらす(数字は半角なのでフォントサイズに0.5をかける)
@@ -819,7 +843,7 @@ void Ui::DrawComboCount()
 		//コメントを表示する
 		DrawRotaGraph(m_comboPraiseCommentPosX, kComboPraiseCommentPosY, 1, 0, m_showUi[praiseComment].handle, true);
 		//ブレンドモードを元に戻す
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND,0);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 }

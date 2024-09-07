@@ -126,7 +126,7 @@ protected:
 	//再生しているエフェクトとループフレーム
 	std::pair<int,int> m_playEffectData;
 	//再生しているエフェクトのプレイハンドル
-	int m_playEffectHandle;
+	int m_playingEffectHandle;
 	//現在再生しているエフェクトのフレーム
 	int m_playEffectFrame;	
 	//出している攻撃

@@ -119,22 +119,22 @@ void CharacterBase::PlayAnim()
 void CharacterBase::PlayEffect()
 {
 	//エフェクトのハンドルが入っていてまだ再生していなかったら
-	if (m_playEffectData.first != -1 && m_playEffectHandle == -1)
+	if (m_playEffectData.first != -1 && m_playingEffectHandle == -1)
 	{
 		//エフェクトをプレイする
-		m_playEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
+		m_playingEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
 		//プレイヤーの座標
 		MyEngine::Vector3 pos = m_rigidbody.GetPos();
 		//エフェクトをプレイヤーの座標に設定
-		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+		SetPosPlayingEffekseer3DEffect(m_playingEffectHandle, pos.x, pos.y, pos.z);
 	}
 	//エフェクトを再生しているときの処理
-	if (m_playEffectHandle != -1)
+	if (m_playingEffectHandle != -1)
 	{
 		//プレイヤーの座標
 		MyEngine::Vector3 pos = m_rigidbody.GetPos();
 		//エフェクトをプレイヤーの座標に設定
-		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+		SetPosPlayingEffekseer3DEffect(m_playingEffectHandle, pos.x, pos.y, pos.z);
 		//エフェクトの再生時間を更新
 		m_playEffectFrame++;
 	}
@@ -144,13 +144,13 @@ void CharacterBase::PlayEffect()
 		//エフェクトの再生時間を0にする
 		m_playEffectFrame = 0;
 		//エフェクトを止める
-		StopEffekseer3DEffect(m_playEffectHandle);
+		StopEffekseer3DEffect(m_playingEffectHandle);
 		//エフェクトを再び再生する
-		m_playEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
+		m_playingEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
 		//プレイヤーの座標
 		MyEngine::Vector3 pos = m_rigidbody.GetPos();
 		//エフェクトをプレイヤーの座標に設定
-		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, pos.x, pos.y, pos.z);
+		SetPosPlayingEffekseer3DEffect(m_playingEffectHandle, pos.x, pos.y, pos.z);
 	}
 }
 
