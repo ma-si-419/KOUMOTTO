@@ -24,6 +24,8 @@ namespace
 	constexpr float kCameraUpSpeed = 10.0f;
 	//カメラの最大上昇値
 	constexpr float kCameraMaxUpPos = 100.0f;
+	//スカイドームの大きさ
+	constexpr float kSkyDomeScale = 600;
 }
 
 GameCamera::GameCamera() :
@@ -32,10 +34,12 @@ GameCamera::GameCamera() :
 	m_cameraUpPos(0)
 {
 	SetCameraNearFar(10.0f, 100000.0f);
+	m_domeHandle = MV1LoadModel("data/model/Dome.mv1");
 }
 
 GameCamera::~GameCamera()
 {
+	MV1DeleteModel(m_domeHandle);
 }
 
 void GameCamera::Init()
@@ -66,8 +70,8 @@ void GameCamera::Init()
 	m_playerVelo = cameraTarget;
 
 	//カメラの座標を設定
-
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(), cameraTarget.CastVECTOR());
+
 }
 
 void GameCamera::Update()
@@ -131,4 +135,7 @@ void GameCamera::Update()
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(), cameraTarget.CastVECTOR());
 	//視野角を広げるかどうかをfalseにする
 	m_isUpFov = false;
+	//カメラの座標にスカイドームを設定
+	MV1SetPosition(m_domeHandle, m_cameraPos.CastVECTOR());
+	MV1SetScale(m_domeHandle, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
 }

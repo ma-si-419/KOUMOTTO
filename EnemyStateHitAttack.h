@@ -27,5 +27,8 @@ private:
 	
 	//ノックバックの方向
 	MyEngine::Vector3 m_burstDir;
+
+
+
 };
 

@@ -105,6 +105,7 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	//Stateの更新処理
 	m_pState->Update();
 
+
 	//エフェクトの再生
 	PlayEffect();
 
@@ -200,7 +201,7 @@ std::shared_ptr<AttackBase> Enemy::CreateAttack(std::string id)
 
 	//ステータス設定
 	ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
-	ans->Init(m_pPhysics, attackPos,m_effekseerHandle[m_attackData[id].effekseerName].first);
+	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName].first);
 
 	return ans;
 }

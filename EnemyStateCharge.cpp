@@ -50,6 +50,6 @@ int EnemyStateCharge::OnDamage(std::shared_ptr<Collidable> collider)
 	m_hitEffect = attack->GetHitEffect();
 	StopEffekseer3DEffect(m_playEffectHandle);
 	DeleteEffekseerEffect(m_effectHandle);
-
+	m_isChangeState = true;
 	return damage;
 }

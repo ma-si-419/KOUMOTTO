@@ -25,7 +25,7 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
 	m_isStartBattle(false),
 	m_standByTime(0)
 {
-	handle = MV1LoadModel("data/model/Dome.mv1");
+	
 	//当たり判定管理クラスのポインタ
 	m_pPhysics = std::make_shared<Physics>();
 	//プレイヤーのポインタ
@@ -56,8 +56,8 @@ SceneGame::~SceneGame()
 
 void SceneGame::Init()
 {
-	MV1SetPosition(handle, VGet(0, 0, 0));
-	MV1SetScale(handle, VGet(500, 500, 500));
+	
+	
 
 	//エネミーの初期化(当たり判定を登録する)
 	m_pEnemy->Init(m_pPhysics);
@@ -185,8 +185,8 @@ void SceneGame::Update(MyEngine::Input input)
 			//プレイヤーの更新
 			m_pPlayer->Update(shared_from_this(), input);
 			//エネミーの更新
-			m_pEnemy->Update(shared_from_this());
 			m_pEnemy->StateUpdate(m_pPlayer);
+			m_pEnemy->Update(shared_from_this());
 		}
 		//プレイヤーにエネミーの座標を渡す
 		m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
@@ -250,9 +250,8 @@ void SceneGame::Update(MyEngine::Input input)
 
 void SceneGame::Draw()
 {
-	//スカイドームの描画(仮処理)
-	MV1DrawModel(handle);
-
+	//スカイドームの描画
+	m_pGameCamera->DrawDome();
 	//プレイヤーの描画
 	m_pPlayer->Draw();
 	//エネミーの描画
@@ -274,7 +273,6 @@ void SceneGame::Draw()
 	m_pUi->DrawComboCount();
 	MyEngine::Vector3 pos = m_pGameCamera->GetPos();
 
-	DrawFormatString(200,550,GetColor(0,0,0),"%f,%f,%f",pos.x,pos.y,pos.z);
 
 	//ゲームオーバー時のUIの表示
 	if (m_isGameOver)
@@ -289,7 +287,6 @@ void SceneGame::End()
 {
 	m_pPlayer->Final(m_pPhysics);
 	m_pEnemy->Final(m_pPhysics);
-	MV1DeleteModel(handle);
 }
 
 void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)

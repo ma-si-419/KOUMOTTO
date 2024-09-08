@@ -15,6 +15,7 @@ void EnemyStateDodge::Init()
 	MyEngine::Vector3 moveDir = MyEngine::Vector3(GetRand(kMoveDirNum) - kMoveDirNumHalf, 0, GetRand(kMoveDirNum) - kMoveDirNumHalf).Normalize();
 	m_velo = moveDir * kMoveSpeed;
 	m_pEnemy->ChangeAnim("Move");
+	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Dodge"));
 }
 void EnemyStateDodge::Update()
 {
@@ -32,6 +33,7 @@ void EnemyStateDodge::Update()
 	if (m_time > kShortestTime)
 	{
 		m_isChangeState = true;
+		m_pEnemy->StopEffect();
 	}
 }
 

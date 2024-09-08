@@ -5,13 +5,13 @@ namespace
 	//Œy‚¢UŒ‚‚ðŽó‚¯‚½‚Æ‚«‚ÌƒmƒbƒNƒoƒbƒN‚Ì‘¬‚³
 	constexpr float kLightKnockBackSpeed = 30.0f;
 	//‚«”ò‚Î‚µUŒ‚‚ðŽó‚¯‚½Žž‚ÌƒmƒbƒNƒoƒbƒN‚Ì‘¬‚³
-	constexpr float kBurstKnockBackSpeed = 120.0f;
+	constexpr float kBurstKnockBackSpeed = 180.0f;
 	//ƒK[ƒh‚µ‚½Žž‚ÌƒmƒbƒNƒoƒbƒN‚Ì‘¬‚³
 	constexpr float kGuardKnockBackSpeed = 10.0f;
 	//Œy‚¢UŒ‚‚ðŽó‚¯‚½Žž‚Ì“®‚¯‚È‚¢ŽžŠÔ
 	constexpr int kLightHitStunTime = 5;
 	//‚«”ò‚Î‚µUŒ‚‚ðŽó‚¯‚½Žž‚Ì“®‚¯‚È‚¢ŽžŠÔ
-	constexpr int kBurstHitStunTime = 30;
+	constexpr int kBurstHitStunTime = 90;
 	//ƒXƒ^ƒ“UŒ‚‚ðŽó‚¯‚½Žž‚Ì“®‚¯‚È‚¢ŽžŠÔ
 	constexpr int kStunHitStunTime = 40;
 	//ƒK[ƒh‚µ‚½Žž‚Ì“®‚¯‚È‚¢ŽžŠÔ
@@ -37,6 +37,9 @@ void EnemyStateHitAttack::Init(int effect)
 	{
 		m_effect = HitEffect::kGuard;
 	}
+
+	m_burstDir = (m_pEnemy->GetPos() - m_pEnemy->GetTargetPos()).Normalize();
+
 }
 
 void EnemyStateHitAttack::Update()

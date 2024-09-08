@@ -7,7 +7,10 @@
 #include "EnemyStateGuard.h"
 #include "EnemyStateMove.h"
 #include "EnemyStateHitAttack.h"
-
+namespace
+{
+	constexpr float kMoveFrontDistance = 6000.0f;
+}
 
 void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 {
@@ -68,15 +71,26 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 		stateIndex++;
 	}
 
-#ifdef _DEBUG
-
-	//stateIndex = static_cast<int>(EnemyStateKind::kAttack);
-
-#endif // _DEBUG
+	//距離が一定以上離れていたら近づくことを最優先にする
+	if ((m_pEnemy->GetTargetPos() - m_pEnemy->GetPos()).Length() > kMoveFrontDistance)
+	{
+		stateIndex = static_cast<int>(EnemyStateKind::kDash);
+	}
 
 	if (m_isChangeState)
 	{
 		//常に次の行動を更新し続ける
+
+
+		//ダメージを受けていたらそれに応じたStateに変化させる
+		if (m_hitEffect >= 0)
+		{
+			m_nextState = std::make_shared<EnemyStateHitAttack>(m_pEnemy, m_pScene);
+			//ダメージの種類を設定する
+			auto state = std::dynamic_pointer_cast<EnemyStateHitAttack>(m_nextState);
+			state->Init(m_hitEffect);
+			return;
+		}
 
 		//何もしない
 		if (static_cast<EnemyStateKind>(stateIndex) == EnemyStateKind::kIdle)
@@ -135,12 +149,6 @@ void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)
 			return;
 		}
 
-		//ダメージを受けていたらそれに応じたStateに変化させる
-		if (m_hitEffect >= 0)
-		{
-			m_nextState = std::make_shared<EnemyStateHitAttack>(m_pEnemy, m_pScene);
-			//ダメージの種類を設定する
-			return;
-		}
+
 	}
 }

@@ -37,6 +37,7 @@ public:
 		bool isSpecial = false;
 		std::string effekseerName = "empty";
 		std::string animationName = "empty";
+		std::string soundName = "empty";
 	};
 
 	DataManager();
@@ -49,12 +50,13 @@ public:
 	void LoadUiFile();
 	void LoadAiFile();
 	void LoadAnimationFile();
-
+	void LoadSoundFile();
 	//攻撃のデータを取得
 	std::map<std::string, AttackInfo> GetAttackData() { return m_attackData; };
 	//Effekseerのデータを取得
 	std::map<std::string, std::pair<int, int>> GetEffekseerHandle() { return m_effekseerHandles; };
-
+	//音楽のデータを取得
+	std::map<std::string, int> GetSoundHandle() { return m_soundData; }
 	//ゲームシーンのUIのパス取得
 	std::vector<UiInfo> GetUiData(Game::SceneNum sceneNum);
 	//エネミーのAI取得
@@ -70,12 +72,12 @@ private:
 	std::map<std::string, AttackInfo> m_attackData;
 	//Effekseerのロードしたハンドルを保存しておく
 	std::map<std::string, std::pair<int,int>> m_effekseerHandles;
-
+	//音声のデータ
+	std::map<std::string, int> m_soundData;
 	//画像のデータ
 	std::vector<UiInfo> m_sceneGameUiData;
 	std::vector<UiInfo> m_sceneTitleUiData;
 	std::vector<UiInfo> m_sceneSelectUiData;
-
 	//Aiのデータ
 	std::map<std::string, std::vector<int>> m_aiData;
 

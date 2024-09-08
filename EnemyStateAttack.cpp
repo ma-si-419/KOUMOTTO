@@ -128,6 +128,8 @@ void EnemyStateAttack::Init(std::shared_ptr<Player> player)
 		m_isNearPlayer = true;
 		m_isStartAttack = false;
 	}
+
+	m_pEnemy->ChangeAnim(m_pEnemy->GetAttackData()[m_attackId].animationName);
 }
 
 void EnemyStateAttack::Update()
@@ -210,6 +212,9 @@ void EnemyStateAttack::Update()
 		//べつのStateに移動する
 		m_isChangeState = true;
 	}
+
+	m_pEnemy->PlayAnim();
+
 }
 int EnemyStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 {
@@ -219,7 +224,12 @@ int EnemyStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
 	//ダメージをそのまま渡す
 	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
-	//ダメージは食らうが、Stateを変更しない
+	//基本Stateは変更しないが、吹き飛ばしだけ変化を受ける
+	if (attack->GetHitEffect() == static_cast<int>(EnemyStateBase::HitEffectKind::kBurst))
+	{
+		m_hitEffect = attack->GetHitEffect();
+		m_isChangeState = true;
+	}
 
 	return damage;
 }

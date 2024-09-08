@@ -16,14 +16,16 @@ public:
 
 	void SetTargetPos(MyEngine::Vector3 pos) { m_targetPos = pos; }
 
-	void Draw() { DrawSphere3D(m_playerVelo.CastVECTOR(), 500, 3, GetColor(255, 255, 255), GetColor(255, 255, 255), true); }
-	//void SetPlayerVelo(MyEngine::Vector3 velo) { m_playerVelo = velo; }
+	void DrawDome() {MV1DrawModel(m_domeHandle); }
+
+
 
 	void UpFov() { m_isUpFov = true; }
 
 	void SetPlayerRotaMat(MATRIX mat) { m_playerRotaMat = mat; }
 private:
-
+	//スカイドームのハンドル
+	int m_domeHandle;
 	//カメラの座標
 	MyEngine::Vector3 m_cameraPos;
 	//プレイヤーの座標

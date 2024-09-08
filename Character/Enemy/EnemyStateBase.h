@@ -6,6 +6,13 @@
 class EnemyStateBase
 {
 public:
+	enum class HitEffectKind
+	{
+		kLightAttack,
+		kStan,
+		kBurst,
+		kGuard
+	};
 
 	enum class EnemyStateKind
 	{

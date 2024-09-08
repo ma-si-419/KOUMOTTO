@@ -40,7 +40,8 @@ namespace Game
 		kHitEffect,
 		kIsSpecial,
 		kEffekseerName,
-		kAnimationName
+		kAnimationName,
+		kSoundName
 	};
 
 	enum class UiInfoSort

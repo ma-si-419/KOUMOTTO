@@ -17,13 +17,13 @@ namespace
 	//基本的な移動方向の割合
 	constexpr int kMoveDirRate[3] = { 35,10,30 };
 	//移動速度
-	constexpr float kMoveSpeed = 120.0f;
+	constexpr float kMoveSpeed = 200.0f;
 	//動きの方向の数
 	constexpr int kMoveDirNum = 8;
 	//動きの方向の数の半分
 	constexpr int kMoveDirNumHalf = kMoveDirNum * 0.5;
 	//プレイヤーに近づきすぎないように
-	constexpr float kPlayerDistance = 500.0f;
+	constexpr float kPlayerDistance = 1200.0f;
 }
 
 void EnemyStateDash::Init(MyEngine::Vector3 playerPos)
@@ -138,6 +138,7 @@ void EnemyStateDash::Init(MyEngine::Vector3 playerPos)
 	m_velo = moveDir * kMoveSpeed;
 
 	m_pEnemy->ChangeAnim("Move");
+	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Dash"));
 
 }
 
@@ -152,6 +153,8 @@ void EnemyStateDash::Update()
 		//移動をやめて別のStateに行く
 		m_velo = MyEngine::Vector3(0, 0, 0);
 		m_isChangeState = true;
+		m_pEnemy->StopEffect();
+
 	}
 
 	m_pEnemy->SetModelFront(m_velo + m_pEnemy->GetPos());
@@ -178,6 +181,7 @@ void EnemyStateDash::Update()
 	if (random > 0)
 	{
 		m_isChangeState = true;
+		m_pEnemy->StopEffect();
 	}
 }
 
@@ -191,6 +195,7 @@ int EnemyStateDash::OnDamage(std::shared_ptr<Collidable> collider)
 	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
-
+	m_isChangeState = true;
+	m_pEnemy->StopEffect();
 	return damage;
 }

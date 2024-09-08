@@ -195,6 +195,6 @@ int EnemyStateMove::OnDamage(std::shared_ptr<Collidable> collider)
 	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//Žó‚¯‚½UŒ‚‚ÌŽí—Þ‚ðÝ’è‚·‚é
 	m_hitEffect = attack->GetHitEffect();
-
+	m_isChangeState = true;
 	return damage;
 }

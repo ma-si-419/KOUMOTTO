@@ -100,7 +100,6 @@ void Physics::Update()
 	}
 	//à íuèCê≥
 	FixPosition();
-	//printfDx("%d\n", m_collidables.size());
 }
 
 void Physics::DebugDraw()

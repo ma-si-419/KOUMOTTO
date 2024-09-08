@@ -31,6 +31,8 @@ public:
 
 	MyEngine::Vector3 GetPos() { return m_rigidbody.GetPos(); }
 
+	MyEngine::Vector3 GetTargetPos() { return m_targetPos; }
+
 	//UŒ‚‚Ìî•ñ‚ğ•Ô‚·
 	std::map<std::string, DataManager::AttackInfo> GetAttackData() { return m_attackData; }
 

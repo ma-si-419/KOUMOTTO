@@ -36,7 +36,7 @@ private:
 	std::shared_ptr<Ui> m_pUi;
 	std::vector<std::shared_ptr<AttackBase>> m_pAttacks;
 
-	int handle;
+	
 	//ゲームオーバーかどうか
 	bool m_isGameOver;
 	//ゲームオーバー時の選択しているアイテム
