@@ -70,7 +70,11 @@ public:
 	//アニメーションを変更する
 	void ChangeAnim(std::string animName);
 	//アニメーションを再生する
-	void PlayAnim();
+	bool PlayAnim();
+	//アニメーションのループをやめる
+	void StopAnimLoop();
+	//攻撃が終わるときのアニメーション
+	void SetAttackEndAnim(float attackEndTime);
 protected:
 	enum class AnimationInfoSort
 	{
@@ -121,8 +125,12 @@ protected:
 	float m_totalAnimTime;
 	//アニメーションの再生時間
 	float m_animTime;
-	//アニメーションのループするフレーム
-	float m_animLoopTime;
+	//アニメーションがループした時に戻るフレーム
+	float m_animLoopStartTime;
+	//アニメーションのループするときのフレーム
+	float m_animLoopEndTime;
+	//アニメーションをループさせるかどうか
+	bool m_isLoopAnim;
 	//再生しているエフェクトとループフレーム
 	std::pair<int,int> m_playEffectData;
 	//再生しているエフェクトのプレイハンドル

@@ -19,6 +19,8 @@ public:
 	void Draw() { DrawSphere3D(m_playerVelo.CastVECTOR(), 500, 3, GetColor(255, 255, 255), GetColor(255, 255, 255), true); }
 	//void SetPlayerVelo(MyEngine::Vector3 velo) { m_playerVelo = velo; }
 
+	void UpFov() { m_isUpFov = true; }
+
 	void SetPlayerRotaMat(MATRIX mat) { m_playerRotaMat = mat; }
 private:
 
@@ -34,6 +36,12 @@ private:
 	MATRIX m_playerRotaMat;
 	//プレイヤーがターゲットを中心にどのくらい回転しているのか
 	float m_playerRota;
+	//視野角を広げるフラグ
+	bool m_isUpFov;
+	//視野角
+	float m_fov;
+	//視野角とともにカメラの座標を上げる
+	float m_cameraUpPos;
 
 };
 

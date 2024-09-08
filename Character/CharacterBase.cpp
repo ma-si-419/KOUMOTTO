@@ -23,7 +23,8 @@ CharacterBase::CharacterBase(const TCHAR* model, ObjectTag tag) :
 	m_animTime(0),
 	m_animPlaySpeed(0),
 	m_totalAnimTime(0),
-	m_playEffectFrame(0)
+	m_playEffectFrame(0),
+	m_isLoopAnim(false)
 {
 	m_playEffectData.first = -1;
 	m_playEffectData.second = -1;
@@ -94,27 +95,72 @@ void CharacterBase::ChangeAnim(std::string animName)
 	//アニメの再生時間をリセット
 	m_animTime = 0;
 	//アニメーションのループするフレームを設定
-	m_animLoopTime = m_animData[animName].loopFrame;
+	m_animLoopStartTime = m_animData[animName].loopFrame;
+	//ループが終わるフレームを設定
+	m_animLoopEndTime = m_animData[animName].endFrame;
+	//ループ終了フレームが0じゃなければループフラグを立てる
+	if (m_animLoopEndTime > 0)
+	{
+		m_isLoopAnim = true;
+	}
 	//新しいアニメーションをアタッチする
 	m_playAnim = MV1AttachAnim(m_modelHandle, m_animData[animName].number);
 	//アニメーションの総再生時間を設定する
 	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData[animName].number);
 }
 
-void CharacterBase::PlayAnim()
+bool CharacterBase::PlayAnim()
 {
 	//アニメーションの再生フレームを進める
 	m_animTime += m_animPlaySpeed;
+	//アニメーションの繰り返しが行われるのなら
+	if (m_isLoopAnim)
+	{
+		//アニメーションの繰り返し終了時間が過ぎたら
+		if (m_animTime > m_animLoopEndTime)
+		{
+			//アニメーションの繰り返し開始時間まで戻す
+			m_animTime = m_animLoopStartTime;
+		}
+	}
 	//アニメーションの総再生フレームを超えたら
 	if (m_animTime > m_totalAnimTime)
 	{
-		//ループするフレームに戻す
-		m_animTime = m_animLoopTime;
+		//再生フレームを0に戻す
+		m_animTime = 0;
+		//再生を止める
+		m_animPlaySpeed = 0;
+		return true;
 	}
 	//再生フレームを反映させる
 	MV1SetAttachAnimTime(m_modelHandle, m_playAnim, m_animTime);
+	return false;
 }
 
+void CharacterBase::StopAnimLoop()
+{
+	m_isLoopAnim = false;
+}
+
+void CharacterBase::SetAttackEndAnim(float attackEndTime)
+{
+	//前のアニメーションをデタッチする
+	MV1DetachAnim(m_modelHandle, m_playAnim);
+	//アニメの再生時間をリセット
+	m_animTime = 0;
+	//アニメーションのループするフレームを設定
+	m_animLoopStartTime = m_animData["SpAttackEnd"].loopFrame;
+	//ループが終わるフレームを設定
+	m_animLoopEndTime = m_animData["SpAttackEnd"].endFrame;
+	//ループ終了フレームが0じゃなければループフラグを立てる
+	m_isLoopAnim = m_animLoopEndTime > 0;
+	//新しいアニメーションをアタッチする
+	m_playAnim = MV1AttachAnim(m_modelHandle, m_animData["SpAttackEnd"].number);
+	//アニメーションの総再生時間を設定する
+	m_totalAnimTime = MV1GetAnimTotalTime(m_modelHandle, m_animData["SpAttackEnd"].number);
+	//アニメの再生速度を設定
+	m_animPlaySpeed = m_totalAnimTime / attackEndTime;
+}
 
 void CharacterBase::PlayEffect()
 {

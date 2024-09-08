@@ -20,13 +20,13 @@ AttackBase::AttackBase(ObjectTag tag) :
 	m_isExist(true),
 	m_lifeTime(0),
 	m_moveLength(0),
-	m_targetLength(0)
+	m_targetLength(0),
+	m_isLeaveEffect(false)
 {
 }
 
 AttackBase::~AttackBase()
 {
-	StopEffekseer3DEffect(m_playEffectHandle);
 }
 
 void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle)
@@ -42,7 +42,6 @@ void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, i
 	m_playEffectHandle = PlayEffekseer3DEffect(effekseerHandle);
 	MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
 	SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
-
 }
 
 void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos, float power)
@@ -127,7 +126,11 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 		if (GetTag() == ObjectTag::kEnemyAttack)
 		{
 			m_isExist = false;
-			StopEffekseer3DEffect(m_playEffectHandle);
+			//エフェクトを残さないと決められていたら
+			if (!m_isLeaveEffect)
+			{
+				StopEffekseer3DEffect(m_playEffectHandle);
+			}
 		}
 	}
 	else if (collider->GetTag() == ObjectTag::kEnemy)
@@ -135,15 +138,23 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 		if (GetTag() == ObjectTag::kPlayerAttack)
 		{
 			m_isExist = false;
-			StopEffekseer3DEffect(m_playEffectHandle);
+			//エフェクトを残さないと決められていたら
+			if (!m_isLeaveEffect)
+			{
+				StopEffekseer3DEffect(m_playEffectHandle);
+			}
 		}
 	}
 }
 
 void AttackBase::Final(std::shared_ptr<Physics> physics)
 {
-	//再生中のエフェクトを消す
-	StopEffekseer3DEffect(m_playEffectHandle);
+	//エフェクトを残さないと決められていたら
+	if (!m_isLeaveEffect)
+	{
+		//再生中のエフェクトを消す
+		StopEffekseer3DEffect(m_playEffectHandle);
+	}
 	//当たり判定をけす
 	Collidable::Final(physics);
 }

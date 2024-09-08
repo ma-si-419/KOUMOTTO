@@ -45,6 +45,7 @@ void DataManager::LoadAttackFile()
 		pushData.hitEffect = std::stoi(item[static_cast<int>(Game::AttackInfoSort::kHitEffect)]);
 		pushData.isSpecial = static_cast<bool>(std::stoi(item[static_cast<int>(Game::AttackInfoSort::kIsSpecial)]));
 		pushData.effekseerName = item[static_cast<int>(Game::AttackInfoSort::kEffekseerName)];
+		pushData.animationName = item[static_cast<int>(Game::AttackInfoSort::kAnimationName)];
 
 		//ÉfÅ[É^Çì¸ÇÍÇÈ
 		m_attackData[item[static_cast<int>(Game::AttackInfoSort::kId)]] = pushData;

@@ -18,6 +18,10 @@ namespace
 	constexpr float kColScale = 100.0f;
 	//トリガーが反応する
 	constexpr int kTriggerReaction = 200;
+	//初期回転度
+	constexpr int kInitRota = 10;
+	//モデルの拡大率
+	constexpr float kModelScale = 3.0f;
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
@@ -41,11 +45,11 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 	SetSpecialAttack();
 
-	MV1SetScale(m_modelHandle, VGet(3, 3, 3));
+	MV1SetScale(m_modelHandle, VGet(kModelScale, kModelScale, kModelScale));
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
-	m_rota = 10;
+	m_rota = kInitRota;
 
 	m_pPhysics = physics;
 	Collidable::Init(physics);
@@ -85,7 +89,7 @@ void Player::RetryInit()
 	m_nowHp = m_status.hp;
 	m_nowMp = m_status.mp;
 
-	m_rota = 10;
+	m_rota = kInitRota;
 
 
 	//Y軸を中心とした回転をするので
@@ -129,6 +133,7 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	//前のフレームとStateを比較して違うStateだったら
 	if (m_pState->m_nextState->GetKind() != m_pState->GetKind())
 	{
+		m_isUpFov = false;
 		//Stateを変更する
 		m_pState = m_pState->m_nextState;
 		m_pState->m_nextState = m_pState;
@@ -138,31 +143,31 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 
 	if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kAttack)
 	{
-		stateKind = "Attack";
+		stateKind = "Attack\n";
 	}
 	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kCharge)
 	{
-		stateKind = "Charge";
+		stateKind = "Charge\n";
 	}
 	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kDodge)
 	{
-		stateKind = "Dodge";
+		stateKind = "Dodge\n";
 	}
 	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kGuard)
 	{
-		stateKind = "Guard";
+		stateKind = "Guard\n";
 	}
 	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kHitAttack)
 	{
-		stateKind = "HitAttack";
+		stateKind = "HitAttack\n";
 	}
 	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kIdle)
 	{
-		stateKind = "Idle";
+		stateKind = "Idle\n";
 	}
 	else if (m_pState->GetKind() == PlayerStateBase::PlayerStateKind::kMove)
 	{
-		stateKind = "Move";
+		stateKind = "Move\n";
 	}
 
 	printfDx(stateKind.c_str());
@@ -172,7 +177,7 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 
 	//Stateの更新
 	m_pState->Update(input);
-	
+
 	//エフェクトの再生
 	PlayEffect();
 

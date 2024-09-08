@@ -40,6 +40,8 @@ private:
 	bool m_isGoTarget = false;
 	//攻撃のモーションに入っているかどうかどうか
 	bool m_isStartAttack = false;
+	//気弾の必殺技を使った後のアニメーションに入っているかどうか
+	bool m_isEndSpecialAttackAnim = false;
 	//抱いている攻撃が通常攻撃かどうか
 	bool m_isNormalAttack = false;
 	//攻撃が終わったかどうか

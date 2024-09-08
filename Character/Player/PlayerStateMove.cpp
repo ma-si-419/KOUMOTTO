@@ -14,6 +14,8 @@ namespace
 	constexpr int kTriggerReaction = 200;
 	//敵との一番近い距離(真上にいかないように)
 	constexpr int kShortestEnemyDistance = 1500;
+	//ダッシュするときの移動速度の倍率
+	constexpr float kDashSpeedRate = 1.8f;
 }
 
 void PlayerStateMove::Init()
@@ -30,6 +32,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		//気弾攻撃をした場合
 		if (input.IsTrigger(Game::InputId::kX))
 		{
+			//一応エフェクトを消しておく
+			m_pPlayer->StopEffect();
 			//状態を変化させる
 			m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 			auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -39,6 +43,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		//格闘攻撃をした場合
 		if (input.IsTrigger(Game::InputId::kB))
 		{
+			//一応エフェクトを消しておく
+			m_pPlayer->StopEffect();
 			//状態を変化させる
 			m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 			auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -48,6 +54,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		//ガード入力がされていたら
 		if (input.IsPress(Game::InputId::kRb))
 		{
+			//一応エフェクトを消しておく
+			m_pPlayer->StopEffect();
 			//StateをGuardに変更する
 			m_nextState = std::make_shared<PlayerStateGuard>(m_pPlayer, m_pScene);
 			auto state = std::dynamic_pointer_cast<PlayerStateGuard>(m_nextState);
@@ -64,6 +72,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kY]))
 			{
+				//一応エフェクトを消しておく
+				m_pPlayer->StopEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -76,6 +86,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kB]))
 			{
+				//一応エフェクトを消しておく
+				m_pPlayer->StopEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -89,6 +101,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kX]))
 			{
+				//一応エフェクトを消しておく
+				m_pPlayer->StopEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -101,6 +115,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			//MPが十分にあったら
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kA]))
 			{
+				//一応エフェクトを消しておく
+				m_pPlayer->StopEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -132,15 +148,25 @@ void PlayerStateMove::Update(MyEngine::Input input)
 
 		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
+		//ダッシュボタンが押されているか
+		bool isDash = input.IsPress(Game::InputId::kA);
+
+		//ダッシュボタンが押されていたら視野角を広げる
+		m_pPlayer->SetUpFov(isDash);
+
+
 		//回転速度(横移動の速さ)
 		float hMoveSpeed = 0;
 
 		if (dir.x != 0.0f)
 		{
 			hMoveSpeed = (dir.x * kMoveSpeed) / toShaftPosVec.Length();
+			//ダッシュボタンを押していたら横移動の速さにダッシュの倍率をかける
+			if (isDash)
+			{
+				hMoveSpeed *= kDashSpeedRate;
+			}
 		}
-
-		DrawFormatString(200, 0, GetColor(255, 255, 255), "%f", hMoveSpeed);
 
 		m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
 
@@ -151,11 +177,13 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
 		velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 
+		MyEngine::Vector3 zDirVec;
+
 		//上下移動入力されていたら
 		if (input.GetTriggerInfo().left > kTriggerReaction)
 		{
 			//前後入力を上下のベクトルに変換
-			velo.y += dir.z * kMoveSpeed;
+			zDirVec.y += dir.z * kMoveSpeed;
 		}
 		//されていなかった場合
 		else
@@ -165,24 +193,35 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			{
 				//前後入力を回転の中心に向かうベクトルに変換
 				toShaftPosVec.y = 0;
-				velo += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
+				zDirVec += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
 			}
 			else
 			{
 				//前入力を横移動に後ろ入力を回転の中心から離れるベクトルに変換
 				if (dir.z > 0)
 				{
-					hMoveSpeed = (dir.z * kMoveSpeed) / toShaftPosVec.Length();
+					hMoveSpeed = (zDirVec.z * kMoveSpeed) / toShaftPosVec.Length();
 					m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
-					velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
-					velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
+					zDirVec.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
+					zDirVec.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 				}
-				else if(dir.z < 0)
+				else if (dir.z < 0)
 				{
-					velo += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
+					zDirVec += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
 				}
 			}
+			//ダッシュボタンが押されていたら
+			if (isDash)
+			{
+				zDirVec *= kDashSpeedRate;
+				m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dash"));
+			}
+			else
+			{
+				m_pPlayer->StopEffect();
+			}
 		}
+		velo += zDirVec;
 
 		//必殺技パレットが開かれていなく
 		if (!input.IsPress(Game::InputId::kLb))
@@ -190,6 +229,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			//回避行動の入力がされたら
 			if (input.IsTrigger(Game::InputId::kA))
 			{
+				//一応エフェクトを消しておく
+				m_pPlayer->StopEffect();
 				//StateをDodgeに変更する
 				m_nextState = std::make_shared<PlayerStateDodge>(m_pPlayer, m_pScene);
 				//回避の方向を設定する
@@ -208,8 +249,10 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		{
 			frontPos = m_pPlayer->GetTargetPos();
 		}
+
 		//移動先の座標を向くようにする
 		m_pPlayer->SetModelFront(frontPos);
+
 		//自分のポインタを返す
 		m_nextState = shared_from_this();
 		return;
@@ -220,6 +263,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		//回避行動の入力がされたら
 		if (input.IsTrigger(Game::InputId::kA))
 		{
+			//一応エフェクトを消しておく
+			m_pPlayer->StopEffect();
 			//StateをDodgeに変更する
 			m_nextState = std::make_shared<PlayerStateDodge>(m_pPlayer, m_pScene);
 			//回避の方向を設定する
@@ -246,7 +291,7 @@ int PlayerStateMove::OnDamage(std::shared_ptr<Collidable> collider)
 	//ダメージをそのまま渡す
 	damage = attack->GetDamage();
 	//状態を変化させる
-	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer,m_pScene);
+	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer, m_pScene);
 	//受けた攻撃の種類を設定する
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->Init(collider);

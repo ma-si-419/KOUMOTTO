@@ -36,6 +36,7 @@ public:
 		int hitEffect = 0;
 		bool isSpecial = false;
 		std::string effekseerName = "empty";
+		std::string animationName = "empty";
 	};
 
 	DataManager();

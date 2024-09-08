@@ -10,17 +10,11 @@ namespace
 	//気弾を出しているときの移動速度
 	constexpr float kEnergyAttackMoveSpeed = 80.0f;
 	//攻撃を出しているときの移動速度
-	constexpr float kPhysicalAttackMoveSpeed = 150;
+	constexpr float kPhysicalAttackMoveSpeed = 300;
 	//敵が近くにいる判定になる距離
-	constexpr float kNearEnemyLength = 200;
+	constexpr float kNearEnemyLength = 1500;
 	//敵に近づく時間の最大
 	constexpr int kGoEnemyTime = 60;
-	//通常攻撃のコンボ入力受付時間
-	constexpr int kComboTime = 40;
-	//気弾攻撃の最大コンボ数
-	constexpr int kEnergyComboMax = 3;
-	//格闘攻撃の最大コンボ数
-	constexpr int kPhysicalComboMax = 2;
 }
 
 void PlayerStateAttack::Init(std::string button, bool isSpecial)
@@ -51,6 +45,8 @@ void PlayerStateAttack::Init(std::string button, bool isSpecial)
 		}
 		m_isNormalAttack = true;
 	}
+	//アニメーションを変更
+	m_pPlayer->ChangeAnim(m_pPlayer->GetAttackData(m_attackId).animationName);
 }
 
 void PlayerStateAttack::Update(MyEngine::Input input)
@@ -160,7 +156,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 	//敵が近くにいるかどうかを調べる
 	float length = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Length();
 	//敵が近くにいるか、経過時間が一定時間を超えたら
-	if (length < kNearEnemyLength || m_time > kGoEnemyTime)
+	if (length <= kNearEnemyLength || m_time > kGoEnemyTime && !attackData.isEnergy)
 	{
 		//敵に向かっていくのをやめる
 		m_isGoTarget = false;
@@ -182,10 +178,19 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			//攻撃を出す時間になったら
 			if (m_actionTime > attackData.attackStartTime)
 			{
+				std::shared_ptr<AttackBase> attack = m_pPlayer->CreateAttack(m_attackId);
+				//格闘攻撃だったら
+				if (!attackData.isEnergy)
+				{
+					//エフェクトを残すように設定をする
+					attack->SetLeaveEffect();
+				}
 				//攻撃を出す
-				m_pScene->AddAttack(m_pPlayer->CreateAttack(m_attackId));
+				m_pScene->AddAttack(attack);
 				//攻撃が終了したフラグを立てる
 				m_isAttackEnd = true;
+				//アニメーションループを止める
+				m_pPlayer->StopAnimLoop();
 			}
 		}
 		//攻撃が複数回の場合
@@ -194,7 +199,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			//攻撃のスパンを取得する
 			int span = (attackData.attackEndTime - attackData.attackStartTime) / attackData.attackNum;
 			//攻撃のタイミングが来たら攻撃を出すようにする
-			if (m_actionTime % span == 0)
+			if (m_actionTime % span == 0 && m_actionTime > attackData.attackStartTime)
 			{
 				//攻撃を作成
 				std::shared_ptr<AttackBase> attack = m_pPlayer->CreateAttack(m_attackId);
@@ -213,6 +218,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			if (m_actionTime > attackData.attackEndTime)
 			{
 				m_isAttackEnd = true;
+				m_pPlayer->StopAnimLoop();
 			}
 		}
 	}
@@ -232,8 +238,9 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 				m_time = 0;
 				m_isAttackEnd = false;
 				auto attack = m_pPlayer->GetAttackData(m_nextAttackId);
-				m_isNormalAttack = attack.isSpecial;
+				m_isNormalAttack = !attack.isSpecial;
 				m_isGoTarget = !attack.isEnergy;
+				m_pPlayer->ChangeAnim(attack.animationName);
 				m_nextAttackId = "empty";
 			}
 			//次の攻撃が入力されていなければ
@@ -310,6 +317,50 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 	//移動ベクトルを入れる
 	m_pPlayer->SetVelo(velo);
 
+	m_pPlayer->SetModelFront(m_pPlayer->GetTargetPos());
+
+	bool endFlag = m_pPlayer->PlayAnim();
+
+	//アニメーションが終了したタイミング
+	if (endFlag)
+	{
+		//気弾の必殺技を打ったあとで
+		if (attackData.isSpecial && attackData.isEnergy)
+		{
+			//気弾の必殺技を打った後のアニメーションが行われていたら
+			if (m_isEndSpecialAttackAnim)
+			{
+				//Stateを戻す
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
+				auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
+				state->Init();
+				return;
+			}
+			//行われていなかったら
+			else
+			{
+				//必殺技のあと隙の時間分アニメーションを入れる
+				m_pPlayer->SetAttackEndAnim(static_cast<float>(attackData.actionTotalTime - attackData.attackEndTime));
+				m_isEndSpecialAttackAnim = true;
+			}
+		}
+		//気団の必殺技以外のもの
+		else
+		{
+			//次のアニメーションが設定されていなかったら
+			if (m_actionTime == 0)
+			{
+				//アニメーションが終わったら
+				//Stateを戻す
+				m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
+				auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
+				state->Init();
+				return;
+			}
+		}
+
+	}
+
 	m_nextState = shared_from_this();
 }
 
@@ -321,12 +372,15 @@ int PlayerStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
 	//ダメージをそのまま渡す
 	damage = attack->GetDamage();
-	//状態を変化させる
-	m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer, m_pScene);
-	//受けた攻撃の種類を設定する
-	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
-	state->Init(collider);
-
+	//気弾を打っているときのみ状態を変化させる
+	if (m_pPlayer->GetAttackData(m_attackId).isEnergy && !m_pPlayer->GetAttackData(m_attackId).isSpecial)
+	{
+		//HitAttackに変化させる
+		m_nextState = std::make_shared<PlayerStateHitAttack>(m_pPlayer, m_pScene);
+		//受けた攻撃の種類を設定する
+		auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
+		state->Init(collider);
+	}
 	return damage;
 }
 
@@ -351,10 +405,6 @@ std::string PlayerStateAttack::GetNextNormalAttack(std::string id)
 	else if (id == CommandId::kPhysicalAttack2)
 	{
 		return CommandId::kPhysicalAttack3;
-	}
-	else if (id == CommandId::kPhysicalAttack3)
-	{
-		return CommandId::kPhysicalAttack1;
 	}
 	else
 	{

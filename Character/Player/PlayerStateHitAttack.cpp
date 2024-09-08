@@ -17,6 +17,21 @@ namespace
 }
 void PlayerStateHitAttack::Init(std::shared_ptr<Collidable> collider)
 {
+	auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
+	m_burstDir = (m_pPlayer->GetPos() - attack->GetPos()).Normalize();
+	
+	if (attack->GetHitEffect() == static_cast<int>(HitEffect::kLightHit))
+	{
+		m_hitEffect = HitEffect::kLightHit;
+	}
+	else if (attack->GetHitEffect() == static_cast<int>(HitEffect::kBurst))
+	{
+		m_hitEffect = HitEffect::kBurst;
+	}
+	else if (attack->GetHitEffect() == static_cast<int>(HitEffect::kStun))
+	{
+		m_hitEffect = HitEffect::kStun;
+	}
 }
 void PlayerStateHitAttack::Update(MyEngine::Input input)
 {

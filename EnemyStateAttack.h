@@ -33,7 +33,8 @@ private:
 	bool m_isNearPlayer = false;
 	//攻撃を出しているかフラグ
 	bool m_isStartAttack = false;
-
+	//攻撃が終わったかどうかフラグ
+	bool m_isAttackEnd = false;
 	//プレイヤーの座標を取得するためにポインターを持つ
 	std::shared_ptr<Player> m_pPlayer;
 };

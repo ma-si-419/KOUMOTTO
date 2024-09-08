@@ -196,6 +196,12 @@ void SceneGame::Update(MyEngine::Input input)
 		m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 		//カメラにエネミーの座標を渡す
 		m_pGameCamera->SetTargetPos(m_pEnemy->GetPos());
+		//カメラの視野角を広げるかどうか
+		if (m_pPlayer->GetIsUpFov())
+		{
+			m_pGameCamera->UpFov();
+		}
+
 		//カメラの更新
 		m_pGameCamera->Update();
 		for (auto& attack : m_pAttacks)
@@ -227,7 +233,6 @@ void SceneGame::Update(MyEngine::Input input)
 				i--;
 			}
 		}
-		printfDx("%d\n", m_pAttacks.size());
 
 
 #ifdef _DEBUG

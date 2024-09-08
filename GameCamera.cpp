@@ -6,16 +6,30 @@ namespace
 	constexpr float kPlayerDistance = 2400.0f;
 	//ƒJƒƒ‰‚ÌˆÚ“®‘¬“x(‹——£‚Ì”{—¦)
 	constexpr float kCameraSpeed = 0.1f;
-	//ƒJƒƒ‰‚Ì‚‚³(ƒvƒŒƒCƒ„[‚©‚çŒ©‚Ä)
+	//ƒJƒƒ‰‚Ì‚‚³
 	constexpr float kCameraHeight = 1000.0f;
 	//‰ñ“]‚ð‚µ‚È‚¢—P—\”ÍˆÍ
 	constexpr float kRotaMargin = 600.0f;
 	//ƒJƒƒ‰‚Ì‰ŠúˆÊ’u
 	MyEngine::Vector3 kInitPos(0,-5000,-10000);
+	//ƒJƒƒ‰‚Ì‰ñ“]‹ï‡‚ð‹——£‚É‚æ‚Á‚Ä‰ñ‚µ‚Ä‚¢‚«‚Ü‚·
+	constexpr float kDistanceRotaYDecayRate = 0.001f;
+	//ƒJƒƒ‰‚Ì‰ŠúŽ‹–ìŠp(60“x)
+	constexpr float kInitCameraFov = 1.046f;
+	//ƒJƒƒ‰‚ðL‚°‚½Žž‚ÌŽ‹–ìŠp(80“x)
+	constexpr float kWideCameraFov = 1.395f;
+	//ƒJƒƒ‰‚ÌŽ‹–ìŠp‚ðŠgk‚·‚é‘¬“x
+	constexpr float kFovScalingSpeed = (kWideCameraFov - kInitCameraFov) * 0.05f;
+	//ƒJƒƒ‰‚ð‚ ‚°‚é‚Æ‚«‚Ìã¸‘¬“x
+	constexpr float kCameraUpSpeed = 10.0f;
+	//ƒJƒƒ‰‚ÌÅ‘åã¸’l
+	constexpr float kCameraMaxUpPos = 100.0f;
 }
 
 GameCamera::GameCamera() :
-	m_playerRota(0)
+	m_playerRota(0),
+	m_fov(kInitCameraFov),
+	m_cameraUpPos(0)
 {
 	SetCameraNearFar(10.0f, 100000.0f);
 }
@@ -27,7 +41,7 @@ GameCamera::~GameCamera()
 void GameCamera::Init()
 {
 
-	m_playerPos.y += 1000;
+	m_playerPos.y += kCameraHeight;
 
 	MyEngine::Vector3 enemyToPlayer = m_playerPos - m_targetPos;
 
@@ -39,7 +53,7 @@ void GameCamera::Init()
 	m_cameraPos.y = enemyToPlayer.y + kPlayerDistance * unitVec.y;
 	m_cameraPos.z = enemyToPlayer.z + kPlayerDistance * unitVec.z;
 
-	MATRIX mat = MGetRotY(0.5 / (vecSize * 0.001));
+	MATRIX mat = MGetRotY(0.5 / (vecSize * kDistanceRotaYDecayRate));
 
 	m_cameraPos = m_cameraPos.MatTransform(mat);
 
@@ -58,13 +72,38 @@ void GameCamera::Init()
 
 void GameCamera::Update()
 {
-	////ˆÚ“®—Ê
-	//MyEngine::Vector3 velo = m_playerVelo;
 
-	////ˆÚ“®ƒxƒNƒgƒ‹‚ðŒ»Ý‚ÌÀ•W‚É‘«‚·
-	//m_cameraPos += velo;
+	if (m_isUpFov)
+	{
+		m_fov += kFovScalingSpeed;
+		m_cameraUpPos += kCameraUpSpeed;
 
-	m_playerPos.y += 1000;
+		if (m_fov > kWideCameraFov)
+		{
+			m_fov = kWideCameraFov;
+		}
+		if (m_cameraUpPos > kCameraMaxUpPos)
+		{
+			m_cameraUpPos = kCameraMaxUpPos;
+		}
+	}
+	else
+	{
+		m_fov -= kFovScalingSpeed;
+		m_cameraUpPos -= kCameraUpSpeed;
+		if (m_fov < kInitCameraFov)
+		{
+			m_fov = kInitCameraFov;
+		}
+		if(m_cameraUpPos < 0)
+		{
+			m_cameraUpPos = 0;
+		}
+	}
+
+	SetupCamera_Perspective(m_fov);
+
+	m_playerPos.y += 500 + m_cameraUpPos;
 
 	MyEngine::Vector3 enemyToPlayer = m_playerPos - m_targetPos;
 
@@ -89,6 +128,7 @@ void GameCamera::Update()
 	m_playerVelo = cameraTarget;
 
 	//ƒJƒƒ‰‚ÌÀ•W‚ðÝ’è
-
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos.CastVECTOR(), cameraTarget.CastVECTOR());
+	//Ž‹–ìŠp‚ðL‚°‚é‚©‚Ç‚¤‚©‚ðfalse‚É‚·‚é
+	m_isUpFov = false;
 }

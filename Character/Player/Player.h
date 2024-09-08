@@ -55,9 +55,16 @@ public:
 	void SetPlayEffect(std::pair<int, int> playHandleData);
 	//プレイしているエフェクトをストップする
 	void StopEffect();
+	//視野角を広げるかどうかを取得する
+	bool GetIsUpFov() { return m_isUpFov; }
+	//視野角を広げる
+	void SetUpFov(bool up) { m_isUpFov = up; }
+
 private:
 
 	float m_rota;
+
+	bool m_isUpFov;
 
 	//最後に攻撃を出してからの時間をカウントする
 	int m_lastAttackTime;

@@ -15,9 +15,13 @@ void PlayerStateDodge::Init(MyEngine::Vector3 dir)
 {
 	m_moveDir = dir;
 	m_pPlayer->ChangeAnim("Move");
+	m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dodge"));
+	m_pPlayer->SetUpFov(true);
 }
 void PlayerStateDodge::Update(MyEngine::Input input)
 {
+	//‹–ìŠp‚ğL‚°‚é
+	m_pPlayer->SetUpFov(true);
 	//ˆÚ“®‚Æ“¯‚¶ˆ—
 	MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
 	rotationShaftPos.y = m_pPlayer->GetPos().y;
@@ -78,6 +82,7 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 		//ƒAƒCƒhƒ‹ó‘Ô‚É–ß‚é
 		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer,m_pScene);
 		auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
+		m_pPlayer->StopEffect();
 	}
 	return;
 

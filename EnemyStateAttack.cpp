@@ -148,6 +148,8 @@ void EnemyStateAttack::Update()
 		velo = MyEngine::Vector3(0, 0, 0);
 		//攻撃を出し始める
 		m_isStartAttack = true;
+		//敵に近づくのをやめる
+		m_isNearPlayer = false;
 	}
 	//攻撃を出している時間を計測する
 	if (m_isStartAttack)
@@ -160,47 +162,51 @@ void EnemyStateAttack::Update()
 	//攻撃の情報を取得する
 	std::map<std::string, DataManager::AttackInfo> attackData = m_pEnemy->GetAttackData();
 
-	//攻撃を出し始めて何フレームかを見て攻撃の処理を行う
-	if (m_attackTime > attackData[m_attackId].attackStartTime)
+	//攻撃が終わっていない時に
+	if (!m_isAttackEnd)
 	{
-		//攻撃を複数回出す技であれば
-		if (attackData[m_attackId].attackNum > 1)
+		//攻撃を出し始めて何フレームかを見て攻撃の処理を行う
+		if (m_attackTime > attackData[m_attackId].attackStartTime)
 		{
-			//攻撃のスパンを取得する
-			int span = (attackData[m_attackId].attackEndTime - attackData[m_attackId].attackStartTime) / attackData[m_attackId].attackNum;
-			//攻撃のタイミングが来たら攻撃を出すようにする
-			if (m_attackTime % span == 0 && m_attackTime < attackData[m_attackId].attackEndTime)
+			//攻撃を複数回出す技であれば
+			if (attackData[m_attackId].attackNum > 1)
 			{
-				//攻撃を作成
-				std::shared_ptr<AttackBase> attack = m_pEnemy->CreateAttack(m_attackId);
-				//レーザー状の攻撃であれば消える時間をそろえる
-				if (attackData[m_attackId].isLaser)
+				//攻撃のスパンを取得する
+				int span = (attackData[m_attackId].attackEndTime - attackData[m_attackId].attackStartTime) / attackData[m_attackId].attackNum;
+				//攻撃のタイミングが来たら攻撃を出すようにする
+				if (m_attackTime % span == 0 && m_attackTime < attackData[m_attackId].attackEndTime)
 				{
-					//消えるまでの時間
-					int lifeTime = attackData[m_attackId].lifeTime - m_attackTime;
+					//攻撃を作成
+					std::shared_ptr<AttackBase> attack = m_pEnemy->CreateAttack(m_attackId);
+					//レーザー状の攻撃であれば消える時間をそろえる
+					if (attackData[m_attackId].isLaser)
+					{
+						//消えるまでの時間
+						int lifeTime = attackData[m_attackId].lifeTime - m_attackTime;
 
-					attack->SetAttackTime(lifeTime);
+						attack->SetAttackTime(lifeTime);
+					}
+					//攻撃を出す
+					m_pScene->AddAttack(attack);
 				}
-				//攻撃を出す
-				m_pScene->AddAttack(attack);
 			}
-		}
-		//単発攻撃であれば
-		else
-		{
-			//攻撃を出す時間になったら
-			if (m_attackTime > attackData[m_attackId].attackStartTime)
+			//単発攻撃であれば
+			else
 			{
-				//攻撃を出す
-				m_pScene->AddAttack(m_pEnemy->CreateAttack(m_attackId));
+				//攻撃を出す時間になったら
+				if (m_attackTime > attackData[m_attackId].attackStartTime)
+				{
+					//攻撃を出す
+					m_pScene->AddAttack(m_pEnemy->CreateAttack(m_attackId));
+					m_isAttackEnd = true;
+				}
 			}
-
 		}
-
 	}
 	//攻撃の時間が終わったら
 	if (m_attackTime > attackData[m_attackId].attackEndTime)
 	{
+		m_isAttackEnd = true;
 		//べつのStateに移動する
 		m_isChangeState = true;
 	}
