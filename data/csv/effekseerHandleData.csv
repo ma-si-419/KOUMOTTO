@@ -4,8 +4,8 @@ EnemyEnergy,enemyEnergy,150,300
 PlayerBigEnergy,playerBigEnergy,150,300
 Guard,barrior,120,250
 Charge,charge,150,25
-PlayerLaser,playerLaser,150,100
-EnemyLaser,enemyLaser,150,100
+PlayerLaser,playerLaser,300,100
+EnemyLaser,enemyLaser,300,100
 Physical1,physicalAttack1,150,120
 Physical2,physicalAttack2,150,70
 Physical3,physicalAttack3,150,120
@@ -14,3 +14,4 @@ Dash,dash,200,100
 Stun,stun,100,50
 StunAttack,stunAttack,100,50
 Burst,burst,100,80
+BossDeath,bossDeath,10,500

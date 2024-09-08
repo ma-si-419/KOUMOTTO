@@ -9,7 +9,7 @@
 #include "EnemyStateHitAttack.h"
 namespace
 {
-	constexpr float kMoveFrontDistance = 6000.0f;
+	constexpr float kMoveFrontDistance = 12000.0f;
 }
 
 void EnemyStateBase::CheckSituation(std::shared_ptr<Player> player)

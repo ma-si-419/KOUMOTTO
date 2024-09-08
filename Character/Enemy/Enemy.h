@@ -42,7 +42,7 @@ public:
 	void StateUpdate(std::shared_ptr<Player> player);
 
 	//攻撃を作成する
-	std::shared_ptr<AttackBase> CreateAttack(std::string id);
+	std::shared_ptr<AttackBase> CreateAttack(std::string id, MyEngine::Vector3 laserTargetPos);
 
 	//プレイするエフェクトを設定する
 	void SetPlayEffect(std::pair<int, int> playHandleData);

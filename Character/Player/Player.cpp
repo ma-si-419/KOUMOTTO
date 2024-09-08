@@ -240,7 +240,7 @@ std::map<std::string, std::string> Player::GetSetSpecialAttackName()
 	return ans;
 }
 
-std::shared_ptr<AttackBase> Player::CreateAttack(std::string id)
+std::shared_ptr<AttackBase> Player::CreateAttack(std::string id, MyEngine::Vector3 laserTargetPos)
 {
 	//エネミーの攻撃を作成
 	std::shared_ptr<AttackBase> ans = std::make_shared<AttackBase>(ObjectTag::kPlayerAttack);
@@ -248,11 +248,22 @@ std::shared_ptr<AttackBase> Player::CreateAttack(std::string id)
 	//攻撃を出す座標を作成
 
 	MyEngine::Vector3 toTargetVec = m_targetPos - m_rigidbody.GetPos();
+
 	MyEngine::Vector3 attackPos = m_rigidbody.GetPos() + toTargetVec.Normalize() * m_attackData[id].radius;
 
+	//サウンドハンドル
+	int soundHandle = m_pScene->GetSEHandle(m_attackData[id].soundName);
+
 	//ステータス設定
-	ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
-	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName].first);
+	if (m_attackData[id].isLaser)
+	{
+		ans->SetStatus(m_attackData[id], laserTargetPos, m_rigidbody.GetPos(), m_status.atk);
+	}
+	else
+	{
+		ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
+	}
+	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName].first, soundHandle);
 
 	return ans;
 }

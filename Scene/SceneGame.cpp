@@ -16,16 +16,21 @@ namespace
 	constexpr int kGameOverItemNum = 1;
 	//バトル開始までの時間
 	constexpr int kStandByTime = 120;
+	//クリア時の画像が最初おいてある座標
+	constexpr int kClearGraphInitPosX = Game::kWindowWidth + 100;
 }
 
 SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager) :
-	SceneBase(sceneManager, dataManager,soundManager),
+	SceneBase(sceneManager, dataManager, soundManager),
 	m_isGameOver(false),
 	m_gameOverSelectItemNum(0),
 	m_isStartBattle(false),
-	m_standByTime(0)
+	m_standByTime(0),
+	m_isGameClear(false),
+	m_clearGraphPosX(kClearGraphInitPosX),
+	m_isFinalStage(false)
 {
-	
+
 	//当たり判定管理クラスのポインタ
 	m_pPhysics = std::make_shared<Physics>();
 	//プレイヤーのポインタ
@@ -56,7 +61,9 @@ SceneGame::~SceneGame()
 
 void SceneGame::Init()
 {
-	m_soundManager.SetHandle(m_dataManager.GetSoundData(Game::SceneNum::kGame));	
+	m_soundManager.SetHandle(m_dataManager.GetSoundData(Game::SceneNum::kGame));
+
+	m_soundManager.Play("BattleStartBgm", DX_PLAYTYPE_LOOP);
 
 	//エネミーの初期化(当たり判定を登録する)
 	m_pEnemy->Init(m_pPhysics);
@@ -72,7 +79,8 @@ void SceneGame::Init()
 	m_pPlayer->Init(m_pPhysics);
 	//エネミーにプレイヤーの座標を渡す
 	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
-
+	//エネミーにシーンのポインタを渡す
+	m_pEnemy->SetGameScene(shared_from_this());
 	//カメラにプレイヤーの座標を渡す
 	m_pGameCamera->SetPlayerPos(m_pPlayer->GetPos());
 	//カメラにエネミーの座標を渡す
@@ -140,6 +148,11 @@ void SceneGame::Update(MyEngine::Input input)
 	//バトル開始後の処理
 	else
 	{
+		//敵の体力が0になったら
+		if (m_pEnemy->GetNowHp() <= 0)
+		{
+			m_isGameClear = true;
+		}
 
 		//ゲームオーバー時の処理
 		if (m_isGameOver)
@@ -171,12 +184,23 @@ void SceneGame::Update(MyEngine::Input input)
 				}
 				else if (m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kEnd))
 				{
-					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager,m_soundManager));
+					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager, m_soundManager));
 					return;
 				}
 			}
 		}
-		//ゲームオーバーしていないときの処理
+		//ゲームクリア時の処理
+		else if (m_isGameClear)
+		{
+			if (input.IsTrigger(Game::InputId::kA))
+			{
+				m_soundManager.Stop("BattleStartBgm");
+				m_soundManager.Stop("BattleEndBgm");
+				m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager, m_soundManager));
+				return;
+			}
+		}
+		//ゲームオーバーもゲームクリアしていないときの処理
 		else
 		{
 			//当たり判定の更新
@@ -233,15 +257,19 @@ void SceneGame::Update(MyEngine::Input input)
 			}
 		}
 
-
-#ifdef _DEBUG
-		if (input.IsTrigger(Game::InputId::kPause))
-		{
-			RetryInit();
-			return;
-		}
-#endif
 	}
+	if (m_pEnemy->GetNowHp() < m_pEnemy->GetStatus().hp / 2 ||
+		m_pPlayer->GetNowHp() < m_pPlayer->GetStatus().hp / 2)
+	{
+		if (!m_isFinalStage)
+		{
+			m_soundManager.Stop("BattleStartBgm");
+
+			m_soundManager.Play("BattleEndBgm", DX_PLAYTYPE_LOOP);
+			m_isFinalStage = true;
+		}
+	}
+
 	//エフェクトを更新する
 	UpdateEffekseer3D();
 
@@ -278,6 +306,11 @@ void SceneGame::Draw()
 	{
 		m_pUi->DrawGameOver(m_gameOverSelectItemNum);
 	}
+	else if (m_isGameClear)
+	{
+		m_pUi->DrawGameClear();
+	}
+
 	//ゲーム開始時のReadyやFightの表示
 	m_pUi->DrawStartSign(m_isStartBattle);
 }
@@ -291,4 +324,9 @@ void SceneGame::End()
 void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)
 {
 	m_pAttacks.push_back(pAttack);
+}
+
+void SceneGame::PlaySE(std::string name, int playType)
+{
+	m_soundManager.Play(name, playType);
 }

@@ -23,14 +23,17 @@ void PlayerStateHitAttack::Init(std::shared_ptr<Collidable> collider)
 	if (attack->GetHitEffect() == static_cast<int>(HitEffect::kLightHit))
 	{
 		m_hitEffect = HitEffect::kLightHit;
+		m_pPlayer->ChangeAnim("LightHit");
 	}
 	else if (attack->GetHitEffect() == static_cast<int>(HitEffect::kBurst))
 	{
 		m_hitEffect = HitEffect::kBurst;
+		m_pPlayer->ChangeAnim("Burst");
 	}
 	else if (attack->GetHitEffect() == static_cast<int>(HitEffect::kStun))
 	{
 		m_hitEffect = HitEffect::kStun;
+		m_pPlayer->ChangeAnim("Stun");
 	}
 }
 void PlayerStateHitAttack::Update(MyEngine::Input input)
@@ -76,6 +79,7 @@ void PlayerStateHitAttack::Update(MyEngine::Input input)
 			return;
 		}
 	}
+	m_pPlayer->PlayAnim();
 	m_pPlayer->SetVelo(velo);
 	//Œ»İ‚Ìó‘Ô‚ğ•Ô‚·
 	m_nextState = shared_from_this();

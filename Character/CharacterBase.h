@@ -14,8 +14,8 @@ class CharacterBase : public Collidable
 public:
 	struct Status
 	{
-		float hp = 30000;
-		float mp = 300;
+		float hp = 50000;
+		float mp = 250;
 		float atk = 100;
 		float def = 200;
 	};
@@ -62,6 +62,10 @@ public:
 	std::pair<int,int> GetEffekseerData(std::string name) {return m_effekseerHandle[name]; }
 	//エフェクトを再生する
 	void PlayEffect();
+	//効果音を鳴らす　
+	void PlaySE(std::string name, int playType);
+	//効果音を止める
+	void StopSE(std::string name);
 
 	//必殺技を出している状態に変化させる
 	void PlaySpecialAttack(std::string id);
@@ -75,6 +79,8 @@ public:
 	void StopAnimLoop();
 	//攻撃が終わるときのアニメーション
 	void SetAttackEndAnim(float attackEndTime);
+	//シーンのポインタを保存する
+	void SetGameScene(std::shared_ptr<SceneGame> scene) { m_pScene = scene; }
 protected:
 	enum class AnimationInfoSort
 	{

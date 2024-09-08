@@ -11,6 +11,8 @@ namespace
 	//どのくらい弾を散らばらせるか
 	constexpr int kScatterPower = 50;
 	constexpr int kScatterPowerHalf = kScatterPower * 0.5;
+	//レーザーのエフェクトを出す感覚
+	constexpr int kLaserEffectPopTime = 1;
 }
 
 AttackBase::AttackBase(ObjectTag tag) :
@@ -21,7 +23,10 @@ AttackBase::AttackBase(ObjectTag tag) :
 	m_lifeTime(0),
 	m_moveLength(0),
 	m_targetLength(0),
-	m_isLeaveEffect(false)
+	m_isLeaveEffect(false),
+	m_playSoundHandle(-1),
+	m_isPopEffect(true),
+	m_isPlaySound(false)
 {
 }
 
@@ -29,7 +34,7 @@ AttackBase::~AttackBase()
 {
 }
 
-void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle)
+void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle, int soundHandle)
 {
 	//当たり判定の初期化＆登録
 	Collidable::Init(physics);
@@ -38,10 +43,26 @@ void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, i
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(Collidable::m_pColData);
 	colData->m_startPos = m_rigidbody.GetPos() + (m_dir * m_status.radius);
 
+	//ハンドルを保存しておく
+	m_playSoundHandle = soundHandle;
+
+
 	//エフェクトの設定
-	m_playEffectHandle = PlayEffekseer3DEffect(effekseerHandle);
-	MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
-	SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+	if (m_isPopEffect)
+	{
+		MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
+		if (m_status.isLaser)
+		{
+			m_laserPlayEffectHandles.push_back(PlayEffekseer3DEffect(effekseerHandle));
+			SetPosPlayingEffekseer3DEffect(m_laserPlayEffectHandles[0], effectPos.x, effectPos.y, effectPos.z);
+		}
+		else
+		{
+			m_playEffectHandle = PlayEffekseer3DEffect(effekseerHandle);
+			SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+		}
+		m_effectHandle = effekseerHandle;
+	}
 }
 
 void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos, float power)
@@ -54,7 +75,6 @@ void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 tar
 	m_status.damage = static_cast<int>(m_status.damageRate * power);
 	//プレイヤーからターゲットに向かっての方向を入れる
 	m_dir = (target - playerPos).Normalize();
-
 	//打ち出す方向をちらばらせる技であれば
 	if (status.isScatter)
 	{
@@ -75,6 +95,27 @@ void AttackBase::SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 tar
 
 void AttackBase::Update(MyEngine::Vector3 targetPos)
 {
+	//レーザー以外のものはすべてサウンドを鳴らす
+	if (!m_isPlaySound)
+	{
+		if (!m_status.isLaser)
+		{
+			m_playSoundHandle = PlaySoundMem(m_playSoundHandle, DX_PLAYTYPE_BACK);
+			m_isPlaySound = true;
+		}
+		else
+		{
+			//レーザーは一段目に出したものだけ効果音を鳴らす
+			if (m_isPopEffect)
+			{
+				PlaySoundMem(m_playSoundHandle, DX_PLAYTYPE_BACK);
+				m_isPlaySound = true;
+			}
+		}
+	}
+
+	//ライフタイムをカウントする
+	m_lifeTime++;
 	//当たり判定のデータをダウンキャスト
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(Collidable::m_pColData);
 	//移動ベクトルを作成
@@ -85,16 +126,33 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 
 	m_moveLength += velo.Length();
 
-	//エフェクトの更新
-	MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
-
-	if (!m_status.isLaser)
+	//エフェクトを出す設定のものだったら
+	if (m_isPopEffect)
 	{
-		SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+		//エフェクトの更新
+		MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
+
+		//レーザーじゃない場合
+		if (!m_status.isLaser)
+		{
+			//座標を更新し続ける
+			SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+		}
+		//レーザーの場合
+		else
+		{
+			if (m_lifeTime % kLaserEffectPopTime == 0)
+			{
+				MyEngine::Vector3 pos = colData->m_startPos;
+
+				//一定時間ごとにエフェクトを出す
+				int playHandle = PlayEffekseer3DEffect(m_effectHandle);
+				SetPosPlayingEffekseer3DEffect(playHandle, effectPos.x, effectPos.y, effectPos.z);
+				m_laserPlayEffectHandles.push_back(playHandle);
+			}
+		}
 	}
 
-	//ライフタイムをカウントする
-	m_lifeTime++;
 
 	//敵を追尾する攻撃だったら
 	if (m_status.isTrack)
@@ -126,6 +184,7 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 		if (GetTag() == ObjectTag::kEnemyAttack)
 		{
 			m_isExist = false;
+
 			//エフェクトを残さないと決められていたら
 			if (!m_isLeaveEffect)
 			{
@@ -155,6 +214,7 @@ void AttackBase::Final(std::shared_ptr<Physics> physics)
 		//再生中のエフェクトを消す
 		StopEffekseer3DEffect(m_playEffectHandle);
 	}
+
 	//当たり判定をけす
 	Collidable::Final(physics);
 }

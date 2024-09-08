@@ -9,7 +9,7 @@ namespace
 	//ガードした時のノックバックの速さ
 	constexpr float kGuardKnockBackSpeed = 10.0f;
 	//軽い攻撃を受けた時の動けない時間
-	constexpr int kLightHitStunTime = 5;
+	constexpr int kLightHitStunTime = 8;
 	//吹き飛ばし攻撃を受けた時の動けない時間
 	constexpr int kBurstHitStunTime = 90;
 	//スタン攻撃を受けた時の動けない時間
@@ -24,14 +24,17 @@ void EnemyStateHitAttack::Init(int effect)
 	if (effect == static_cast<int>(HitEffect::kBurst))
 	{
 		m_effect = HitEffect::kBurst;
+		m_pEnemy->ChangeAnim("Burst");
 	}
 	else if (effect == static_cast<int>(HitEffect::kLightHit))
 	{
 		m_effect = HitEffect::kLightHit;
+		m_pEnemy->ChangeAnim("LightHit");
 	}
 	else if (effect == static_cast<int>(HitEffect::kStun))
 	{
 		m_effect = HitEffect::kStun;
+		m_pEnemy->ChangeAnim("Stun");
 	}
 	else if (effect == static_cast<int>(HitEffect::kGuard))
 	{

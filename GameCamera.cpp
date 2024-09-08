@@ -11,7 +11,7 @@ namespace
 	//回転をしない猶予範囲
 	constexpr float kRotaMargin = 600.0f;
 	//カメラの初期位置
-	MyEngine::Vector3 kInitPos(0,-5000,-10000);
+	MyEngine::Vector3 kInitPos(0, -5000, -10000);
 	//カメラの回転具合を距離によって回していきます
 	constexpr float kDistanceRotaYDecayRate = 0.001f;
 	//カメラの初期視野角(60度)
@@ -35,6 +35,7 @@ GameCamera::GameCamera() :
 {
 	SetCameraNearFar(10.0f, 100000.0f);
 	m_domeHandle = MV1LoadModel("data/model/Dome.mv1");
+	MV1SetScale(m_domeHandle, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
 }
 
 GameCamera::~GameCamera()
@@ -99,7 +100,7 @@ void GameCamera::Update()
 		{
 			m_fov = kInitCameraFov;
 		}
-		if(m_cameraUpPos < 0)
+		if (m_cameraUpPos < 0)
 		{
 			m_cameraUpPos = 0;
 		}
@@ -119,10 +120,10 @@ void GameCamera::Update()
 	m_cameraPos.y = enemyToPlayer.y + kPlayerDistance * unitVec.y;
 	m_cameraPos.z = enemyToPlayer.z + kPlayerDistance * unitVec.z;
 
-	MATRIX mat = MGetRotY(0.5 / (vecSize* 0.001));
+	MATRIX mat = MGetRotY(0.5 / (vecSize * 0.001));
 
 	m_cameraPos = m_cameraPos.MatTransform(mat);
-	
+
 	m_cameraPos += m_targetPos;
 
 	//カメラのターゲット座標を作成
@@ -137,5 +138,4 @@ void GameCamera::Update()
 	m_isUpFov = false;
 	//カメラの座標にスカイドームを設定
 	MV1SetPosition(m_domeHandle, m_cameraPos.CastVECTOR());
-	MV1SetScale(m_domeHandle, VGet(kSkyDomeScale, kSkyDomeScale, kSkyDomeScale));
 }

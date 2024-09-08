@@ -37,5 +37,9 @@ private:
 	bool m_isAttackEnd = false;
 	//プレイヤーの座標を取得するためにポインターを持つ
 	std::shared_ptr<Player> m_pPlayer;
+	//攻撃を出した回数
+	int m_popAttackNum = 0;
+	//レーザーを出す攻撃の座標
+	MyEngine::Vector3 m_laserTargetPos;
 };
 

@@ -5,6 +5,7 @@
 #include "CommandIdList.h"
 #include "LoadCsv.h"
 #include "EffekseerForDXLib.h"
+#include "SceneGame.h"
 
 namespace
 {
@@ -198,6 +199,16 @@ void CharacterBase::PlayEffect()
 		//エフェクトをプレイヤーの座標に設定
 		SetPosPlayingEffekseer3DEffect(m_playingEffectHandle, pos.x, pos.y, pos.z);
 	}
+}
+
+void CharacterBase::PlaySE(std::string name, int playType)
+{
+	m_pScene->PlaySE(name, playType);
+}
+
+void CharacterBase::StopSE(std::string name)
+{
+	m_pScene->StopSE(name);
 }
 
 void CharacterBase::PlaySpecialAttack(std::string id)

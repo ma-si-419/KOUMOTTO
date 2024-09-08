@@ -178,15 +178,29 @@ void EnemyStateAttack::Update()
 				//攻撃のタイミングが来たら攻撃を出すようにする
 				if (m_attackTime % span == 0 && m_attackTime < attackData[m_attackId].attackEndTime)
 				{
+					//レーザーを出す座標が指定されていなかったら
+					if (m_laserTargetPos.sqLength() == 0)
+					{
+						m_laserTargetPos = m_pEnemy->GetTargetPos();
+					}
 					//攻撃を作成
-					std::shared_ptr<AttackBase> attack = m_pEnemy->CreateAttack(m_attackId);
-					//レーザー状の攻撃であれば消える時間をそろえる
+					std::shared_ptr<AttackBase> attack = m_pEnemy->CreateAttack(m_attackId, m_laserTargetPos);
+					//レーザー状の攻撃の設定
 					if (attackData[m_attackId].isLaser)
 					{
 						//消えるまでの時間
 						int lifeTime = attackData[m_attackId].lifeTime - m_attackTime;
 
 						attack->SetAttackTime(lifeTime);
+						//エフェクトを残すようにする
+						attack->SetLeaveEffect();
+						//一度目の攻撃以外エフェクトを出さないようにする
+						if (m_popAttackNum != 0)
+						{
+							attack->SetNotPopEffect();
+						}
+
+						m_popAttackNum++;
 					}
 					//攻撃を出す
 					m_pScene->AddAttack(attack);
@@ -199,7 +213,7 @@ void EnemyStateAttack::Update()
 				if (m_attackTime > attackData[m_attackId].attackStartTime)
 				{
 					//攻撃を出す
-					m_pScene->AddAttack(m_pEnemy->CreateAttack(m_attackId));
+					m_pScene->AddAttack(m_pEnemy->CreateAttack(m_attackId,MyEngine::Vector3(0,0,0)));
 					m_isAttackEnd = true;
 				}
 			}

@@ -14,8 +14,6 @@ public:
 	void Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input);
 	void Draw();
 
-	void SetGameScene(std::shared_ptr<SceneGame> scene) { m_pScene = scene; }
-
 	float GetRota() { return m_rota; }
 
 	MyEngine::Vector3 GetVelo() { return m_rigidbody.GetVelo(); }
@@ -51,7 +49,7 @@ public:
 	//セットしてある必殺技の名前を返す
 	std::map<std::string, std::string> GetSetSpecialAttackName();
 	//攻撃を作成する
-	std::shared_ptr<AttackBase> CreateAttack(std::string id);
+	std::shared_ptr<AttackBase> CreateAttack(std::string id,MyEngine::Vector3 laserTargetPos);
 	//プレイするエフェクトを設定する
 	void SetPlayEffect(std::pair<int, int> playHandleData);
 	//プレイしているエフェクトをストップする

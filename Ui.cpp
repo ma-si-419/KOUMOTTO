@@ -6,6 +6,8 @@
 
 namespace
 {
+	//HPの残量を表示するときのフォントの大きさ
+	constexpr int kHpNumFontSize = 20;
 	//HPバーの大きさ
 	constexpr int kHpBarHeight = 15;
 	constexpr int kHpBarWidth = 188;
@@ -29,6 +31,10 @@ namespace
 	//プレイヤーのMPバーの座標(画像の座標に対してのMPバーの座標のずれを直す)
 	constexpr int kMpBarPosX = -36;
 	constexpr int kMpBarPosY = 40;
+	//プレイヤーのHPの量を表示する座標
+	constexpr int kHpNumPosX = 42;
+	constexpr int kHpNumPosY = -3;
+
 	//エネミーのスタンバーの座標(画像の座標に対してのスタンバーの座標のずれを直す)
 	constexpr int kStanBarPosX = 23;
 	constexpr int kStanBarPosY = 40;
@@ -113,7 +119,15 @@ namespace
 	constexpr int kGreatComboNum = 30;
 	//ほめるコメントがExcellentになるコンボ数
 	constexpr int kExcellentComboNum = 50;
-
+	//ゲームクリア時のKOの初期拡大率
+	constexpr float kInitKoExRate = 20.0f;
+	//ゲームクリア時のKOの拡縮速度
+	constexpr float kKoScalingSpeed = 1.0f;
+	//ゲームクリア時のKOの最終拡大率
+	constexpr float kFinalKoExRate = 2.0f;
+	//ゲームクリア時の文字の表示座標
+	constexpr int kGameClearStringPosX = 600;
+	constexpr int kGameClearStringPosY = 600;
 
 }
 
@@ -140,12 +154,14 @@ Ui::Ui() :
 	m_comboPraiseCommentPosX(kComboPraiseCommentInitPosX),
 	m_comboUiAlpha(255),
 	m_isCountCombo(true),
-	m_lastComboCount(0)
+	m_lastComboCount(0),
+	m_koExRate(kInitKoExRate)
 {
 	m_damageFontHandle = CreateFontToHandle("アンニャントロマン", kDamageFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	m_gameOverFontHandle = CreateFontToHandle("アンニャントロマン", kGameOverFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	m_commandFontHandle = CreateFontToHandle("アンニャントロマン", kCommandFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	m_comboCountFontHandle = CreateFontToHandle("アンニャントロマン", kComboCountFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	m_hpNumFontHandle = CreateFontToHandle("アンニャントロマン", kHpNumFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 }
 
 Ui::~Ui()
@@ -154,6 +170,7 @@ Ui::~Ui()
 	DeleteFontToHandle(m_gameOverFontHandle);
 	DeleteFontToHandle(m_commandFontHandle);
 	DeleteFontToHandle(m_comboCountFontHandle);
+	DeleteFontToHandle(m_hpNumFontHandle);
 }
 
 void Ui::Init()
@@ -390,6 +407,18 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	DrawRotaGraph(static_cast<int>(m_showUi[enemyStateBar].drawPos.x + enemyStateBarShakeSize.x),
 		static_cast<int>(m_showUi[enemyStateBar].drawPos.y + +enemyStateBarShakeSize.y),
 		1.0, 0.0, m_showUi[enemyStateBar].handle, true);
+	//プレイヤーの体力値表示
+	std::string playerHp = std::to_string(static_cast<int>(player->GetNowHp()));
+	std::string enemyHp = std::to_string(static_cast<int>(enemy->GetNowHp()));
+	
+	//プレイヤーの体力値表示
+	DrawStringToHandle(static_cast<int>(m_showUi[playerStateBar].drawPos.x + playerStateBarShakeSize.x + kHpNumPosX),
+		static_cast<int>(m_showUi[playerStateBar].drawPos.y + playerStateBarShakeSize.y + kHpNumPosY),
+			playerHp.c_str(), GetColor(255, 255, 255), m_hpNumFontHandle);
+	//エネミーの体力値表示
+	DrawStringToHandle(static_cast<int>(m_showUi[enemyStateBar].drawPos.x + enemyStateBarShakeSize.x + kHpNumPosX),
+		static_cast<int>(m_showUi[enemyStateBar].drawPos.y + enemyStateBarShakeSize.y + kHpNumPosY),
+		enemyHp.c_str(), GetColor(255, 255, 255), m_hpNumFontHandle);
 }
 
 
@@ -495,6 +524,25 @@ void Ui::DrawGameOver(int arrowPos)
 		MyEngine::Vector2 pos(static_cast<int>(kGameOverStringPosX[static_cast<int>(GameOverItem::kEnd)] + sinf(m_shakeArrowNum) * kShakeArrowScale - kArrowDistance), static_cast<int>(kGameOverStringPosY[static_cast<int>(GameOverItem::kEnd)]));
 		DrawStringToHandle(pos.x, pos.y, "→", GetColor(0, 0, 0), m_gameOverFontHandle, GetColor(255, 255, 255));
 	}
+}
+
+void Ui::DrawGameClear()
+{
+	if (m_koExRate > kFinalKoExRate)
+	{
+		m_koExRate -= kKoScalingSpeed;
+	}
+	else
+	{
+		m_koExRate = kFinalKoExRate;
+	}
+	//ゲームクリアの画像データ
+	std::string logo = "Ko";
+	DrawRotaGraph(static_cast<int>(m_showUi[logo].drawPos.x), static_cast<int>(m_showUi[logo].drawPos.y),
+		m_koExRate, 0.0, m_showUi[logo].handle, true);
+
+	DrawStringToHandle(kGameClearStringPosX, kGameClearStringPosY, "Press A Button", GetColor(255, 255, 255), m_gameOverFontHandle);;
+
 }
 
 void Ui::DrawStartSign(bool startFlag)

@@ -11,6 +11,9 @@ StunAttack,Game
 OK,Game
 Cursor,Game
 Cancel,Game
+BattleStartBgm,Game
+BattleEndBgm,Game
 OK,Title
 Cursor,Title
 Cancel,Title
+TitleBgm,Title

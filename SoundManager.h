@@ -11,6 +11,8 @@ public:
 
 	void Stop(std::string name);
 
+	int GetHandle(std::string name) { return m_soundHandles[name]; }
+
 private:
 	std::map<std::string, int> m_soundHandles;
 };

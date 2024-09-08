@@ -180,7 +180,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			//攻撃を出す時間になったら
 			if (m_actionTime > attackData.attackStartTime)
 			{
-				std::shared_ptr<AttackBase> attack = m_pPlayer->CreateAttack(m_attackId);
+				std::shared_ptr<AttackBase> attack = m_pPlayer->CreateAttack(m_attackId,MyEngine::Vector3(0,0,0));
 				//格闘攻撃だったら
 				if (!attackData.isEnergy)
 				{
@@ -203,15 +203,29 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			//攻撃のタイミングが来たら攻撃を出すようにする
 			if (m_actionTime % span == 0 && m_actionTime > attackData.attackStartTime)
 			{
+				//レーザーを出す座標が指定されていなかったら
+				if (m_laserTargetPos.sqLength() == 0)
+				{
+					m_laserTargetPos = m_pPlayer->GetTargetPos();
+				}
 				//攻撃を作成
-				std::shared_ptr<AttackBase> attack = m_pPlayer->CreateAttack(m_attackId);
-				//レーザー状の攻撃であれば消える時間をそろえる
+				std::shared_ptr<AttackBase> attack = m_pPlayer->CreateAttack(m_attackId,m_laserTargetPos);
+				//レーザー状の攻撃の設定
 				if (attackData.isLaser)
 				{
 					//消えるまでの時間
 					int lifeTime = attackData.lifeTime - m_actionTime;
 
 					attack->SetAttackTime(lifeTime);
+					//エフェクトを残すようにする
+					attack->SetLeaveEffect();
+					//一度目の攻撃以外エフェクトを出さないようにする
+					if (m_popAttackNum != 0)
+					{
+						attack->SetNotPopEffect();
+					}
+
+					m_popAttackNum++;
 				}
 				//攻撃を出す
 				m_pScene->AddAttack(attack);

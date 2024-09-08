@@ -46,5 +46,9 @@ private:
 	bool m_isNormalAttack = false;
 	//攻撃が終わったかどうか
 	bool m_isAttackEnd = false;
+	//出した攻撃の数
+	int m_popAttackNum = 0;
+	//攻撃を出したタイミングの敵の位置を保存する
+	MyEngine::Vector3 m_laserTargetPos;
 };
 

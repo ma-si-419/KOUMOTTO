@@ -8,7 +8,7 @@ public:
 	AttackBase(ObjectTag tag);
 	virtual ~AttackBase();
 
-	void Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle);
+	void Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle,int soundHandle);
 	void SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos, float power);
 	void Update(MyEngine::Vector3 targetPos);
 	void Draw() {};
@@ -33,6 +33,8 @@ public:
 	bool GetIsExist() { return m_isExist; }
 
 	void SetLeaveEffect() { m_isLeaveEffect = true; }
+
+	void SetNotPopEffect() { m_isPopEffect = false; }
 private:
 	/*ステータス*/
 	DataManager::AttackInfo m_status;
@@ -50,7 +52,14 @@ private:
 	int m_effectHandle;
 	//プレイ中のエフェクトのハンドル
 	int m_playEffectHandle;
+	//レーザーのプレイ中のエフェクトハンドル
+	std::vector<int> m_laserPlayEffectHandles;
 	//当たり判定が消えた後にエフェクトを残すかどうか
 	bool m_isLeaveEffect;
+	//再生する音のハンドル
+	int m_playSoundHandle;
+	//エフェクトを出すかどうか
+	bool m_isPopEffect;
+	//効果音を再生したかどうか
+	bool m_isPlaySound;
 };
-

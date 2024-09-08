@@ -49,6 +49,8 @@ public:
 	/// <param name="arrowPos">どの項目を選択しているか</param>
 	void DrawGameOver(int arrowPos);
 
+	void DrawGameClear();
+
 	/// <summary>
 	/// バトル開始前の合図を表示する
 	/// </summary>
@@ -122,6 +124,10 @@ private:
 	//fightの縮小を行っているかどうか
 	bool m_isFightChangeExRate;
 
+	//Koの拡大率
+	float m_koExRate;
+
+
 	//基本コマンドUIのX座標
 	int m_normalCommandPosX;
 	//基本コマンドUIのアルファ値
@@ -140,6 +146,8 @@ private:
 	//コンボをカウントするタイミングかどうか
 	bool m_isCountCombo;
 
+	//体力を表示するときのフォントハンドル
+	int m_hpNumFontHandle;
 	//ダメージを表示するときのフォントハンドル
 	int m_damageFontHandle;
 	//ゲームオーバーの時の選択肢のフォントハンドル

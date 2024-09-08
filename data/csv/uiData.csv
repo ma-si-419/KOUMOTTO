@@ -5,6 +5,7 @@ TitleLogo,300,50,Title
 GameOverLogo,415,300,Game
 Ready,768,432,Game
 Fight,768,432,Game
+Ko,768,432,Game
 CommandFrame,9999,9999,Game
 ButtonABXY,9999,9999,Game
 Excellent,9999,9999,Game

@@ -14,6 +14,7 @@ namespace
 void PlayerStateDodge::Init(MyEngine::Vector3 dir)
 {
 	m_moveDir = dir;
+	m_pPlayer->PlaySE("Dodge",DX_PLAYTYPE_BACK);
 	m_pPlayer->ChangeAnim("Move");
 	m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dodge"));
 	m_pPlayer->SetUpFov(true);
