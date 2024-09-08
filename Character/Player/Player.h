@@ -35,6 +35,7 @@ public:
 	PlayerStateBase::PlayerStateKind GetStateKind() { return m_pState->GetKind(); }
 
 	void AddMp(float addPoint) { if(m_nowMp < m_status.mp)m_nowMp += addPoint; }
+	void SubMp(float subPoint) { m_nowMp -= subPoint; if (m_nowMp < 0)m_nowMp = 0; }
 
 	/// <summary>
 	/// UŒ‚‚Ìí—Ş‚ğæ“¾‚·‚é

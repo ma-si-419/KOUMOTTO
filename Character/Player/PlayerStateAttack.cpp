@@ -47,6 +47,8 @@ void PlayerStateAttack::Init(std::string button, bool isSpecial)
 	}
 	//アニメーションを変更
 	m_pPlayer->ChangeAnim(m_pPlayer->GetAttackData(m_attackId).animationName);
+	//プレイヤーのMPを減らす
+	m_pPlayer->SubMp(m_pPlayer->GetAttackData(m_attackId).cost);
 }
 
 void PlayerStateAttack::Update(MyEngine::Input input)
@@ -231,17 +233,35 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 			//次の攻撃が入力されていたら
 			if (m_nextAttackId != "empty")
 			{
-				//次の攻撃に移行する
-				m_attackId = m_nextAttackId;
-				//攻撃の情報を初期化する
-				m_actionTime = 0;
-				m_time = 0;
-				m_isAttackEnd = false;
-				auto attack = m_pPlayer->GetAttackData(m_nextAttackId);
-				m_isNormalAttack = !attack.isSpecial;
-				m_isGoTarget = !attack.isEnergy;
-				m_pPlayer->ChangeAnim(attack.animationName);
-				m_nextAttackId = "empty";
+				//攻撃のコスト分MPがあれば
+				if (m_pPlayer->GetAttackCost(m_nextAttackId) < m_pPlayer->GetNowMp())
+				{
+					//MPを減らす
+					m_pPlayer->SubMp(m_pPlayer->GetAttackCost(m_nextAttackId));
+					//次の攻撃に移行する
+					m_attackId = m_nextAttackId;
+					//攻撃の情報を初期化する
+					m_actionTime = 0;
+					m_time = 0;
+					m_isAttackEnd = false;
+					auto attack = m_pPlayer->GetAttackData(m_nextAttackId);
+					m_isNormalAttack = !attack.isSpecial;
+					m_isGoTarget = !attack.isEnergy;
+					m_pPlayer->ChangeAnim(attack.animationName);
+					m_nextAttackId = "empty";
+				}
+				//コストが足りなければ
+				else
+				{
+					//攻撃の全体フレームが終わってからIdle状態に戻る
+					if (m_actionTime > attackData.actionTotalTime)
+					{
+						m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
+						auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
+						state->Init();
+						return;
+					}
+				}
 			}
 			//次の攻撃が入力されていなければ
 			else

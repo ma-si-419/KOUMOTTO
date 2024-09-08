@@ -11,3 +11,6 @@ Physical2,physicalAttack2,150,70
 Physical3,physicalAttack3,150,120
 Dodge,dodge,150,120
 Dash,dash,200,100
+Stun,stun,100,50
+StunAttack,stunAttack,100,50
+Burst,burst,100,80
