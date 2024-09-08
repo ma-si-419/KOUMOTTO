@@ -177,6 +177,9 @@
     <ClCompile Include="PlayerStateCharge.cpp">
       <Filter>ソース ファイル\Character\Player</Filter>
     </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
@@ -307,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="PlayerStateCharge.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

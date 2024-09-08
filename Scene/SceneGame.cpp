@@ -18,8 +18,8 @@ namespace
 	constexpr int kStandByTime = 120;
 }
 
-SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager) :
-	SceneBase(sceneManager, dataManager),
+SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager) :
+	SceneBase(sceneManager, dataManager,soundManager),
 	m_isGameOver(false),
 	m_gameOverSelectItemNum(0),
 	m_isStartBattle(false),
@@ -56,8 +56,7 @@ SceneGame::~SceneGame()
 
 void SceneGame::Init()
 {
-	
-	
+	m_soundManager.SetHandle(m_dataManager.GetSoundData(Game::SceneNum::kGame));	
 
 	//ƒGƒlƒ~[‚Ì‰Šú‰»(“–‚½‚è”»’è‚ð“o˜^‚·‚é)
 	m_pEnemy->Init(m_pPhysics);
@@ -172,7 +171,7 @@ void SceneGame::Update(MyEngine::Input input)
 				}
 				else if (m_gameOverSelectItemNum == static_cast<int>(Ui::GameOverItem::kEnd))
 				{
-					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager));
+					m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager,m_soundManager));
 					return;
 				}
 			}

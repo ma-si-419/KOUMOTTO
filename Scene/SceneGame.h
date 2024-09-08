@@ -11,7 +11,7 @@ class Ui;
 class SceneGame : public SceneBase , public std::enable_shared_from_this<SceneGame>
 {
 public:
-	SceneGame(SceneManager& sceneManager,DataManager& dataManager);
+	SceneGame(SceneManager& sceneManager,DataManager& dataManager, SoundManager& soundManager);
 	~SceneGame();
 	//‰Šú‰»ˆ—
 	void Init();

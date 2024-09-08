@@ -69,6 +69,11 @@ namespace Game
 		kMag,
 		kLoopFrame
 	};
+	enum class SoundInfo
+	{
+		kName,
+		kScene
+	};
 	enum class SceneNum
 	{
 		kTitle,

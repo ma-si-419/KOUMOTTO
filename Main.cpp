@@ -3,6 +3,7 @@
 #include "SceneTitle.h"
 #include "SceneManager.h"
 #include "DataManager.h"
+#include "SoundManager.h"
 #include "Input.h"
 #include "Game.h"
 #include <cassert>
@@ -50,11 +51,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SceneManager scene;
 	DataManager data;
+	SoundManager sound;
+	
 	data.LoadAttackFile();
 	data.LoadUiFile();
 	data.LoadAiFile();
+	data.LoadSoundFile();
 	MyEngine::Input input;
-	scene.ChangeScene(std::make_shared<SceneTitle>(scene, data));
+	scene.ChangeScene(std::make_shared<SceneTitle>(scene, data,sound));
 
 	scene.Init();
 

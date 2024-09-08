@@ -181,6 +181,7 @@
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp" />
     <ClCompile Include="Character\Player\PlayerStateBase.cpp" />
     <ClCompile Include="Character\Player\PlayerStateIdle.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="TitleCamera.cpp" />
     <ClCompile Include="Ui.cpp" />
   </ItemGroup>
@@ -226,6 +227,7 @@
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
     <ClInclude Include="Character\Player\PlayerStateBase.h" />
     <ClInclude Include="Character\Player\PlayerStateIdle.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="TitleCamera.h" />
     <ClInclude Include="Ui.h" />
   </ItemGroup>

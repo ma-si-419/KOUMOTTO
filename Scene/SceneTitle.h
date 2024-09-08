@@ -20,7 +20,7 @@ private:
 		kKindNum
 	};
 public:
-	SceneTitle(SceneManager& sceneManager, DataManager& dataManager);
+	SceneTitle(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager);
 	~SceneTitle();
 	//‰Šú‰»ˆ—
 	void Init();

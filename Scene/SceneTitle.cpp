@@ -16,8 +16,8 @@ namespace
 	constexpr float kShakeArrowSpeed = 0.5f;
 }
 
-SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& dataManager) :
-	SceneBase(sceneManager, dataManager),
+SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager) :
+	SceneBase(sceneManager, dataManager,soundManager),
 	m_isEnd(false),
 	m_isOpenEndWindow(false),
 	m_isOpenOption(false),
@@ -44,6 +44,9 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
+
+	m_soundManager.SetHandle(m_dataManager.GetSoundData(Game::SceneNum::kTitle));
+
 	//Uiのロード
 	LoadUiHandle(m_dataManager.GetUiData(Game::SceneNum::kTitle));
 	//モデルのポジション設定
@@ -96,7 +99,7 @@ void SceneTitle::Update(MyEngine::Input input)
 //				m_sceneManager.ChangeScene(std::make_shared<SceneSelect>(m_sceneManager, m_dataManager));
 				
 				//ゲームシーンに直接飛ぶ
-				m_sceneManager.ChangeScene(std::make_shared<SceneGame>(m_sceneManager, m_dataManager));
+				m_sceneManager.ChangeScene(std::make_shared<SceneGame>(m_sceneManager, m_dataManager, m_soundManager));
 				return;
 			}
 			//else if (m_selectItem == static_cast<int>(ItemKind::kOption))

@@ -56,7 +56,7 @@ public:
 	//Effekseerのデータを取得
 	std::map<std::string, std::pair<int, int>> GetEffekseerHandle() { return m_effekseerHandles; };
 	//音楽のデータを取得
-	std::map<std::string, int> GetSoundHandle() { return m_soundData; }
+	std::vector<std::string> GetSoundData(Game::SceneNum sceneNum);
 	//ゲームシーンのUIのパス取得
 	std::vector<UiInfo> GetUiData(Game::SceneNum sceneNum);
 	//エネミーのAI取得
@@ -73,7 +73,8 @@ private:
 	//Effekseerのロードしたハンドルを保存しておく
 	std::map<std::string, std::pair<int,int>> m_effekseerHandles;
 	//音声のデータ
-	std::map<std::string, int> m_soundData;
+	std::vector<std::string> m_sceneTitleSoundData;
+	std::vector<std::string> m_sceneGameSoundData;
 	//画像のデータ
 	std::vector<UiInfo> m_sceneGameUiData;
 	std::vector<UiInfo> m_sceneTitleUiData;

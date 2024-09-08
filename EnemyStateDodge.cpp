@@ -8,7 +8,7 @@ namespace
 	//“®‚«‚Ì•ûŒü‚Ì”
 	constexpr int kMoveDirNum = 8;
 	//“®‚«‚Ì•ûŒü‚Ì”‚Ì”¼•ª
-	constexpr int kMoveDirNumHalf = kMoveDirNum * 0.5;
+	constexpr int kMoveDirNumHalf = static_cast<int>(kMoveDirNum * 0.5);
 }
 void EnemyStateDodge::Init()
 {

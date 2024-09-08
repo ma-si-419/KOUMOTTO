@@ -205,8 +205,6 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 
 void Player::Draw()
 {
-	DrawFormatString(200, 500, GetColor(0, 0, 0), "%f,%f,%f", m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
-	DrawFormatString(0, 300, GetColor(255, 255, 255), "HP:%f,MP:%f", m_nowHp, m_nowMp);
 	MV1DrawModel(m_modelHandle);
 }
 

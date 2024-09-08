@@ -18,7 +18,7 @@ void DataManager::Init()
 void DataManager::LoadAttackFile()
 {
 	//攻撃のデータ読み込み
-	std::vector<std::vector<std::string>> loadAttackData = m_pLoadCsv->LoadFile("data/attackData.csv");
+	std::vector<std::vector<std::string>> loadAttackData = m_pLoadCsv->LoadFile("data/csv/attackData.csv");
 
 	for (auto& item : loadAttackData)
 	{
@@ -56,7 +56,7 @@ void DataManager::LoadAttackFile()
 void DataManager::LoadEffekseerFile()
 {
 	//エフェクトのデータ読み込み
-	std::vector<std::vector<std::string>> loadEffectData = m_pLoadCsv->LoadFile("data/effekseerHandleData.csv");
+	std::vector<std::vector<std::string>> loadEffectData = m_pLoadCsv->LoadFile("data/csv/effekseerHandleData.csv");
 
 	for (auto& item : loadEffectData)
 	{
@@ -70,7 +70,7 @@ void DataManager::LoadEffekseerFile()
 
 void DataManager::LoadUiFile()
 {
-	std::vector<std::vector<std::string>> loadUiData = m_pLoadCsv->LoadFile("data/uiData.csv");
+	std::vector<std::vector<std::string>> loadUiData = m_pLoadCsv->LoadFile("data/csv/uiData.csv");
 	for (auto& item : loadUiData)
 	{
 		UiInfo pushData;
@@ -102,7 +102,7 @@ void DataManager::LoadUiFile()
 
 void DataManager::LoadAiFile()
 {
-	std::vector<std::vector<std::string>> loadAiData = m_pLoadCsv->LoadFile("data/enemyAiData.csv");
+	std::vector<std::vector<std::string>> loadAiData = m_pLoadCsv->LoadFile("data/csv/enemyAiData.csv");
 	//入れるデータ
 	std::map<std::string, std::vector<int>> pushData;
 	for (auto& item : loadAiData)
@@ -123,14 +123,41 @@ void DataManager::LoadAiFile()
 
 void DataManager::LoadAnimationFile()
 {
-	m_LoadAnimationData = m_pLoadCsv->LoadFile("data/animationData.csv");
+	m_LoadAnimationData = m_pLoadCsv->LoadFile("data/csv/animationData.csv");
+
 }
 
 void DataManager::LoadSoundFile()
 {
-	std::vector<std::vector<std::string>> loadAiData = m_pLoadCsv->LoadFile("data/soundData.csv");
+	std::vector<std::vector<std::string>> loadSoundData = m_pLoadCsv->LoadFile("data/csv/soundData.csv");
+	for (auto item : loadSoundData)
+	{
+		if (item[static_cast<int>(Game::SoundInfo::kScene)] == "Title")
+		{
+			m_sceneTitleSoundData.push_back(item[static_cast<int>(Game::SoundInfo::kName)]);
+		}
+		else if (item[static_cast<int>(Game::SoundInfo::kScene)] == "Game")
+		{
+			m_sceneGameSoundData.push_back(item[static_cast<int>(Game::SoundInfo::kName)]);
+		}
+	}
 }
-
+std::vector<std::string> DataManager::GetSoundData(Game::SceneNum sceneNum)
+{
+	if (sceneNum == Game::SceneNum::kTitle)
+	{
+		return m_sceneTitleSoundData;
+	}
+	else if (sceneNum == Game::SceneNum::kGame)
+	{
+		return m_sceneGameSoundData;
+	}
+	else
+	{
+		//どれにも当てはまらなかったらエラー
+		assert(false);
+	}
+}
 std::vector<DataManager::UiInfo> DataManager::GetUiData(Game::SceneNum sceneNum)
 {
 	if (sceneNum == Game::SceneNum::kTitle)
