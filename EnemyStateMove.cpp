@@ -1,4 +1,5 @@
 #include "EnemyStateMove.h"
+#include "EffekseerForDXLib.h"
 
 namespace
 {
@@ -196,5 +197,10 @@ int EnemyStateMove::OnDamage(std::shared_ptr<Collidable> collider)
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
 	m_isChangeState = true;
+	//ヒットエフェクトを表示する
+	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
+	MyEngine::Vector3 pos = m_pEnemy->GetPos();
+	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
+
 	return damage;
 }

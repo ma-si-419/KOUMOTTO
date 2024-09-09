@@ -14,6 +14,10 @@ namespace
 	constexpr float kShakeArrowScale = 10.0f;
 	//矢印を揺らすスピード
 	constexpr float kShakeArrowSpeed = 0.5f;
+	//プレイヤーのアニメーションの番号
+	constexpr int kPlayerAnimNumber = 20;
+	//プレイヤーのアニメーションの番号
+	constexpr int kEnemyAnimNumber = 19;
 }
 
 SceneTitle::SceneTitle(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager) :
@@ -59,6 +63,9 @@ void SceneTitle::Init()
 	MV1SetScale(m_domeHandle, VGet(500, 500, 500));
 	MV1SetScale(m_playerHandle, VGet(3, 3, 3));
 	MV1SetScale(m_enemyHandle, VGet(300, 300, 300));
+	//モデルのアニメーション設定
+	MV1AttachAnim(m_playerHandle,kPlayerAnimNumber);
+	MV1AttachAnim(m_enemyHandle,kEnemyAnimNumber);
 	//プレイヤーとエネミーが向き合う形にする
 	MV1SetRotationZYAxis(m_playerHandle, (kPlayerInitPos - kEnemyInitPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
 	MV1SetRotationZYAxis(m_enemyHandle, (kEnemyInitPos - kPlayerInitPos).CastVECTOR(), VGet(0.0f, 1.0f, 0.0f), 0.0f);
@@ -184,9 +191,11 @@ void SceneTitle::Draw()
 {
 	//背景の描画
 	MV1DrawModel(m_domeHandle);
+	//キャラクターの描画
 	MV1DrawModel(m_playerHandle);
 	MV1DrawModel(m_enemyHandle);
-	DrawString(0, 0, "SceneTitle", GetColor(255, 255, 255));
+
+	
 
 	//オプションもエンドウィンドウも開いていないとき
 	bool isCloseWindow = !m_isOpenEndWindow && !m_isOpenOption;
@@ -210,15 +219,6 @@ void SceneTitle::Draw()
 			DrawStringToHandle(520 + sinf(m_shakeArrowNum) * kShakeArrowScale, 650, "→", GetColor(0, 0, 0), m_fontHandle, GetColor(255, 255, 255));
 		}
 	}
-
-	//オプションを開いているとき
-//	if (m_isOpenOption)
-//	{
-//#ifdef _DEBUG
-//		DrawString(500, 500, "おぷしょんだよ", GetColor(255, 255, 255));
-//		DrawString(500, 700, "Bで戻るよ", GetColor(255, 255, 255));
-//#endif
-//	}
 	//エンドウィンドウを開いているとき
 	if (m_isOpenEndWindow)
 	{

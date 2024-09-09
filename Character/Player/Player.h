@@ -3,7 +3,7 @@
 #include "Input.h"
 #include "PlayerStateBase.h"
 class SceneGame;
-class Player : public CharacterBase
+class Player : public CharacterBase 
 {
 public:
 	Player();

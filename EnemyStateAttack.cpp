@@ -1,5 +1,6 @@
 #include "EnemyStateAttack.h"
 #include "CommandIdList.h"
+#include "EffekseerForDXLib.h"
 
 namespace
 {
@@ -213,17 +214,22 @@ void EnemyStateAttack::Update()
 				if (m_attackTime > attackData[m_attackId].attackStartTime)
 				{
 					//攻撃を出す
-					m_pScene->AddAttack(m_pEnemy->CreateAttack(m_attackId,MyEngine::Vector3(0,0,0)));
+					m_pScene->AddAttack(m_pEnemy->CreateAttack(m_attackId, MyEngine::Vector3(0, 0, 0)));
 					m_isAttackEnd = true;
 				}
 			}
 		}
 	}
 	//攻撃の時間が終わったら
-	if (m_attackTime > attackData[m_attackId].attackEndTime)
+	if (m_attackTime > attackData[m_attackId].attackEndTime && !m_isAttackEndStanAnim)
 	{
+		m_isAttackEndStanAnim = true;
 		m_isAttackEnd = true;
-		//べつのStateに移動する
+		m_pEnemy->SetAttackEndAnim(attackData[m_attackId].actionTotalTime - attackData[m_attackId].attackEndTime);
+	}
+	//行動全体の時間が終わったら
+	if (m_attackTime > attackData[m_attackId].actionTotalTime)
+	{
 		m_isChangeState = true;
 	}
 
@@ -244,6 +250,8 @@ int EnemyStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 		m_hitEffect = attack->GetHitEffect();
 		m_isChangeState = true;
 	}
-
+	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
+	MyEngine::Vector3 pos = m_pEnemy->GetPos();
+	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
 	return damage;
 }

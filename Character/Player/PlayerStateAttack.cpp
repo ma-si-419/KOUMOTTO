@@ -5,6 +5,9 @@
 #include "Player.h"
 #include "SceneGame.h"
 #include "CommandIdList.h"
+#include "EffekseerForDXLib.h"
+
+
 namespace
 {
 	//気弾を出しているときの移動速度
@@ -415,6 +418,10 @@ int PlayerStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 		auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 		state->Init(collider);
 	}
+	//ヒットエフェクトを表示する
+	int effect = PlayEffekseer3DEffect(m_pPlayer->GetEffekseerData("Hit").first);
+	MyEngine::Vector3 pos = m_pPlayer->GetPos();
+	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
 	return damage;
 }
 

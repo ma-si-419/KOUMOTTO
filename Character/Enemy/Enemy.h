@@ -18,8 +18,6 @@ public:
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
-	void SetUi(std::shared_ptr<Ui> pUi);
-
 	void InitAiState(std::shared_ptr<SceneGame> scene);
 
 	void SetAiData(std::map<std::string, std::vector<int>> data) { m_aiStateData = data; }
@@ -58,8 +56,6 @@ private:
 	int m_lastHitDamageTime;
 	//間隔を開けずに攻撃を受けた数
 	int m_comboCount;
-	//受けたダメージを表示するためにUi管理クラスの参照を持つ
-	std::shared_ptr<Ui> m_pUi;
 	//Stateパターン
 	std::shared_ptr<EnemyStateBase> m_pState;
 	//敵のStateによって動きの確率を変化させる

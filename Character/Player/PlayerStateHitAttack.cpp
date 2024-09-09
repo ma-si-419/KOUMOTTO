@@ -1,6 +1,8 @@
 #include "PlayerStateHitAttack.h"
 #include "PlayerStateIdle.h"
 #include "Player.h"
+#include "EffekseerForDXLib.h"
+
 
 namespace
 {
@@ -98,6 +100,10 @@ int PlayerStateHitAttack::OnDamage(std::shared_ptr<Collidable> collider)
 	//受けた攻撃の種類を設定する
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->Init(collider);
+	//ヒットエフェクトを表示する
+	int effect = PlayEffekseer3DEffect(m_pPlayer->GetEffekseerData("Hit").first);
+	MyEngine::Vector3 pos = m_pPlayer->GetPos();
+	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
 
 	return damage;
 }

@@ -129,8 +129,6 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 
 void Enemy::Draw()
 {
-	DrawFormatString(1300, 300, GetColor(0, 0, 0), "HP:%f\nMP:%f", m_nowHp, m_nowMp);
-
 	MV1DrawModel(m_modelHandle);
 }
 
@@ -166,13 +164,8 @@ void Enemy::OnCollide(std::shared_ptr<Collidable> collider)
 		//ダメージを受けてからの時間を数える
 		m_lastHitDamageTime = 0;
 		//UIに受けたダメージを送る
-		m_pUi->AddShowDamage(m_rigidbody.GetPos(), damage);
+		m_pUi->AddShowDamage(m_rigidbody.GetPos(), damage,false);
 	}
-}
-
-void Enemy::SetUi(std::shared_ptr<Ui> pUi)
-{
-	m_pUi = pUi;
 }
 
 void Enemy::InitAiState(std::shared_ptr<SceneGame> scene)

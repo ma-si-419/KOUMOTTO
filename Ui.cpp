@@ -191,9 +191,9 @@ void Ui::RetryInit()
 	m_showFightTime = 0;
 	m_isFightChangeExRate = true;
 	//ダメージ表示をすべて消す
-	for (int i = 0; i < m_showDamage.size(); i++)
+	for (int i = 0; i < m_showEnemyDamage.size(); i++)
 	{
-		m_showDamage.erase(m_showDamage.begin() + i);
+		m_showEnemyDamage.erase(m_showEnemyDamage.begin() + i);
 		i--;
 	}
 	//コンボをすべて消す
@@ -410,11 +410,11 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	//プレイヤーの体力値表示
 	std::string playerHp = std::to_string(static_cast<int>(player->GetNowHp()));
 	std::string enemyHp = std::to_string(static_cast<int>(enemy->GetNowHp()));
-	
+
 	//プレイヤーの体力値表示
 	DrawStringToHandle(static_cast<int>(m_showUi[playerStateBar].drawPos.x + playerStateBarShakeSize.x + kHpNumPosX),
 		static_cast<int>(m_showUi[playerStateBar].drawPos.y + playerStateBarShakeSize.y + kHpNumPosY),
-			playerHp.c_str(), GetColor(255, 255, 255), m_hpNumFontHandle);
+		playerHp.c_str(), GetColor(255, 255, 255), m_hpNumFontHandle);
 	//エネミーの体力値表示
 	DrawStringToHandle(static_cast<int>(m_showUi[enemyStateBar].drawPos.x + enemyStateBarShakeSize.x + kHpNumPosX),
 		static_cast<int>(m_showUi[enemyStateBar].drawPos.y + enemyStateBarShakeSize.y + kHpNumPosY),
@@ -442,7 +442,7 @@ void Ui::LoadUiHandle(std::vector<DataManager::UiInfo> data)
 	}
 }
 
-void Ui::AddShowDamage(MyEngine::Vector3 pos, int damage)
+void Ui::AddShowDamage(MyEngine::Vector3 pos, int damage, bool isPlayer)
 {
 	DamageShowStatus pushData;
 	VECTOR screenPos = ConvWorldPosToScreenPos(pos.CastVECTOR());
@@ -452,22 +452,42 @@ void Ui::AddShowDamage(MyEngine::Vector3 pos, int damage)
 	pushData.pos.y += GetRand(kDamageShowPosShakeScale) - kDamageShowPosShakeScaleHalf;
 	pushData.damage = std::to_string(damage);
 	pushData.time = kDamageShowTime;
-	m_showDamage.push_back(pushData);
+	if (isPlayer)
+	{
+		m_showPlayerDamage.push_back(pushData);
+	}
+	else
+	{
+		m_showEnemyDamage.push_back(pushData);
+	}
 }
 
 void Ui::DrawDamage()
 {
 	//表示時間が終わっているものを削除する
-	for (int i = 0; i < m_showDamage.size(); i++)
+	//エネミーダメージ配列
+	for (int i = 0; i < m_showEnemyDamage.size(); i++)
 	{
-		if (m_showDamage[i].time < 0)
+		if (m_showEnemyDamage[i].time < 0)
 		{
-			m_showDamage.erase(m_showDamage.begin() + i);
+			m_showEnemyDamage.erase(m_showEnemyDamage.begin() + i);
 			i--;
 		}
 	}
+
+	//プレイヤーダメージ配列
+	for (int i = 0; i < m_showPlayerDamage.size(); i++)
+	{
+		if (m_showPlayerDamage[i].time < 0)
+		{
+			m_showPlayerDamage.erase(m_showPlayerDamage.begin() + i);
+			i--;
+		}
+	}
+
 	//描画処理
-	for (auto& item : m_showDamage)
+	//エネミー
+	for (auto& item : m_showEnemyDamage)
 	{
 		int alpha = 0;
 		//表示する残り時間が一定以上の時はアルファ値を減らさない
@@ -490,6 +510,36 @@ void Ui::DrawDamage()
 		//ダメージの表示
 		DrawFormatStringToHandle(static_cast<int>(item.pos.x - shiftSize), static_cast<int>(item.pos.y + kDamageShowPosShiftY),
 			GetColor(255, 255, 255), m_damageFontHandle, item.damage.c_str());
+		//ブレンドモードを元に戻す
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		//表示時間を減らす
+		item.time--;
+	}
+
+	//プレイヤー
+	for (auto& item : m_showPlayerDamage)
+	{
+		int alpha = 0;
+		//表示する残り時間が一定以上の時はアルファ値を減らさない
+		if (item.time > kDamageVanishTime)
+		{
+			alpha = 255;
+		}
+		//残り時間が一定以下になったら
+		else
+		{
+			//残り時間からアルファ値を計算する
+			alpha = 255 / kDamageVanishTime * item.time;
+		}
+		//文字列の長さを取得
+		int length = GetStringLength(item.damage.c_str());
+		//表示座標をずらす
+		int shiftSize = length * kDamageFontSize * 0.5;
+		//ブレンドモードを変更
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//ダメージの表示
+		DrawFormatStringToHandle(static_cast<int>(item.pos.x - shiftSize), static_cast<int>(item.pos.y + kDamageShowPosShiftY),
+			GetColor(200, 0, 0), m_damageFontHandle, item.damage.c_str());
 		//ブレンドモードを元に戻す
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		//表示時間を減らす

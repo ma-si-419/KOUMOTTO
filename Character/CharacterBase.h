@@ -9,6 +9,7 @@
 class AttackBase;
 class Physics;
 class SceneGame;
+class Ui;
 class CharacterBase : public Collidable
 {
 public:
@@ -79,6 +80,8 @@ public:
 	void StopAnimLoop();
 	//攻撃が終わるときのアニメーション
 	void SetAttackEndAnim(float attackEndTime);
+	//Ui管理クラスのポインタを保存する
+	void SetUiManager(std::shared_ptr<Ui> ui) { m_pUi = ui; }
 	//シーンのポインタを保存する
 	void SetGameScene(std::shared_ptr<SceneGame> scene) { m_pScene = scene; }
 protected:
@@ -104,7 +107,8 @@ protected:
 	std::shared_ptr<Physics> m_pPhysics;
 	//シーンのポインタを持っておく
 	std::shared_ptr<SceneGame> m_pScene;
-
+	//Ui管理クラスのポインタを持っておく
+	std::shared_ptr<Ui> m_pUi;
 	//攻撃のデータ
 	std::map<std::string, DataManager::AttackInfo> m_attackData;
 	//アニメーションのデータ

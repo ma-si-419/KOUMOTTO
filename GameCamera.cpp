@@ -45,6 +45,8 @@ GameCamera::~GameCamera()
 
 void GameCamera::Init()
 {
+	//ライトの作成
+	m_lightHandle = CreateDirLightHandle(VGet(0, 0, 1));
 
 	m_playerPos.y += kCameraHeight;
 
@@ -138,4 +140,7 @@ void GameCamera::Update()
 	m_isUpFov = false;
 	//カメラの座標にスカイドームを設定
 	MV1SetPosition(m_domeHandle, m_cameraPos.CastVECTOR());
+
+	//カメラの見ている方向にディレクションライトを設定
+	SetLightDirectionHandle(m_lightHandle, (m_targetPos - m_cameraPos).Normalize().CastVECTOR());
 }

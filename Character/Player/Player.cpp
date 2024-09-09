@@ -6,6 +6,7 @@
 #include "CapsuleColliderData.h"
 #include "PlayerStateIdle.h"
 #include "EffekseerForDXLib.h"
+#include "Ui.h"
 namespace
 {
 	//移動速度
@@ -218,13 +219,15 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 	if (collider->GetTag() == ObjectTag::kEnemyAttack)
 	{
 		auto attack = std::dynamic_pointer_cast<AttackBase>(collider);
-		int damage = m_pState->OnDamage(collider);
+		int damage = m_pState->OnDamage(collider) - GetRand(m_status.def);
 		if (damage < 0)
 		{
 			damage = 2;
 		}
 
 		m_nowHp -= damage;
+		//UIに受けたダメージを送る
+		m_pUi->AddShowDamage(m_rigidbody.GetPos(), damage, true);
 	}
 }
 

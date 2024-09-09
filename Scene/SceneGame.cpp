@@ -69,7 +69,9 @@ void SceneGame::Init()
 	m_pEnemy->Init(m_pPhysics);
 	//エネミーのStateパターンの初期化
 	m_pEnemy->InitAiState(shared_from_this());
-	m_pEnemy->SetUi(m_pUi);
+	//UIのポインタを渡す
+	m_pPlayer->SetUiManager(m_pUi);
+	m_pEnemy->SetUiManager(m_pUi);
 
 	//エネミーの座標をプレイヤーに渡す
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());
@@ -279,17 +281,17 @@ void SceneGame::Draw()
 {
 	//スカイドームの描画
 	m_pGameCamera->DrawDome();
+	//エフェクトを描画する
+	DrawEffekseer3D();
 	//プレイヤーの描画
 	m_pPlayer->Draw();
 	//エネミーの描画
 	m_pEnemy->Draw();
-	//エフェクトを描画する
 
 #ifdef _DEBUG
 	//当たり判定の描画
 	m_pPhysics->DebugDraw();
 #endif
-	DrawEffekseer3D();
 	//プレイヤーとエネミーの体力バーを表示する
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
 	//与えたダメージの表示

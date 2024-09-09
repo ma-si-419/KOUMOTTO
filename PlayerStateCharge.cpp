@@ -14,7 +14,7 @@ namespace
 void PlayerStateCharge::Init()
 {
 	m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Charge"));
-    m_pPlayer->ChangeAnim("Guard");
+	m_pPlayer->ChangeAnim("Guard");
 }
 
 void PlayerStateCharge::Update(MyEngine::Input input)
@@ -57,6 +57,10 @@ int PlayerStateCharge::OnDamage(std::shared_ptr<Collidable> collider)
 	//受けた攻撃の種類を設定する
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->Init(collider);
+	//ヒットエフェクトを表示する
+	int effect = PlayEffekseer3DEffect(m_pPlayer->GetEffekseerData("Hit").first);
+	MyEngine::Vector3 pos = m_pPlayer->GetPos();
+	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
 
 	return damage;
 }

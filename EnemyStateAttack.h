@@ -41,5 +41,7 @@ private:
 	int m_popAttackNum = 0;
 	//レーザーを出す攻撃の座標
 	MyEngine::Vector3 m_laserTargetPos;
+	//攻撃後の硬直時間であるかどうか
+	bool m_isAttackEndStanAnim = false;
 };
 

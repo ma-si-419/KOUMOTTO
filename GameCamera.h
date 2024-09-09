@@ -26,6 +26,9 @@ public:
 private:
 	//スカイドームのハンドル
 	int m_domeHandle;
+	//ライトのハンドル
+	int m_lightHandle;
+
 	//カメラの座標
 	MyEngine::Vector3 m_cameraPos;
 	//プレイヤーの座標
@@ -44,6 +47,7 @@ private:
 	float m_fov;
 	//視野角とともにカメラの座標を上げる
 	float m_cameraUpPos;
+
 
 };
 

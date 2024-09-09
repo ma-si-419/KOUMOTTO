@@ -14,5 +14,8 @@ private:
 	MyEngine::Vector3 m_cameraPos;
 	//回転させるときの計算に使用する変数
 	float m_loopCount;
+	//ライトのハンドル
+	int m_lightHandle;
+
 };
 

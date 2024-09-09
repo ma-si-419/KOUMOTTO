@@ -1,4 +1,5 @@
 #include "EnemyStateDash.h"
+#include "EffekseerForDXLib.h"
 
 namespace
 {
@@ -197,5 +198,8 @@ int EnemyStateDash::OnDamage(std::shared_ptr<Collidable> collider)
 	m_hitEffect = attack->GetHitEffect();
 	m_isChangeState = true;
 	m_pEnemy->StopEffect();
+	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
+	MyEngine::Vector3 pos = m_pEnemy->GetPos();
+	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
 	return damage;
 }

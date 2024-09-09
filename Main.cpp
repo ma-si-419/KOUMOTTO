@@ -48,7 +48,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetWriteZBuffer3D(true);
 	SetDrawScreen(DX_SCREEN_BACK);
 
-
 	SceneManager scene;
 	DataManager data;
 	SoundManager sound;

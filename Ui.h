@@ -36,10 +36,10 @@ public:
 
 	void LoadUiHandle(std::vector<DataManager::UiInfo> data);
 
-	void AddShowDamage(MyEngine::Vector3 pos, int damage);
+	void AddShowDamage(MyEngine::Vector3 pos, int damage,bool isPlayer);
 
 	/// <summary>
-	/// 敵に与えたダメージを表示する
+	/// ダメージを表示する
 	/// </summary>
 	void DrawDamage();
 
@@ -162,7 +162,8 @@ private:
 	int m_comboPraiseCommentPosX;
 
 	//表示するダメージの配列
-	std::vector<DamageShowStatus> m_showDamage;
+	std::vector<DamageShowStatus> m_showEnemyDamage;
+	std::vector<DamageShowStatus> m_showPlayerDamage;
 	//選択している矢印を動かす際に使用する変数
 	float m_shakeArrowNum;
 	//表示しているUiのデータ

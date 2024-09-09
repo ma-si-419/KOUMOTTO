@@ -1,5 +1,6 @@
 #include "Vector3.h"
 #include <cmath>
+#include <cassert>
 using namespace MyEngine;
 
 float Vector3::Length() const
@@ -35,9 +36,17 @@ Vector3 Vector3::Normalize()
 
 	float len = Length();
 
-	ans.x = x / len;
-	ans.y = y / len;
-	ans.z = z / len;
+	if (len != 0)
+	{
+		ans.x = x / len;
+		ans.y = y / len;
+		ans.z = z / len;
+	}
+	//0èúéZÇµÇÊÇ§Ç∆ÇµÇΩÇÁé~ÇﬂÇÈ
+	else
+	{
+		assert(false);
+	}
 
 	return ans;
 }

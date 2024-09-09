@@ -51,5 +51,8 @@ int EnemyStateCharge::OnDamage(std::shared_ptr<Collidable> collider)
 	StopEffekseer3DEffect(m_playEffectHandle);
 	DeleteEffekseerEffect(m_effectHandle);
 	m_isChangeState = true;
+	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
+	MyEngine::Vector3 pos = m_pEnemy->GetPos();
+	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
 	return damage;
 }
