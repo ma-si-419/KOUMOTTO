@@ -16,8 +16,11 @@ namespace
 	constexpr int kGameOverItemNum = 1;
 	//バトル開始までの時間
 	constexpr int kStandByTime = 120;
-	//クリア時の画像が最初おいてある座標
-	constexpr int kClearGraphInitPosX = Game::kWindowWidth + 100;
+	//クリア時のエフェクトを出す間隔
+	constexpr int kClearEffectPopTime = 10;
+	//クリア時のエフェクトの座標の範囲
+	constexpr int kClearEffectPopRange = 2000;
+	constexpr int kClearEffectPopRangeHalf = 1000;
 }
 
 SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager) :
@@ -25,10 +28,11 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, Sound
 	m_isGameOver(false),
 	m_gameOverSelectItemNum(0),
 	m_isStartBattle(false),
-	m_standByTime(0),
+	m_time(0),
 	m_isGameClear(false),
-	m_clearGraphPosX(kClearGraphInitPosX),
-	m_isFinalStage(false)
+	m_isFinalStage(false),
+	m_isClearSe(true),
+	m_isClearBgm(true)
 {
 
 	//当たり判定管理クラスのポインタ
@@ -42,9 +46,16 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, Sound
 	//Uiのポインタ
 	m_pUi = std::make_shared<Ui>();
 
+}
+
+SceneGame::~SceneGame()
+{
+}
+
+void SceneGame::Init()
+{
 	m_dataManager.LoadAnimationFile();
 	m_dataManager.LoadEffekseerFile();
-
 
 	m_pPlayer->SetAnimationData(m_dataManager.GetAnimationData(), true);
 	m_pEnemy->SetAnimationData(m_dataManager.GetAnimationData(), false);
@@ -52,15 +63,6 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, Sound
 	m_pPlayer->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
 	m_pEnemy->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
 
-}
-
-SceneGame::~SceneGame()
-{
-
-}
-
-void SceneGame::Init()
-{
 	m_soundManager.SetHandle(m_dataManager.GetSoundData(Game::SceneNum::kGame));
 
 	m_soundManager.Play("BattleStartBgm", DX_PLAYTYPE_LOOP);
@@ -128,19 +130,20 @@ void SceneGame::RetryInit()
 	m_pGameCamera->Init();
 	m_isGameOver = false;
 	m_isStartBattle = false;
-	m_standByTime = 0;
+	m_time = 0;
 }
 
 void SceneGame::Update(MyEngine::Input input)
 {
+	//時間を計測する
+	m_time++;
 	//バトルが開始していないときの処理
 	if (!m_isStartBattle)
 	{
-		m_standByTime++;
 		m_pPlayer->PlayAnim();
 		m_pEnemy->PlayAnim();
 		//一定時間待機したら
-		if (m_standByTime > kStandByTime)
+		if (m_time > kStandByTime)
 		{
 			//バトルを開始する
 			m_isStartBattle = true;
@@ -194,10 +197,39 @@ void SceneGame::Update(MyEngine::Input input)
 		//ゲームクリア時の処理
 		else if (m_isGameClear)
 		{
-			if (input.IsTrigger(Game::InputId::kA))
+			if (m_isClearSe)
 			{
 				m_soundManager.Stop("BattleStartBgm");
 				m_soundManager.Stop("BattleEndBgm");
+				m_soundManager.Play("ClearFanfare", DX_PLAYTYPE_BACK);
+				m_isClearSe = false;
+			}
+			//SEがなり終わったBGMを鳴らす
+			if (CheckSoundMem(m_soundManager.GetHandle("ClearFanfare")))
+			{
+				if (m_isClearBgm)
+				{
+					m_soundManager.Play("ClearBgm", DX_PLAYTYPE_LOOP);
+					m_isClearBgm = false;
+				}
+			}
+			//一定時間ごとにエフェクトを出す
+			if (m_time % kClearEffectPopTime == 0)
+			{
+				int handle = PlayEffekseer3DEffect(m_dataManager.GetEffekseerHandle()["Clear"].first);
+				MyEngine::Vector3 pos = m_pPlayer->GetPos();
+				pos.x += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
+				pos.y += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
+				pos.z += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
+
+				SetPosPlayingEffekseer3DEffect(handle, pos.x, pos.y, pos.z);
+
+			}
+
+			if (input.IsTrigger(Game::InputId::kA))
+			{
+				m_soundManager.Stop("ClearBgm");
+				m_soundManager.Play("OK", DX_PLAYTYPE_BACK);
 				m_sceneManager.ChangeScene(std::make_shared<SceneTitle>(m_sceneManager, m_dataManager, m_soundManager));
 				return;
 			}
@@ -321,6 +353,7 @@ void SceneGame::End()
 {
 	m_pPlayer->Final(m_pPhysics);
 	m_pEnemy->Final(m_pPhysics);
+	m_dataManager.DeleteEffekseerData();
 }
 
 void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)

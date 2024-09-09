@@ -81,6 +81,11 @@ namespace
 	constexpr int kFightInitAlpha = 255;
 	//ボタンの画像の大きさ
 	constexpr int kButtonGraphSize = 56;
+	//ショルダーボタンの画像の大きさ
+	constexpr int kShoulderButtonGraphSize = 59;
+	//ショルダーボタンのUIとフレームのUIのずれ
+	constexpr int kShoulderButtonGraphGapX = 60;
+	constexpr int kShoulderButtonGraphGapY = 3;
 	//ボタンのUIとフレームのUIのずれ
 	constexpr int kButtonGraphGapX = 15;
 	constexpr int kButtonGraphGapY = 6;
@@ -128,6 +133,25 @@ namespace
 	//ゲームクリア時の文字の表示座標
 	constexpr int kGameClearStringPosX = 600;
 	constexpr int kGameClearStringPosY = 600;
+	//ガードコマンドを表示する座標
+	constexpr int kGuardCommandPosX = 380;
+	constexpr int kGuardCommandPosY = 520;
+	//SPコマンドを表示するコマンドを表示する座標
+	constexpr int kSpCommandControlPosX = 90;
+	constexpr int kSpCommandControlPosY = 520;
+	//上下移動コマンドを表示する座標
+	constexpr int kUpDownMoveCommandPosX = 90;
+	constexpr int kUpDownMoveCommandPosY = 430;
+	//一フレームに増やすパーティクルの最大数
+	constexpr int kAddParticleMaxNum = 10;
+	//パーティクルの最大速度
+	constexpr int kParticleSpeed = 10;
+	//パーティクルの大きさ
+	constexpr int kParticleRadius = 3;
+	//パーティクルにかかる重力の力
+	constexpr float kParticleGravity = 0.05f;
+	//パーティクルのライフタイム
+	constexpr int kParticleLifeTime = 300;
 
 }
 
@@ -171,6 +195,10 @@ Ui::~Ui()
 	DeleteFontToHandle(m_commandFontHandle);
 	DeleteFontToHandle(m_comboCountFontHandle);
 	DeleteFontToHandle(m_hpNumFontHandle);
+	for (auto& item : m_showUi)
+	{
+		DeleteGraph(item.second.handle);
+	}
 }
 
 void Ui::Init()
@@ -578,6 +606,72 @@ void Ui::DrawGameOver(int arrowPos)
 
 void Ui::DrawGameClear()
 {
+	int addParticleNum = GetRand(kAddParticleMaxNum);
+
+	for (int i = 0; i < addParticleNum; i++)
+	{
+		Particle addParticle;
+		addParticle.color = GetColor(GetRand(255), GetRand(255),GetRand(255));
+		int posKind = GetRand(static_cast<int>(ParticlePos::kPosKindNum));
+		if (posKind == static_cast<int>(ParticlePos::kLeftDown))
+		{
+			addParticle.pos.x = 0;
+			addParticle.pos.y = Game::kWindowHeight;
+			//右上に行くようにベクトル作成
+			addParticle.vec = MyEngine::Vector2(1,-1);
+		}
+		else if (posKind == static_cast<int>(ParticlePos::kLeftUp))
+		{
+			addParticle.pos.x = 0;
+			addParticle.pos.y = 0;
+			//右下に行くようにベクトル作成
+			addParticle.vec = MyEngine::Vector2(1, 1);
+		}
+		else if (posKind == static_cast<int>(ParticlePos::kRightUp))
+		{
+			addParticle.pos.x = Game::kWindowWidth;
+			addParticle.pos.y = 0;
+			//左下に行くようにベクトル作成
+			addParticle.vec = MyEngine::Vector2(-1, 1);
+		}
+		else if (posKind == static_cast<int>(ParticlePos::kRightDown))
+		{
+			addParticle.pos.x = Game::kWindowWidth;
+			addParticle.pos.y = Game::kWindowHeight;
+			//左上に行くようにベクトル作成
+			addParticle.vec = MyEngine::Vector2(-1, -1);
+		}
+		addParticle.vec.x *= GetRand(kParticleSpeed);
+		addParticle.vec.y *= GetRand(kParticleSpeed);
+
+		addParticle.lifeTime = kParticleLifeTime;
+
+		m_particles.push_back(addParticle);
+	}
+	int number = 0;
+	std::vector<int> deleteParticle;
+	for (auto& item : m_particles)
+	{
+		//パーティクルを描画する
+		DrawCircle(item.pos.x,item.pos.y,kParticleRadius,item.color,true);
+		//座標の更新
+		item.pos += item.vec;
+		//ベクトルを少しずつ下向きにしていく
+		item.vec.y += kParticleGravity;	
+		//ライフタイムを減らしていく
+		item.lifeTime--;
+		if (item.lifeTime < 0)
+		{
+			deleteParticle.push_back(number);
+		}
+		number++;
+	}
+	for (auto deleteItem : deleteParticle)
+	{
+		m_particles.erase(m_particles.begin() + deleteItem);
+	}
+	
+	//KOの拡大率を調整する
 	if (m_koExRate > kFinalKoExRate)
 	{
 		m_koExRate -= kKoScalingSpeed;
@@ -670,6 +764,9 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 	std::string frame = "CommandFrame";
 	//ボタンの画像
 	std::string button = "ButtonABXY";
+	//コントローラーの上側にあるボタン画像
+	std::string shoulderButton = "ButtonShoulder";
+
 	//必殺技パレットを開いていないとき
 	if (!showSpecialAttack)
 	{
@@ -801,13 +898,13 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 
 	//各操作の名前を表示する
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kPhysical)] + kCommandStringGapY,
-		"なぐる", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		"きんせつまほう", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kEnergy)] + kCommandStringGapY,
 		"まだん", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kDodge)] + kCommandStringGapY,
-		"かいひ", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		"かいひ/ダッシュ", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_normalCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kCharge)] + kCommandStringGapY,
-		"まそをためる", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		"チャージ", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
@@ -849,6 +946,29 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 		attackName[Game::InputId::kY].c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	//ガードコマンドを表示する
+	DrawRectGraph(kGuardCommandPosX, kGuardCommandPosY,
+		kShoulderButtonGraphSize * static_cast<int>(ButtonSort::kRb),
+		0, kShoulderButtonGraphSize, kShoulderButtonGraphSize,
+		m_showUi[shoulderButton].handle, true);
+	DrawStringToHandle(kGuardCommandPosX + kShoulderButtonGraphGapX, kGuardCommandPosY + kShoulderButtonGraphGapY,
+		"ガード", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	//必殺技コマンドを表示するコマンドを表示する
+	DrawRectGraph(kSpCommandControlPosX, kSpCommandControlPosY,
+		kShoulderButtonGraphSize * static_cast<int>(ButtonSort::kLb),
+		0, kShoulderButtonGraphSize, kShoulderButtonGraphSize,
+		m_showUi[shoulderButton].handle, true);
+	DrawStringToHandle(kSpCommandControlPosX + kShoulderButtonGraphGapX, kSpCommandControlPosY + kShoulderButtonGraphGapY,
+		"Spコマンド", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	//上下移動コマンドを表示するコマンドを表示する
+	DrawRectGraph(kUpDownMoveCommandPosX, kUpDownMoveCommandPosY,
+		kShoulderButtonGraphSize * static_cast<int>(ButtonSort::kLt),
+		0, kShoulderButtonGraphSize, kShoulderButtonGraphSize,
+		m_showUi[shoulderButton].handle, true);
+	DrawStringToHandle(kUpDownMoveCommandPosX + kShoulderButtonGraphGapX, kUpDownMoveCommandPosY + kShoulderButtonGraphGapY,
+		"アップダウン", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+
 
 
 

@@ -28,6 +28,7 @@ Enemy::Enemy() :
 
 Enemy::~Enemy()
 {
+	MV1DeleteModel(m_modelHandle);
 }
 
 void Enemy::Init(std::shared_ptr<Physics> physics)

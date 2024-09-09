@@ -7,6 +7,7 @@
 #include "DataManager.h"
 #include <memory>
 
+
 class Player;
 class Enemy;
 class Ui
@@ -72,8 +73,8 @@ private:
 	{
 		kA,kLb = kA,
 		kB,kRb = kB,
-		kX,
-		kY
+		kX,kLt = kX,
+		kY,kRt = kY
 	};
 
 	enum class CommandSort
@@ -101,6 +102,24 @@ private:
 		//表示座標
 		MyEngine::Vector2 pos;
 	};
+
+	enum class ParticlePos
+	{
+		kLeftUp,
+		kRightUp,
+		kLeftDown,
+		kRightDown,
+		kPosKindNum
+	};
+
+	struct Particle
+	{
+		MyEngine::Vector2 pos;
+		MyEngine::Vector2 vec;
+		int color = 0;
+		int lifeTime = 0;
+	};
+
 	//前のフレーム表示していたHpバーの状態を残しておく
 	int m_lastPlayerHpBarEndPosX;
 	int m_lastEnemyHpBarEndPosX;
@@ -168,5 +187,6 @@ private:
 	float m_shakeArrowNum;
 	//表示しているUiのデータ
 	std::map<std::string, UiStatus> m_showUi;
-
+	//クリア時に表示するパーティクルの配列
+	std::vector<Particle> m_particles;
 };

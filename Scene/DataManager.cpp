@@ -123,8 +123,8 @@ void DataManager::LoadAiFile()
 
 void DataManager::LoadAnimationFile()
 {
+	m_LoadAnimationData.clear();
 	m_LoadAnimationData = m_pLoadCsv->LoadFile("data/csv/animationData.csv");
-
 }
 
 void DataManager::LoadSoundFile()
@@ -141,6 +141,15 @@ void DataManager::LoadSoundFile()
 			m_sceneGameSoundData.push_back(item[static_cast<int>(Game::SoundInfo::kName)]);
 		}
 	}
+}
+void DataManager::DeleteEffekseerData()
+{
+	for (auto item : m_effekseerHandles)
+	{
+		StopEffekseer3DEffect(item.second.first);
+		DeleteEffekseerEffect(item.second.first);
+	}
+	m_effekseerHandles.clear();
 }
 std::vector<std::string> DataManager::GetSoundData(Game::SceneNum sceneNum)
 {

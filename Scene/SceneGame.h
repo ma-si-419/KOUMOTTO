@@ -52,11 +52,12 @@ private:
 	int m_gameOverSelectItemNum;
 	//バトルが開始しているかどうか
 	bool m_isStartBattle;
-	//待機時間を計測
-	int m_standByTime;
-	//クリア時の画像がおいてある座標
-	int m_clearGraphPosX;
+	//シーンに来てからの時間を計測
+	int m_time;
 	//バトル終盤かどうか
 	bool m_isFinalStage;
+	//ゲームクリアの音を鳴らしたかどうか
+	bool m_isClearSe;
+	bool m_isClearBgm;
 };
 

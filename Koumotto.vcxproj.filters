@@ -102,23 +102,8 @@
     <ClCompile Include="Scene\SceneSelect.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="GameCamera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="AttackBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp">
       <Filter>ソース ファイル\MyEngine\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Ui.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DataManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleCamera.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Character\Player\Player.cpp">
       <Filter>ソース ファイル\Character\Player</Filter>
@@ -150,35 +135,50 @@
     <ClCompile Include="Character\Enemy\EnemyStateBase.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateAttack.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateAttack.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateCharge.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateCharge.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateDash.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateDash.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateDodge.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateDodge.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateGuard.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateGuard.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateHitAttack.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateHitAttack.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateIdle.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateIdle.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyStateMove.cpp">
+    <ClCompile Include="Character\Enemy\EnemyStateMove.cpp">
       <Filter>ソース ファイル\Character\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStateCharge.cpp">
+    <ClCompile Include="Character\Player\PlayerStateCharge.cpp">
       <Filter>ソース ファイル\Character\Player</Filter>
     </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Character\AttackBase.cpp">
+      <Filter>ソース ファイル\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\DataManager.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SoundManager.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TitleCamera.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GameCamera.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Ui.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,26 +233,8 @@
     <ClInclude Include="Game.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="AttackBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="MyEngine\Utility\LoadCsv.h">
       <Filter>ヘッダー ファイル\MyEngine\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandIdList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Ui.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DataManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleCamera.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Character\Player\Player.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
@@ -284,35 +266,53 @@
     <ClInclude Include="Character\Enemy\EnemyStateBase.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateAttack.h">
+    <ClInclude Include="Character\Enemy\EnemyStateAttack.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateCharge.h">
+    <ClInclude Include="Character\Enemy\EnemyStateCharge.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateDash.h">
+    <ClInclude Include="Character\Enemy\EnemyStateDash.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateDodge.h">
+    <ClInclude Include="Character\Enemy\EnemyStateDodge.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateGuard.h">
+    <ClInclude Include="Character\Enemy\EnemyStateGuard.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateHitAttack.h">
+    <ClInclude Include="Character\Enemy\EnemyStateHitAttack.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateIdle.h">
+    <ClInclude Include="Character\Enemy\EnemyStateIdle.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyStateMove.h">
+    <ClInclude Include="Character\Enemy\EnemyStateMove.h">
       <Filter>ヘッダー ファイル\Character\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerStateCharge.h">
+    <ClInclude Include="Character\Player\PlayerStateCharge.h">
       <Filter>ヘッダー ファイル\Character\Player</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Character\AttackBase.h">
+      <Filter>ヘッダー ファイル\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\CommandIdList.h">
+      <Filter>ヘッダー ファイル\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\DataManager.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameCamera.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SoundManager.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleCamera.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Ui.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

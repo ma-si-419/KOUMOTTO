@@ -11,7 +11,7 @@ public:
 	~SceneManager();
 
 	//初期化処理
-	void Init();
+	void Init(std::shared_ptr<SceneBase> firstScene);
 
 	void Update(MyEngine::Input input);
 	//描画処理
@@ -25,5 +25,13 @@ public:
 private:
 	std::shared_ptr<SceneBase> m_pScene;
 
+	std::shared_ptr<SceneBase> m_pNextScene;//次に行くシーンを保存する
+
 	bool m_isEnd;//終了処理を呼ぶときに使う
+
+	bool m_isFadeOut;//フェードアウトするか
+
+	bool m_isChangeScene;//シーンを切り替えるときにtrueにする
+
+	int m_fadeAlpha;
 };

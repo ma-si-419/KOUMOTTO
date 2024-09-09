@@ -4,6 +4,10 @@
 void SoundManager::SetHandle(std::vector<std::string> datas)
 {
 	//’†‚É‚ ‚éƒf[ƒ^‚ğ‚·‚×‚ÄÁ‚·
+	for (auto item : m_soundHandles)
+	{
+		DeleteSoundMem(item.second);
+	}
 	m_soundHandles.clear();
 	for (auto item : datas)
 	{

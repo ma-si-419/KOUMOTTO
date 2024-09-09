@@ -57,9 +57,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	data.LoadAiFile();
 	data.LoadSoundFile();
 	MyEngine::Input input;
-	scene.ChangeScene(std::make_shared<SceneTitle>(scene, data,sound));
 
-	scene.Init();
+	scene.Init(std::make_shared<SceneTitle>(scene, data, sound));
 
 	// ゲームループ
 	while (ProcessMessage() != -1)
@@ -81,9 +80,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//シーンの更新
 		scene.Update(input);
 		//シーンの描画
-		scene.Draw();
 		Effekseer_Sync3DSetting();
-		DrawEffekseer3D();
+		scene.Draw();
 
 		// 画面が切り替わるのを待つ
 		ScreenFlip();

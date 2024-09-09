@@ -35,6 +35,7 @@ Player::Player() :
 
 Player::~Player()
 {
+	MV1DeleteModel(m_modelHandle);
 }
 
 void Player::Init(std::shared_ptr<Physics> physics)

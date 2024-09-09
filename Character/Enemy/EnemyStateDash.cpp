@@ -1,4 +1,4 @@
-#include "EnemyStateMove.h"
+#include "EnemyStateDash.h"
 #include "EffekseerForDXLib.h"
 
 namespace
@@ -16,19 +16,18 @@ namespace
 	//離れている距離のまま優先度を上げないように、距離に割合をかけて優先度に変換する
 	constexpr float kDistanceRate = 0.005f;
 	//基本的な移動方向の割合
-	constexpr int kMoveDirRate[3] = { 30,20,20 };
+	constexpr int kMoveDirRate[3] = { 35,10,30 };
 	//移動速度
-	constexpr float kMoveSpeed = 50.0f;
+	constexpr float kMoveSpeed = 200.0f;
 	//動きの方向の数
 	constexpr int kMoveDirNum = 8;
 	//動きの方向の数の半分
 	constexpr int kMoveDirNumHalf = kMoveDirNum * 0.5;
 	//プレイヤーに近づきすぎないように
-	constexpr float kPlayerDistance = 500.0f;
-
+	constexpr float kPlayerDistance = 1200.0f;
 }
 
-void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
+void EnemyStateDash::Init(MyEngine::Vector3 playerPos)
 {
 	//playerの座標に合わせて動く方向を決定する
 
@@ -87,10 +86,8 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 		}
 		moveKind++;
 	}
-	if (moveKind > static_cast<int>(MoveKind::kRandom))
-	{
-		moveKind = static_cast<int>(MoveKind::kRandom);
-	}
+
+
 	//移動方向
 	MyEngine::Vector3 moveDir;
 
@@ -117,7 +114,7 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 	else if (moveKind == static_cast<int>(MoveKind::kRandom))
 	{
 		moveDir = MyEngine::Vector3(GetRand(kMoveDirNum) - kMoveDirNumHalf, 0, GetRand(kMoveDirNum) - kMoveDirNumHalf).Normalize();
-	
+
 		//上下移動フラグが立っていたら
 		if (m_isMoveVertical)
 		{
@@ -130,8 +127,7 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 			//上下移動成分のみの方向ベクトルを作成
 			moveDir = (targetPos - m_pEnemy->GetPos()).Normalize();
 		}
-
-		m_moveKind = MoveKind::kRandom;	
+		m_moveKind = MoveKind::kRandom;
 	}
 
 	//最初の座標を保存する
@@ -139,15 +135,15 @@ void EnemyStateMove::Init(MyEngine::Vector3 playerPos)
 	//ターゲット座標を保存する
 	m_targetPos = playerPos;
 
-
 	//移動ベクトル
 	m_velo = moveDir * kMoveSpeed;
 
 	m_pEnemy->ChangeAnim("Move");
+	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Dash"));
 
 }
 
-void EnemyStateMove::Update()
+void EnemyStateDash::Update()
 {
 	//経過時間を計る
 	m_time++;
@@ -158,6 +154,15 @@ void EnemyStateMove::Update()
 		//移動をやめて別のStateに行く
 		m_velo = MyEngine::Vector3(0, 0, 0);
 		m_isChangeState = true;
+		m_pEnemy->StopEffect();
+	}
+	//プレイヤーに近づきすぎないように一定距離まで来たら別のStateに行く
+	if ((m_pEnemy->GetTargetPos() - m_pEnemy->GetPos()).Length() < kPlayerDistance)
+	{
+		//移動をやめて別のStateに行く
+		m_velo = MyEngine::Vector3(0, 0, 0);
+		m_isChangeState = true;
+		m_pEnemy->StopEffect();
 	}
 
 	m_pEnemy->SetModelFront(m_velo + m_pEnemy->GetPos());
@@ -180,13 +185,15 @@ void EnemyStateMove::Update()
 	{
 		random = GetRand(m_time) - kShortestTime;
 	}
+
 	if (random > 0)
 	{
 		m_isChangeState = true;
+		m_pEnemy->StopEffect();
 	}
 }
 
-int EnemyStateMove::OnDamage(std::shared_ptr<Collidable> collider)
+int EnemyStateDash::OnDamage(std::shared_ptr<Collidable> collider)
 {
 	//ダメージ
 	int damage = 0;
@@ -197,10 +204,9 @@ int EnemyStateMove::OnDamage(std::shared_ptr<Collidable> collider)
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
 	m_isChangeState = true;
-	//ヒットエフェクトを表示する
+	m_pEnemy->StopEffect();
 	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
 	MyEngine::Vector3 pos = m_pEnemy->GetPos();
 	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
-
 	return damage;
 }

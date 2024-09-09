@@ -13,6 +13,9 @@ Cursor,Game
 Cancel,Game
 BattleStartBgm,Game
 BattleEndBgm,Game
+ClearSe,Game
+ClearFanfare,Game
+ClearBgm,Game
 OK,Title
 Cursor,Title
 Cancel,Title

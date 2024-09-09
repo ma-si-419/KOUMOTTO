@@ -51,10 +51,13 @@ public:
 	void LoadAiFile();
 	void LoadAnimationFile();
 	void LoadSoundFile();
+
 	//攻撃のデータを取得
 	std::map<std::string, AttackInfo> GetAttackData() { return m_attackData; };
 	//Effekseerのデータを取得
 	std::map<std::string, std::pair<int, int>> GetEffekseerHandle() { return m_effekseerHandles; };
+	//Effekseerのデータを削除
+	void DeleteEffekseerData();
 	//音楽のデータを取得
 	std::vector<std::string> GetSoundData(Game::SceneNum sceneNum);
 	//ゲームシーンのUIのパス取得

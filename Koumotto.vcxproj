@@ -143,19 +143,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AttackBase.cpp" />
+    <ClCompile Include="Character\AttackBase.cpp" />
     <ClCompile Include="Character\Enemy\EnemyStateBase.cpp" />
-    <ClCompile Include="EnemyStateAttack.cpp" />
-    <ClCompile Include="EnemyStateCharge.cpp" />
-    <ClCompile Include="EnemyStateDash.cpp" />
-    <ClCompile Include="EnemyStateDodge.cpp" />
-    <ClCompile Include="EnemyStateGuard.cpp" />
-    <ClCompile Include="EnemyStateHitAttack.cpp" />
-    <ClCompile Include="EnemyStateIdle.cpp" />
-    <ClCompile Include="EnemyStateMove.cpp" />
-    <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateAttack.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateCharge.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateDash.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateDodge.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateGuard.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateHitAttack.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateIdle.cpp" />
+    <ClCompile Include="Character\Enemy\EnemyStateMove.cpp" />
+    <ClCompile Include="Scene\GameCamera.cpp" />
     <ClCompile Include="Character\Enemy\Enemy.cpp" />
-    <ClCompile Include="DataManager.cpp" />
+    <ClCompile Include="Scene\DataManager.cpp" />
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp" />
     <ClCompile Include="MyEngine\Physics\CapsuleColliderData.cpp" />
     <ClCompile Include="Character\CharacterBase.cpp" />
@@ -170,7 +170,7 @@
     <ClCompile Include="Character\Player\PlayerStateGuard.cpp" />
     <ClCompile Include="Character\Player\PlayerStateHitAttack.cpp" />
     <ClCompile Include="Character\Player\PlayerStateMove.cpp" />
-    <ClCompile Include="PlayerStateCharge.cpp" />
+    <ClCompile Include="Character\Player\PlayerStateCharge.cpp" />
     <ClCompile Include="Scene\SceneSelect.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneGame.cpp" />
@@ -181,25 +181,25 @@
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp" />
     <ClCompile Include="Character\Player\PlayerStateBase.cpp" />
     <ClCompile Include="Character\Player\PlayerStateIdle.cpp" />
-    <ClCompile Include="SoundManager.cpp" />
-    <ClCompile Include="TitleCamera.cpp" />
-    <ClCompile Include="Ui.cpp" />
+    <ClCompile Include="Scene\SoundManager.cpp" />
+    <ClCompile Include="Scene\TitleCamera.cpp" />
+    <ClCompile Include="Scene\Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttackBase.h" />
+    <ClInclude Include="Character\AttackBase.h" />
     <ClInclude Include="Character\Enemy\EnemyStateBase.h" />
-    <ClInclude Include="EnemyStateAttack.h" />
-    <ClInclude Include="EnemyStateCharge.h" />
-    <ClInclude Include="EnemyStateDash.h" />
-    <ClInclude Include="EnemyStateDodge.h" />
-    <ClInclude Include="EnemyStateGuard.h" />
-    <ClInclude Include="EnemyStateHitAttack.h" />
-    <ClInclude Include="EnemyStateIdle.h" />
-    <ClInclude Include="EnemyStateMove.h" />
-    <ClInclude Include="GameCamera.h" />
-    <ClInclude Include="CommandIdList.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateAttack.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateCharge.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateDash.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateDodge.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateGuard.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateHitAttack.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateIdle.h" />
+    <ClInclude Include="Character\Enemy\EnemyStateMove.h" />
+    <ClInclude Include="Scene\GameCamera.h" />
+    <ClInclude Include="Character\CommandIdList.h" />
     <ClInclude Include="Character\Enemy\Enemy.h" />
-    <ClInclude Include="DataManager.h" />
+    <ClInclude Include="Scene\DataManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="MyEngine\Utility\LoadCsv.h" />
     <ClInclude Include="MyEngine\Physics\CapsuleColliderData.h" />
@@ -216,7 +216,7 @@
     <ClInclude Include="Character\Player\PlayerStateGuard.h" />
     <ClInclude Include="Character\Player\PlayerStateHitAttack.h" />
     <ClInclude Include="Character\Player\PlayerStateMove.h" />
-    <ClInclude Include="PlayerStateCharge.h" />
+    <ClInclude Include="Character\Player\PlayerStateCharge.h" />
     <ClInclude Include="Scene\SceneSelect.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneGame.h" />
@@ -227,9 +227,9 @@
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
     <ClInclude Include="Character\Player\PlayerStateBase.h" />
     <ClInclude Include="Character\Player\PlayerStateIdle.h" />
-    <ClInclude Include="SoundManager.h" />
-    <ClInclude Include="TitleCamera.h" />
-    <ClInclude Include="Ui.h" />
+    <ClInclude Include="Scene\SoundManager.h" />
+    <ClInclude Include="Scene\TitleCamera.h" />
+    <ClInclude Include="Scene\Ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

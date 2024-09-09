@@ -16,3 +16,4 @@ StunAttack,stunAttack,100,50
 Burst,burst,100,80
 BossDeath,bossDeath,10,500
 Hit,hitEffect,70,25
+Clear,clear,100,50

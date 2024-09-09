@@ -238,6 +238,11 @@ void SceneTitle::Draw()
 
 void SceneTitle::End()
 {
+	for (auto& item : m_showUi)
+	{
+		DeleteGraph(item.second.handle);
+	}
+	m_dataManager.DeleteEffekseerData();
 }
 
 void SceneTitle::LoadUiHandle(std::vector<DataManager::UiInfo> data)
