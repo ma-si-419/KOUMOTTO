@@ -143,7 +143,7 @@ namespace
 	constexpr int kUpDownMoveCommandPosX = 90;
 	constexpr int kUpDownMoveCommandPosY = 430;
 	//一フレームに増やすパーティクルの最大数
-	constexpr int kAddParticleMaxNum = 10;
+	constexpr int kAddParticleMaxNum = 20;
 	//パーティクルの最大速度
 	constexpr int kParticleSpeed = 10;
 	//パーティクルの大きさ
