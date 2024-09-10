@@ -10,7 +10,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	bool isWindow = true;
+	bool isWindow = false;
 
 
 	// ウィンドウかフルスクリーンか可変にする
@@ -30,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Effekseer_InitDistortion();
 	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 	Effekseer_Sync3DSetting();
-	
+
 	//フォントの読み込み
 	LPCSTR fontPath = "data/toroman.ttf";
 	if (AddFontResourceEx(fontPath, FR_PRIVATE, NULL) > 0)
@@ -51,7 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SceneManager scene;
 	DataManager data;
 	SoundManager sound;
-	
+
 	data.LoadAttackFile();
 	data.LoadUiFile();
 	data.LoadAiFile();
@@ -71,12 +71,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		//入力情報の更新
 		input.Update();
-		//セレクトボタンが押されたらウィンドウモードを切り替える
-		if (input.IsTrigger("SELECT"))
+#ifdef _DEBUG
 		{
-			isWindow = !isWindow;
-			ChangeWindowMode(isWindow);
+			//セレクトボタンが押されたらウィンドウモードを切り替える
+			if (input.IsTrigger("SELECT"))
+			{
+				isWindow = !isWindow;
+				ChangeWindowMode(isWindow);
+			}
 		}
+#endif
 		//シーンの更新
 		scene.Update(input);
 		//シーンの描画
@@ -98,7 +102,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// 16.66ミリ秒(16667マイクロ秒)経過するまで待つ
 		}
 	}
-	
+
 	Effkseer_End();
 
 	DxLib_End();				// ＤＸライブラリ使用の終了処理

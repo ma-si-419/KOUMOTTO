@@ -17,6 +17,11 @@ namespace
 	constexpr int kHealStanPointTime = 200;
 	//コンボがつながらなくなるまでの時間
 	constexpr int kComboTime = 180;
+	//エネミーの体力
+	constexpr int kEnemyHp = 50000;
+	//エネミーの攻撃力
+	constexpr int kEnemyAtk = 150;
+
 }
 Enemy::Enemy() :
 	CharacterBase("data/model/Enemy.mv1", ObjectTag::kEnemy),
@@ -24,6 +29,8 @@ Enemy::Enemy() :
 	m_lastHitDamageTime(0),
 	m_comboCount(0)
 {
+	m_status.hp = kEnemyHp;
+	m_status.atk = kEnemyAtk;
 }
 
 Enemy::~Enemy()
