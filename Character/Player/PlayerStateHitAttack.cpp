@@ -26,6 +26,7 @@ void PlayerStateHitAttack::Init(std::shared_ptr<Collidable> collider)
 	{
 		m_hitEffect = HitEffect::kLightHit;
 		m_pPlayer->ChangeAnim("LightHit");
+		m_pPlayer->PlaySE("LightHit", DX_PLAYTYPE_BACK);
 	}
 	else if (attack->GetHitEffect() == static_cast<int>(HitEffect::kBurst))
 	{

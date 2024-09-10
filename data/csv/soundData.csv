@@ -16,6 +16,8 @@ BattleEndBgm,Game
 ClearSe,Game
 ClearFanfare,Game
 ClearBgm,Game
+LightHit,Game
+Guard,Game
 OK,Title
 Cursor,Title
 Cancel,Title

@@ -227,6 +227,10 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 		}
 
 		m_nowHp -= damage;
+		if (m_nowHp < 0)
+		{
+			m_nowHp = 0;
+		}
 		//UI‚ÉŽó‚¯‚½ƒ_ƒ[ƒW‚ð‘—‚é
 		m_pUi->AddShowDamage(m_rigidbody.GetPos(), damage, true);
 	}

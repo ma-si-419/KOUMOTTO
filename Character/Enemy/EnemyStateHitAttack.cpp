@@ -31,6 +31,7 @@ void EnemyStateHitAttack::Init(int effect)
 	{
 		m_effect = HitEffect::kLightHit;
 		m_pEnemy->ChangeAnim("LightHit");
+		m_pEnemy->PlaySE("LightHit", DX_PLAYTYPE_BACK);
 	}
 	else if (effect == static_cast<int>(HitEffect::kStun))
 	{
@@ -40,6 +41,7 @@ void EnemyStateHitAttack::Init(int effect)
 	else if (effect == static_cast<int>(HitEffect::kGuard))
 	{
 		m_effect = HitEffect::kGuard;
+		m_pEnemy->PlaySE("Guard", DX_PLAYTYPE_BACK);
 	}
 
 	m_burstDir = (m_pEnemy->GetPos() - m_pEnemy->GetTargetPos()).Normalize();
@@ -76,7 +78,7 @@ void EnemyStateHitAttack::Update()
 		}
 	}
 	//スタン攻撃を受けた時
-	else if(m_effect == HitEffect::kStun)
+	else if (m_effect == HitEffect::kStun)
 	{
 		velo = MyEngine::Vector3(0, 0, 0);
 		//スタン攻撃を受けた時のスタン時間が経過したら
