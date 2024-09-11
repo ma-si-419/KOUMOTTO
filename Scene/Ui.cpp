@@ -147,7 +147,8 @@ namespace
 	//パーティクルの最大速度
 	constexpr int kParticleSpeed = 10;
 	//パーティクルの大きさ
-	constexpr int kParticleRadius = 3;
+	constexpr int kParticleRadius = 2
+		;
 	//パーティクルにかかる重力の力
 	constexpr float kParticleGravity = 0.05f;
 	//パーティクルのライフタイム
@@ -968,10 +969,6 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 		m_showUi[shoulderButton].handle, true);
 	DrawStringToHandle(kUpDownMoveCommandPosX + kShoulderButtonGraphGapX, kUpDownMoveCommandPosY + kShoulderButtonGraphGapY,
 		"アップダウン", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
-
-
-
-
 }
 
 void Ui::DrawComboCount()
