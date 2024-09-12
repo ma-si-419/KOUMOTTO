@@ -1,7 +1,7 @@
 #include "PlayerStateDodge.h"
 #include "PlayerStateIdle.h"
 #include "Player.h"
-
+#include <cmath>
 
 namespace
 {
@@ -23,51 +23,74 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 {
 	//視野角を広げる
 	m_pPlayer->SetUpFov(true);
-	//移動と同じ処理
-	MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
+	//エネミーの座標
+	MyEngine::Vector3 targetPos = m_pPlayer->GetTargetPos();
+	//Y軸を中心とした回転をするので
+	//Y座標が関係しないようにプレイヤーと同じ座標にする
+	MyEngine::Vector3 rotationShaftPos = targetPos;
 	rotationShaftPos.y = m_pPlayer->GetPos().y;
 
+	//プレイヤーから回転の中心へのベクトル
 	MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
-	MyEngine::Vector3 velo(0, 0, 0);
+	MyEngine::Vector3 nextPos;
 
-	//回転速度(横移動の速さ)
-	float hMoveSpeed = 0;
+	//回転の大きさ
+	float hMoveScale = 0;
+
+	//現状の回転度を取得する
+	float x = m_pPlayer->GetPos().x - rotationShaftPos.x;
+	float z = m_pPlayer->GetPos().z - rotationShaftPos.z;
+
+	float angle = std::atan2(z, x);
 
 	if (m_moveDir.x != 0.0f)
 	{
-		hMoveSpeed = (m_moveDir.x * kDodgeSpeed) / toShaftPosVec.Length();
+		hMoveScale = (m_moveDir.x * kDodgeSpeed) / toShaftPosVec.Length();
 	}
-
-	m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
-
-	velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
-	velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
 
 	//敵に近すぎたら周囲を回るようにする
-	if (toShaftPosVec.Length() > kShortestEnemyDistance)
+	if (toShaftPosVec.Length() < kShortestEnemyDistance)
 	{
-		//前後入力を回転の中心に向かうベクトルに変換
-		toShaftPosVec.y = 0;
-		velo += toShaftPosVec.Normalize() * (m_moveDir.z * kDodgeSpeed);
-	}
-	else
-	{
-		//前入力を横移動に後ろ入力を回転の中心から離れるベクトルに変換
+		//前入力されている場合
 		if (m_moveDir.z > 0)
 		{
-			hMoveSpeed = (m_moveDir.z * kDodgeSpeed) / toShaftPosVec.Length();
-			m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
-			velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
-			velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
+			//横入力の値で回る方向を決める
+			if (m_moveDir.x > 0)
+			{
+				//前入力で回転する
+				hMoveScale += (m_moveDir.z * kDodgeSpeed) / toShaftPosVec.Length();
+			}
+			else
+			{
+				//前入力で回転する
+				hMoveScale -= (m_moveDir.z * kDodgeSpeed) / toShaftPosVec.Length();
+			}
 		}
-		else if (m_moveDir.z < 0)
+		//後ろ入力されている場合
+		else
 		{
-			velo += toShaftPosVec.Normalize() * (m_moveDir.z * kDodgeSpeed);
+			MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
+
+			//エネミーから離れていくベクトル
+			nextPos = nextPos + toTargetVec.Normalize() * m_moveDir.z * kDodgeSpeed;
 		}
 	}
+	//敵から一定距離離れていた場合
+	else
+	{
+		//前後入力されたら敵に向かっていく
+		MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
+		nextPos = nextPos + toTargetVec.Normalize() * m_moveDir.z * kDodgeSpeed;
+	}
 
-	m_pPlayer->SetVelo(velo);
+	//現在の角度に横移動の大きさを足す
+	angle += hMoveScale;
+
+	nextPos.x += cosf(angle) * toShaftPosVec.Length() + rotationShaftPos.x;
+	nextPos.z += sinf(angle) * toShaftPosVec.Length() + rotationShaftPos.z;
+
+	m_pPlayer->SetVelo(nextPos - m_pPlayer->GetPos());
 
 	m_time++;
 

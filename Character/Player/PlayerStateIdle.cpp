@@ -54,7 +54,7 @@ void PlayerStateIdle::Update(MyEngine::Input input)
 			m_nextState =  std::make_shared<PlayerStateDodge>(m_pPlayer,m_pScene);
 			//‰ñ”ğ‚Ì•ûŒü‚ğİ’è‚·‚é
 			auto state = std::dynamic_pointer_cast<PlayerStateDodge>(m_nextState);
-			MyEngine::Vector3 dir = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Normalize();
+			MyEngine::Vector3 dir(0,0,1);
 			state->Init(dir);
 			return;
 		}

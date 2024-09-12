@@ -8,10 +8,10 @@ class GameCamera;
 class Enemy;
 class AttackBase;
 class Ui;
-class SceneGame : public SceneBase , public std::enable_shared_from_this<SceneGame>
+class SceneGame : public SceneBase, public std::enable_shared_from_this<SceneGame>
 {
 public:
-	SceneGame(SceneManager& sceneManager,DataManager& dataManager, SoundManager& soundManager);
+	SceneGame(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager);
 	~SceneGame();
 	//初期化処理
 	void Init();
@@ -28,10 +28,10 @@ public:
 	//ゲームオーバー時に呼び出す
 	void GameOver() { m_isGameOver = true; }
 	//効果音を再生する
-	void PlaySE(std::string name,int playType);
+	void PlaySE(std::string name, int playType);
 	//効果音を止める
 	void StopSE(std::string name) { m_soundManager.Stop(name); }
-	
+
 	//サウンドのハンドルを取得する
 	int GetSEHandle(std::string name) { return m_soundManager.GetHandle(name); }
 
@@ -43,7 +43,13 @@ private:
 	std::shared_ptr<Ui> m_pUi;
 	std::vector<std::shared_ptr<AttackBase>> m_pAttacks;
 
-	
+#ifdef _DEBUG
+
+	//ステージのモデルハンドル
+	int m_handle;
+
+#endif // !_DEBUG
+
 	//ゲームオーバーかどうか
 	bool m_isGameOver;
 	//ゲームクリアかどうか

@@ -153,87 +153,101 @@ void PlayerStateMove::Update(MyEngine::Input input)
 	{
 		dir = dir.Normalize();
 
+		//エネミーの座標
+		MyEngine::Vector3 targetPos = m_pPlayer->GetTargetPos();
 		//Y軸を中心とした回転をするので
-		MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
 		//Y座標が関係しないようにプレイヤーと同じ座標にする
+		MyEngine::Vector3 rotationShaftPos = targetPos;
 		rotationShaftPos.y = m_pPlayer->GetPos().y;
 
+		//プレイヤーから回転の中心へのベクトル
 		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
 		//ダッシュボタンが押されているか
 		bool isDash = input.IsPress(Game::InputId::kA);
 
+		//移動速度
+		float speed = kMoveSpeed;
+
 		//ダッシュボタンが押されていたら視野角を広げる
 		m_pPlayer->SetUpFov(isDash);
+		
+		//ダッシュボタンが押されていたら
+		if (isDash)
+		{
+			speed *= kDashSpeedRate;
+			m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dash"));
+		}
+		else
+		{
+			m_pPlayer->StopEffect();
+		}
+		//現状の回転度を取得する
+		float x = m_pPlayer->GetPos().x - rotationShaftPos.x;
+		float z = m_pPlayer->GetPos().z - rotationShaftPos.z;
 
+		float angle = std::atan2(z, x);
 
-		//回転速度(横移動の速さ)
-		float hMoveSpeed = 0;
+		//回転の大きさ
+		float hMoveScale = 0;
 
+		//次に向かう座標
+		MyEngine::Vector3 nextPos;
+
+		//横移動
 		if (dir.x != 0.0f)
 		{
-			hMoveSpeed = (dir.x * kMoveSpeed) / toShaftPosVec.Length();
+			//距離によって回転する大きさを変化させる
+			hMoveScale = (dir.x * kMoveSpeed) / toShaftPosVec.Length();
 			//ダッシュボタンを押していたら横移動の速さにダッシュの倍率をかける
 			if (isDash)
 			{
-				hMoveSpeed *= kDashSpeedRate;
+				hMoveScale *= kDashSpeedRate;
 			}
 		}
 
-		m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
-
-		//左右移動は敵の周囲を回る
-
-		//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
-		//現在の座標からその座標に向かうベクトルを作成する
-		velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
-		velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
-
-		MyEngine::Vector3 zDirVec;
-
-		//上下移動入力されていたら
-		if (input.GetTriggerInfo().left > kTriggerReaction)
+		//敵に近すぎた場合
+		if (toShaftPosVec.Length() < kShortestEnemyDistance)
 		{
-			//前後入力を上下のベクトルに変換
-			zDirVec.y += dir.z * kMoveSpeed;
+			//前入力されている場合
+			if (dir.z > 0)
+			{
+				//横入力の値で回る方向を決める
+				if (dir.x > 0)
+				{
+					//前入力で回転する
+					hMoveScale += (dir.z * speed) / toShaftPosVec.Length();
+				}
+				else
+				{
+					//前入力で回転する
+					hMoveScale -= (dir.z * speed) / toShaftPosVec.Length();
+				}
+			}
+			//後ろ入力されている場合
+			else
+			{
+				MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
+
+				//エネミーから離れていくベクトル
+				nextPos = nextPos + toTargetVec.Normalize() * dir.z * speed;
+			}
 		}
-		//されていなかった場合
+		//敵から一定距離離れている場合
 		else
 		{
-			//敵に近すぎたら周囲を回るようにする
-			if (toShaftPosVec.Length() > kShortestEnemyDistance)
-			{
-				//前後入力を回転の中心に向かうベクトルに変換
-				toShaftPosVec.y = 0;
-				zDirVec += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
-			}
-			else
-			{
-				//前入力を横移動に後ろ入力を回転の中心から離れるベクトルに変換
-				if (dir.z > 0)
-				{
-					hMoveSpeed = (zDirVec.z * kMoveSpeed) / toShaftPosVec.Length();
-					m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
-					zDirVec.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
-					zDirVec.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
-				}
-				else if (dir.z < 0)
-				{
-					zDirVec += toShaftPosVec.Normalize() * (dir.z * kMoveSpeed);
-				}
-			}
-			//ダッシュボタンが押されていたら
-			if (isDash)
-			{
-				zDirVec *= kDashSpeedRate;
-				m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dash"));
-			}
-			else
-			{
-				m_pPlayer->StopEffect();
-			}
+			//前後入力されたら敵に向かっていく
+			MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
+			nextPos = nextPos + toTargetVec.Normalize() * dir.z * speed;
 		}
-		velo += zDirVec;
+
+		//現在の角度に横移動の大きさを足す
+		angle += hMoveScale;
+
+		nextPos.x += cosf(angle) * toShaftPosVec.Length() + rotationShaftPos.x;
+		nextPos.z += sinf(angle) * toShaftPosVec.Length() + rotationShaftPos.z;
+
+		velo = nextPos - m_pPlayer->GetPos();
 
 		//必殺技パレットが開かれていなく
 		if (!input.IsPress(Game::InputId::kLb))

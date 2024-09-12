@@ -46,6 +46,12 @@ SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, Sound
 	//Uiのポインタ
 	m_pUi = std::make_shared<Ui>();
 
+#ifdef _DEBUG
+
+	//ステージのモデルハンドル
+	m_handle =  MV1LoadModel("data/model/Stage.mv1");
+
+#endif // !_DEBUG
 }
 
 SceneGame::~SceneGame()
@@ -103,6 +109,14 @@ void SceneGame::Init()
 
 	//UIに画像のデータを入れる
 	m_pUi->LoadUiHandle(m_dataManager.GetUiData(Game::SceneNum::kGame));
+
+#ifdef _DEBUG
+
+	//ステージのモデルハンドル
+	MV1SetScale(m_handle,VGet(20,20,20));
+	MV1SetPosition(m_handle,VGet(0,-10000,0));
+
+#endif // !_DEBUG
 }
 
 void SceneGame::RetryInit()
@@ -323,6 +337,8 @@ void SceneGame::Draw()
 #ifdef _DEBUG
 	//当たり判定の描画
 	m_pPhysics->DebugDraw();
+	//ステージの描画
+	MV1DrawModel(m_handle);
 #endif
 	//プレイヤーとエネミーの体力バーを表示する
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);

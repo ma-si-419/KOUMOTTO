@@ -10,7 +10,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	bool isWindow = false;
+	bool isWindow = true;
 
 
 	// ウィンドウかフルスクリーンか可変にする
