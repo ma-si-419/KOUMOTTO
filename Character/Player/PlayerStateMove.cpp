@@ -12,13 +12,13 @@
 namespace
 {
 	//移動速度
-	constexpr float kMoveSpeed = 100.0f;
-	//トリガーが反応する
-	constexpr int kTriggerReaction = 200;
+	constexpr float kMoveSpeed = 10.0f;	
 	//敵との一番近い距離(真上にいかないように)
-	constexpr int kShortestEnemyDistance = 1500;
+	constexpr int kShortestEnemyDistance = 150;
 	//ダッシュするときの移動速度の倍率
 	constexpr float kDashSpeedRate = 1.8f;
+	//トリガーが反応する値
+	constexpr int kTriggerReaction = 200;
 }
 
 void PlayerStateMove::Init()
@@ -227,25 +227,34 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			//後ろ入力されている場合
 			else
 			{
-				MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
-
-				//エネミーから離れていくベクトル
-				nextPos = nextPos + toTargetVec.Normalize() * dir.z * speed;
+				nextPos += nextPos + toShaftPosVec.Normalize() * dir.z * speed;
 			}
 		}
 		//敵から一定距離離れている場合
 		else
 		{
-			//前後入力されたら敵に向かっていく
-			MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
-			nextPos = nextPos + toTargetVec.Normalize() * dir.z * speed;
+			nextPos += nextPos + toShaftPosVec.Normalize() * dir.z * speed;
 		}
+
+		//上下移動
+		if (input.GetTriggerInfo().left > kTriggerReaction)
+		{
+			nextPos.y += kMoveSpeed;
+		}
+		else if (input.GetTriggerInfo().right > kTriggerReaction)
+		{
+			nextPos.y -= kMoveSpeed;
+		}
+
 
 		//現在の角度に横移動の大きさを足す
 		angle += hMoveScale;
 
 		nextPos.x += cosf(angle) * toShaftPosVec.Length() + rotationShaftPos.x;
+		nextPos.y += m_pPlayer->GetPos().y;
 		nextPos.z += sinf(angle) * toShaftPosVec.Length() + rotationShaftPos.z;
+
+
 
 		velo = nextPos - m_pPlayer->GetPos();
 
@@ -265,6 +274,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 				return;
 			}
 		}
+		
 		m_pPlayer->PlayAnim();
 		m_pPlayer->SetVelo(velo);
 

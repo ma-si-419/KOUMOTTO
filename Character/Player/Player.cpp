@@ -10,19 +10,19 @@
 namespace
 {
 	//ˆÚ“®‘¬“x
-	constexpr float kMoveSpeed = 100.0f;
+	constexpr float kMoveSpeed = 10.0f;
 	//UŒ‚‚ğo‚·À•W
-	constexpr float kAttackPos = 500.0f;
+	constexpr float kAttackPos = 50.0f;
 	//Ši“¬UŒ‚‚ğo‚·‚Ì“G‚Æ‚Ì‹——£(“–‚½‚è”»’è‚Ì‘å‚«‚³‚Ì”{—¦)
 	constexpr float kPhysicalAttackLange = 0.9f;
 	//“–‚½‚è”»’è‚Ì‘å‚«‚³
-	constexpr float kColScale = 100.0f;
+	constexpr float kColScale = 10.0f;
 	//ƒgƒŠƒK[‚ª”½‰‚·‚é
 	constexpr int kTriggerReaction = 200;
 	//‰Šú‰ñ“]“x
 	constexpr int kInitRota = 10;
 	//ƒ‚ƒfƒ‹‚ÌŠg‘å—¦
-	constexpr float kModelScale = 3.0f;
+	constexpr float kModelScale = 0.3f;
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),

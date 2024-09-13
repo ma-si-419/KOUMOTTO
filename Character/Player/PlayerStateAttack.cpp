@@ -11,13 +11,15 @@
 namespace
 {
 	//気弾を出しているときの移動速度
-	constexpr float kEnergyAttackMoveSpeed = 80.0f;
+	constexpr float kEnergyAttackMoveSpeed = 8.0f;
 	//攻撃を出しているときの移動速度
-	constexpr float kPhysicalAttackMoveSpeed = 300;
+	constexpr float kPhysicalAttackMoveSpeed = 30;
 	//敵が近くにいる判定になる距離
-	constexpr float kNearEnemyLength = 1500;
+	constexpr float kNearEnemyLength = 150;
 	//敵に近づく時間の最大
 	constexpr int kGoEnemyTime = 60;
+	//トリガーが反応する値
+	constexpr int kTriggerReaction = 200;
 }
 
 void PlayerStateAttack::Init(std::string button, bool isSpecial)
@@ -81,44 +83,90 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 		{
 			dir = dir.Normalize();
 
+			//エネミーの座標
+			MyEngine::Vector3 targetPos = m_pPlayer->GetTargetPos();
 			//Y軸を中心とした回転をするので
-			MyEngine::Vector3 rotationShaftPos = m_pPlayer->GetTargetPos();
 			//Y座標が関係しないようにプレイヤーと同じ座標にする
+			MyEngine::Vector3 rotationShaftPos = targetPos;
 			rotationShaftPos.y = m_pPlayer->GetPos().y;
 
+			//プレイヤーから回転の中心へのベクトル
 			MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
-			//回転速度(横移動の速さ)
-			float hMoveSpeed = 0;
+			//移動速度
+			float speed = kEnergyAttackMoveSpeed;
 
+			//現状の回転度を取得する
+			float x = m_pPlayer->GetPos().x - rotationShaftPos.x;
+			float z = m_pPlayer->GetPos().z - rotationShaftPos.z;
+
+			float angle = std::atan2(z, x);
+
+			//回転の大きさ
+			float hMoveScale = 0;
+
+			//次に向かう座標
+			MyEngine::Vector3 nextPos;
+
+
+			//横移動
 			if (dir.x != 0.0f)
 			{
-				hMoveSpeed = (dir.x * kEnergyAttackMoveSpeed) / toShaftPosVec.Length();
+				//距離によって回転する大きさを変化させる
+				hMoveScale = (dir.x * kEnergyAttackMoveSpeed) / toShaftPosVec.Length();
 			}
 
-			m_pPlayer->SetRota(m_pPlayer->GetRota() + hMoveSpeed);
-
-			//左右移動は敵の周囲を回る
-
-			//敵の座標を回転度を参照し、次の回転度だったら次はどの座標になるか計算し
-			//現在の座標からその座標に向かうベクトルを作成する
-			velo.x = (rotationShaftPos.x + cosf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().x;
-			velo.z = (rotationShaftPos.z + sinf(m_pPlayer->GetRota()) * toShaftPosVec.Length()) - m_pPlayer->GetPos().z;
-
-			//上下移動入力されていたら
-			if (input.IsPress(Game::InputId::kLb))
+			//敵に近すぎた場合
+			if (toShaftPosVec.Length() < kNearEnemyLength)
 			{
-				//前後入力を上下のベクトルに変換
-				velo.y += dir.z * kEnergyAttackMoveSpeed;
+				//前入力されている場合
+				if (dir.z > 0)
+				{
+					//横入力の値で回る方向を決める
+					if (dir.x > 0)
+					{
+						//前入力で回転する
+						hMoveScale += (dir.z * speed) / toShaftPosVec.Length();
+					}
+					else
+					{
+						//前入力で回転する
+						hMoveScale -= (dir.z * speed) / toShaftPosVec.Length();
+					}
+				}
+				//後ろ入力されている場合
+				else
+				{
+					//エネミーから離れていくベクトル
+					nextPos = nextPos + toShaftPosVec.Normalize() * dir.z * speed;
+				}
 			}
-			//されていなかった場合
+			//敵から一定距離離れている場合
 			else
 			{
-				//前後入力を回転の中心に向かうベクトルに変換
-				MyEngine::Vector3 toCenterVec = m_pPlayer->GetTargetPos() - m_pPlayer->GetPos();
-				toCenterVec.y = 0;
-				velo += toCenterVec.Normalize() * (dir.z * kEnergyAttackMoveSpeed);
+				nextPos = nextPos + toShaftPosVec.Normalize() * dir.z * speed;
 			}
+
+			//現在の角度に横移動の大きさを足す
+			angle += hMoveScale;
+
+			//上下移動
+			if (input.GetTriggerInfo().left > kTriggerReaction)
+			{
+				nextPos.y += kEnergyAttackMoveSpeed;
+			}
+			else if (input.GetTriggerInfo().right > kTriggerReaction)
+			{
+				nextPos.y -= kEnergyAttackMoveSpeed;
+			}
+
+
+			nextPos.x += cosf(angle) * toShaftPosVec.Length() + rotationShaftPos.x;
+			nextPos.y += m_pPlayer->GetPos().y;
+			nextPos.z += sinf(angle) * toShaftPosVec.Length() + rotationShaftPos.z;
+
+			velo = nextPos - m_pPlayer->GetPos();
+
 			//気弾攻撃を行っているときは回避行動にすぐに移行できる
 			if (!input.IsPress(Game::InputId::kLb))
 			{

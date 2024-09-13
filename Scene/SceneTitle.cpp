@@ -7,9 +7,9 @@
 namespace
 {
 	//プレイヤーの初期位置
-	MyEngine::Vector3 kPlayerInitPos(-500, -800, -500);
+	MyEngine::Vector3 kPlayerInitPos(-50, -80, -50);
 	//エネミーの初期位置
-	MyEngine::Vector3 kEnemyInitPos(500, -500, 500);
+	MyEngine::Vector3 kEnemyInitPos(50, -50, 50);
 	//矢印を揺らす大きさ
 	constexpr float kShakeArrowScale = 10.0f;
 	//矢印を揺らすスピード
@@ -60,9 +60,9 @@ void SceneTitle::Init()
 	MV1SetPosition(m_playerHandle, kPlayerInitPos.CastVECTOR());
 	MV1SetPosition(m_enemyHandle, kEnemyInitPos.CastVECTOR());
 	//モデルのスケール設定
-	MV1SetScale(m_domeHandle, VGet(500, 500, 500));
-	MV1SetScale(m_playerHandle, VGet(3, 3, 3));
-	MV1SetScale(m_enemyHandle, VGet(300, 300, 300));
+	MV1SetScale(m_domeHandle, VGet(50, 50, 50));
+	MV1SetScale(m_playerHandle, VGet(0.3, 0.3, 0.3));
+	MV1SetScale(m_enemyHandle, VGet(30, 30, 30));
 	//モデルのアニメーション設定
 	MV1AttachAnim(m_playerHandle,kPlayerAnimNumber);
 	MV1AttachAnim(m_enemyHandle,kEnemyAnimNumber);

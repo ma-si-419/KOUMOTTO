@@ -5,11 +5,11 @@
 
 namespace
 {
-	constexpr float kDodgeSpeed = 200.0f;
+	constexpr float kDodgeSpeed = 20.0f;
 	//‰ñ”ð‚ÌŽžŠÔ
 	constexpr int kDodgeTime = 10;
 	//“G‚Æ‚ÌÅ’Z‹——£
-	constexpr int kShortestEnemyDistance = 1500;
+	constexpr int kShortestEnemyDistance = 150;
 }
 void PlayerStateDodge::Init(MyEngine::Vector3 dir)
 {
@@ -70,24 +70,20 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 		//Œã‚ë“ü—Í‚³‚ê‚Ä‚¢‚éê‡
 		else
 		{
-			MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
-
-			//ƒGƒlƒ~[‚©‚ç—£‚ê‚Ä‚¢‚­ƒxƒNƒgƒ‹
-			nextPos = nextPos + toTargetVec.Normalize() * m_moveDir.z * kDodgeSpeed;
+			nextPos = nextPos + toShaftPosVec.Normalize() * m_moveDir.z * kDodgeSpeed;
 		}
 	}
 	//“G‚©‚çˆê’è‹——£—£‚ê‚Ä‚¢‚½ê‡
 	else
 	{
-		//‘OŒã“ü—Í‚³‚ê‚½‚ç“G‚ÉŒü‚©‚Á‚Ä‚¢‚­
-		MyEngine::Vector3 toTargetVec = targetPos - m_pPlayer->GetPos();
-		nextPos = nextPos + toTargetVec.Normalize() * m_moveDir.z * kDodgeSpeed;
+		nextPos = nextPos + toShaftPosVec.Normalize() * m_moveDir.z * kDodgeSpeed;
 	}
 
 	//Œ»Ý‚ÌŠp“x‚É‰¡ˆÚ“®‚Ì‘å‚«‚³‚ð‘«‚·
 	angle += hMoveScale;
 
 	nextPos.x += cosf(angle) * toShaftPosVec.Length() + rotationShaftPos.x;
+	nextPos.y += m_pPlayer->GetPos().y;
 	nextPos.z += sinf(angle) * toShaftPosVec.Length() + rotationShaftPos.z;
 
 	m_pPlayer->SetVelo(nextPos - m_pPlayer->GetPos());

@@ -8,9 +8,9 @@
 namespace
 {
 	//当たり判定の大きさ
-	constexpr float kColScale = 100.0f;
+	constexpr float kColScale = 10.0f;
 	//初期位置
-	const MyEngine::Vector3 kInitPos(3000, 0, 3000);
+	const MyEngine::Vector3 kInitPos(300, 0, 300);
 	//スタンゲージのマックス
 	constexpr float kMaxStanPoint = 500;
 	//スタンゲージが回復するまでの時間
@@ -42,7 +42,7 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 {
 	ChangeAnim("Idle");
 
-	MV1SetScale(m_modelHandle, VGet(300, 300, 300));
+	MV1SetScale(m_modelHandle, VGet(30, 30, 30));
 	Collidable::Init(physics);
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	colData->m_radius = kColScale;

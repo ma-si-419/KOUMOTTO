@@ -8,7 +8,11 @@
 #include "Player.h"
 #include "EffekseerForDXLib.h"
 
-
+namespace
+{
+	//トリガーが反応する値
+	constexpr int kTriggerReaction = 200;
+}
 
 void PlayerStateIdle::Init()
 {
@@ -18,7 +22,8 @@ void PlayerStateIdle::Init()
 void PlayerStateIdle::Update(MyEngine::Input input)
 {
 	//移動入力がされていたら
-	if (input.GetStickInfo().leftStickX != 0 || input.GetStickInfo().leftStickY != 0)
+	if (input.GetStickInfo().leftStickX != 0 || input.GetStickInfo().leftStickY != 0 ||
+		input.GetTriggerInfo().left > kTriggerReaction || input.GetTriggerInfo().right > kTriggerReaction)
 	{
 		//StateをMoveに変更する
 		m_nextState = std::make_shared<PlayerStateMove>(m_pPlayer,m_pScene);

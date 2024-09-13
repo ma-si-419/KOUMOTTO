@@ -4,11 +4,11 @@
 namespace
 {
 	//軽い攻撃を受けたときのノックバックの速さ
-	constexpr float kLightKnockBackSpeed = 30.0f;
+	constexpr float kLightKnockBackSpeed = 3.0f;
 	//吹き飛ばし攻撃を受けた時のノックバックの速さ
-	constexpr float kBurstKnockBackSpeed = 180.0f;
+	constexpr float kBurstKnockBackSpeed = 18.0f;
 	//ガードした時のノックバックの速さ
-	constexpr float kGuardKnockBackSpeed = 10.0f;
+	constexpr float kGuardKnockBackSpeed = 1.0f;
 	//軽い攻撃を受けた時の動けない時間
 	constexpr int kLightHitStunTime = 8;
 	//吹き飛ばし攻撃を受けた時の動けない時間

@@ -19,8 +19,8 @@ namespace
 	//クリア時のエフェクトを出す間隔
 	constexpr int kClearEffectPopTime = 10;
 	//クリア時のエフェクトの座標の範囲
-	constexpr int kClearEffectPopRange = 2000;
-	constexpr int kClearEffectPopRangeHalf = 1000;
+	constexpr int kClearEffectPopRange = 200;
+	constexpr int kClearEffectPopRangeHalf = 100;
 }
 
 SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager) :
@@ -113,8 +113,8 @@ void SceneGame::Init()
 #ifdef _DEBUG
 
 	//ステージのモデルハンドル
-	MV1SetScale(m_handle,VGet(20,20,20));
-	MV1SetPosition(m_handle,VGet(0,-10000,0));
+	MV1SetScale(m_handle,VGet(2,2,2));
+	MV1SetPosition(m_handle,VGet(0,-1000,0));
 
 #endif // !_DEBUG
 }
@@ -327,8 +327,6 @@ void SceneGame::Draw()
 {
 	//スカイドームの描画
 	m_pGameCamera->DrawDome();
-	//エフェクトを描画する
-	DrawEffekseer3D();
 	//プレイヤーの描画
 	m_pPlayer->Draw();
 	//エネミーの描画
@@ -340,6 +338,9 @@ void SceneGame::Draw()
 	//ステージの描画
 	MV1DrawModel(m_handle);
 #endif
+
+	//エフェクトを描画する
+	DrawEffekseer3D();
 	//プレイヤーとエネミーの体力バーを表示する
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
 	//与えたダメージの表示

@@ -8,23 +8,23 @@ namespace
 	//MoveBack時何フレームこのStateでいるか
 	constexpr int kMoveBackTime = 60;
 	//上下移動を優先するY座標のずれの大きさ
-	constexpr float kYGapScale = 300;
+	constexpr float kYGapScale = 30;
 	//近づくことを優先し始める距離
-	constexpr float kMoveFrontDistance = 5000;
+	constexpr float kMoveFrontDistance = 500;
 	//離れることを優先し始める距離
-	constexpr float kMoveBackDistance = 800;
+	constexpr float kMoveBackDistance = 150;
 	//離れている距離のまま優先度を上げないように、距離に割合をかけて優先度に変換する
 	constexpr float kDistanceRate = 0.005f;
 	//基本的な移動方向の割合
 	constexpr int kMoveDirRate[3] = { 35,10,30 };
 	//移動速度
-	constexpr float kMoveSpeed = 200.0f;
+	constexpr float kMoveSpeed = 20.0f;
 	//動きの方向の数
 	constexpr int kMoveDirNum = 8;
 	//動きの方向の数の半分
 	constexpr int kMoveDirNumHalf = kMoveDirNum * 0.5;
 	//プレイヤーに近づきすぎないように
-	constexpr float kPlayerDistance = 1200.0f;
+	constexpr float kPlayerDistance = 150.0f;
 }
 
 void EnemyStateDash::Init(MyEngine::Vector3 playerPos)

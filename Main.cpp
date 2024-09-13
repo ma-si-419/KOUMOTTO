@@ -26,11 +26,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;			// エラーが起きたら直ちに終了
 	}
 
+	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	Effekseer_Init(16000);
 	//Effekseer_InitDistortion();
 	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 	Effekseer_Sync3DSetting();
-
 	//フォントの読み込み
 	LPCSTR fontPath = "data/toroman.ttf";
 	if (AddFontResourceEx(fontPath, FR_PRIVATE, NULL) > 0)
