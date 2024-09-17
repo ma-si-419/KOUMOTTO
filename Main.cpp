@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "DataManager.h"
 #include "SoundManager.h"
+#include "ObjectManager.h"
 #include "Input.h"
 #include "Game.h"
 #include <cassert>
@@ -56,6 +57,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	data.LoadUiFile();
 	data.LoadAiFile();
 	data.LoadSoundFile();
+	ObjectManager::GetInstance().LoadData();
+
 	MyEngine::Input input;
 
 	scene.Init(std::make_shared<SceneTitle>(scene, data, sound));

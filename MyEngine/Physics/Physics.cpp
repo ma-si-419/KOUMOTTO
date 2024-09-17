@@ -128,7 +128,8 @@ void Physics::FixPosition()
 	for (auto& item : m_collidables)
 	{
 		// Posを更新するので、velocityもそこに移動するvelocityに修正
-		MyEngine::Vector3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos();
+		MyEngine::Vector3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos(); 
+
 		item->m_rigidbody.SetVelo(toFixedPos);
 
 		// 位置確定

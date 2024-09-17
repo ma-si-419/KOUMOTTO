@@ -6,16 +6,29 @@
 #include <map>
 #include "Vector3.h"
 
-class ObjectBase;
+
+class Object;
+// シングルトンクラス
 class ObjectManager
 {
+private:
+	ObjectManager() = default;
+	~ObjectManager();
+	ObjectManager(const ObjectManager&) = delete;
+	ObjectManager& operator = (const ObjectManager&) = delete;
+	ObjectManager(ObjectManager&&) = delete;
+	ObjectManager& operator = (ObjectManager&&) = delete;
 public:
-	ObjectManager();
-	virtual ~ObjectManager();
 
-	void LoadData(Game::SceneNum scene);
+	static ObjectManager& GetInstance()
+	{
+		static ObjectManager instance;
+		return instance;
+	}
 
-	void SetObject();
+	void LoadData();
+
+	void SetObject(Game::SceneNum scene);
 
 	void Draw();
 
@@ -26,6 +39,7 @@ private:
 		MyEngine::Vector3 pos;
 		MyEngine::Vector3 rota;
 		MyEngine::Vector3 scale;
+		Game::SceneNum scene;
 	};
 
 	enum class ObjectDataInfo
@@ -44,8 +58,8 @@ private:
 		kScene
 	};
 
-	std::map<std::string, ObjectData> m_sceneObjectDatas;
+	std::map<std::string, ObjectData> m_objectDatas;
 
-	std::vector<std::shared_ptr<ObjectBase>> m_pObjects;
+	std::vector<std::shared_ptr<Object>> m_pObjects;
 };
 

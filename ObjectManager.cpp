@@ -1,15 +1,25 @@
 #include "ObjectManager.h"
-#include "ObjectBase.h"
-
-ObjectManager::ObjectManager()
+#include "Object.h"
+namespace
 {
+	const std::map<std::string, Game::SceneNum> kSceneNum =
+	{
+		{"Game", Game::SceneNum::kGame},
+		{"Title", Game::SceneNum::kTitle}
+	};
 }
 
 ObjectManager::~ObjectManager()
 {
+	//オブジェクトの削除
+	for (auto& item : m_pObjects)
+	{
+		item->Final();
+	}
+	m_pObjects.clear();
 }
 
-void ObjectManager::LoadData(Game::SceneNum scene)
+void ObjectManager::LoadData()
 {
 	LoadCsv loadCsv;
 
@@ -27,20 +37,44 @@ void ObjectManager::LoadData(Game::SceneNum scene)
 		pushData.rota.y = std::stoi(item[static_cast<int>(ObjectDataInfo::kRotaY)]);
 		pushData.rota.z = std::stoi(item[static_cast<int>(ObjectDataInfo::kRotaZ)]);
 		pushData.scale.x = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleX)]);
-		pushData.scale.x = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleY)]);
-		pushData.scale.x = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleZ)]);
+		pushData.scale.y = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleY)]);
+		pushData.scale.z = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleZ)]);
+		pushData.scene = kSceneNum.at(item[static_cast<int>(ObjectDataInfo::kScene)]);
 		
+		m_objectDatas[item[static_cast<int>(ObjectDataInfo::kName)]] = pushData;
 	}
 	
 }
 
-void ObjectManager::SetObject()
+void ObjectManager::SetObject(Game::SceneNum scene)
 {
+	//オブジェクトの削除
+	for (auto& item : m_pObjects)
+	{
+		item->Final();
+	}
+	m_pObjects.clear();
+	
+	//シーンのオブジェクトの作成
+	for (auto& item : m_objectDatas)
+	{
+		if (item.second.scene == scene)
+		{
+			std::string path = "data/model/" + item.second.path + ".mv1";
+
+			std::shared_ptr<Object> pushData = std::make_shared<Object>(path.c_str());
+			
+			pushData->SetStatus(item.second.pos, item.second.rota, item.second.scale);
+
+			m_pObjects.push_back(pushData);
+		}
+	}
+
 }
 
 void ObjectManager::Draw()
 {
-	for (auto& item : m_pObject)
+	for (auto& item : m_pObjects)
 	{
 		item->Draw();
 	}

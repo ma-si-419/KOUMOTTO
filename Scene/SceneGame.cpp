@@ -8,6 +8,7 @@
 #include "Ui.h"
 #include "AttackBase.h"
 #include "LoadCsv.h"
+#include "ObjectManager.h"
 #include "EffekseerForDXLib.h"
 
 namespace
@@ -62,6 +63,8 @@ void SceneGame::Init()
 {
 	m_dataManager.LoadAnimationFile();
 	m_dataManager.LoadEffekseerFile();
+
+	ObjectManager::GetInstance().SetObject(Game::SceneNum::kGame);
 
 	m_pPlayer->SetAnimationData(m_dataManager.GetAnimationData(), true);
 	m_pEnemy->SetAnimationData(m_dataManager.GetAnimationData(), false);
@@ -335,10 +338,9 @@ void SceneGame::Draw()
 #ifdef _DEBUG
 	//当たり判定の描画
 	m_pPhysics->DebugDraw();
-	//ステージの描画
-	MV1DrawModel(m_handle);
 #endif
-
+	//オブジェクトの描画
+	ObjectManager::GetInstance().Draw();
 	//エフェクトを描画する
 	DrawEffekseer3D();
 	//プレイヤーとエネミーの体力バーを表示する

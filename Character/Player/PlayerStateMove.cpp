@@ -12,7 +12,7 @@
 namespace
 {
 	//移動速度
-	constexpr float kMoveSpeed = 10.0f;	
+	constexpr float kMoveSpeed = 10.0f;
 	//敵との一番近い距離(真上にいかないように)
 	constexpr int kShortestEnemyDistance = 150;
 	//ダッシュするときの移動速度の倍率
@@ -152,149 +152,115 @@ void PlayerStateMove::Update(MyEngine::Input input)
 	if (dir.sqLength() != 0)
 	{
 		dir = dir.Normalize();
+	}
 
-		//エネミーの座標
-		MyEngine::Vector3 targetPos = m_pPlayer->GetTargetPos();
-		//Y軸を中心とした回転をするので
-		//Y座標が関係しないようにプレイヤーと同じ座標にする
-		MyEngine::Vector3 rotationShaftPos = targetPos;
-		rotationShaftPos.y = m_pPlayer->GetPos().y;
+	//エネミーの座標
+	MyEngine::Vector3 targetPos = m_pPlayer->GetTargetPos();
+	//Y軸を中心とした回転をするので
+	//Y座標が関係しないようにプレイヤーと同じ座標にする
+	MyEngine::Vector3 rotationShaftPos = targetPos;
+	rotationShaftPos.y = m_pPlayer->GetPos().y;
 
-		//プレイヤーから回転の中心へのベクトル
-		MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
+	//プレイヤーから回転の中心へのベクトル
+	MyEngine::Vector3 toShaftPosVec = rotationShaftPos - m_pPlayer->GetPos();
 
-		//ダッシュボタンが押されているか
-		bool isDash = input.IsPress(Game::InputId::kA);
+	//ダッシュボタンが押されているか
+	bool isDash = input.IsPress(Game::InputId::kA);
 
-		//移動速度
-		float speed = kMoveSpeed;
+	//移動速度
+	float speed = kMoveSpeed;
 
-		//ダッシュボタンが押されていたら視野角を広げる
-		m_pPlayer->SetUpFov(isDash);
-		
-		//ダッシュボタンが押されていたら
+	//ダッシュボタンが押されていたら視野角を広げる
+	m_pPlayer->SetUpFov(isDash);
+
+	//ダッシュボタンが押されていたら
+	if (isDash)
+	{
+		speed *= kDashSpeedRate;
+		m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dash"));
+	}
+	else
+	{
+		m_pPlayer->StopEffect();
+	}
+	//現状の回転度を取得する
+	float x = m_pPlayer->GetPos().x - rotationShaftPos.x;
+	float z = m_pPlayer->GetPos().z - rotationShaftPos.z;
+
+	float angle = std::atan2(z, x);
+
+	//回転の大きさ
+	float hMoveScale = 0;
+
+	//次に向かう座標
+	MyEngine::Vector3 nextPos;
+
+	//横移動
+	if (dir.x != 0.0f)
+	{
+		//距離によって回転する大きさを変化させる
+		hMoveScale = (dir.x * kMoveSpeed) / toShaftPosVec.Length();
+		//ダッシュボタンを押していたら横移動の速さにダッシュの倍率をかける
 		if (isDash)
 		{
-			speed *= kDashSpeedRate;
-			m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dash"));
+			hMoveScale *= kDashSpeedRate;
 		}
-		else
+	}
+
+	//敵に近すぎた場合
+	if (toShaftPosVec.Length() < kShortestEnemyDistance)
+	{
+		//前入力されている場合
+		if (dir.z > 0)
 		{
-			m_pPlayer->StopEffect();
-		}
-		//現状の回転度を取得する
-		float x = m_pPlayer->GetPos().x - rotationShaftPos.x;
-		float z = m_pPlayer->GetPos().z - rotationShaftPos.z;
-
-		float angle = std::atan2(z, x);
-
-		//回転の大きさ
-		float hMoveScale = 0;
-
-		//次に向かう座標
-		MyEngine::Vector3 nextPos;
-
-		//横移動
-		if (dir.x != 0.0f)
-		{
-			//距離によって回転する大きさを変化させる
-			hMoveScale = (dir.x * kMoveSpeed) / toShaftPosVec.Length();
-			//ダッシュボタンを押していたら横移動の速さにダッシュの倍率をかける
-			if (isDash)
+			//横入力の値で回る方向を決める
+			if (dir.x > 0)
 			{
-				hMoveScale *= kDashSpeedRate;
+				//前入力で回転する
+				hMoveScale += (dir.z * speed) / toShaftPosVec.Length();
 			}
-		}
-
-		//敵に近すぎた場合
-		if (toShaftPosVec.Length() < kShortestEnemyDistance)
-		{
-			//前入力されている場合
-			if (dir.z > 0)
-			{
-				//横入力の値で回る方向を決める
-				if (dir.x > 0)
-				{
-					//前入力で回転する
-					hMoveScale += (dir.z * speed) / toShaftPosVec.Length();
-				}
-				else
-				{
-					//前入力で回転する
-					hMoveScale -= (dir.z * speed) / toShaftPosVec.Length();
-				}
-			}
-			//後ろ入力されている場合
 			else
 			{
-				nextPos += nextPos + toShaftPosVec.Normalize() * dir.z * speed;
+				//前入力で回転する
+				hMoveScale -= (dir.z * speed) / toShaftPosVec.Length();
 			}
 		}
-		//敵から一定距離離れている場合
+		//後ろ入力されている場合
 		else
 		{
 			nextPos += nextPos + toShaftPosVec.Normalize() * dir.z * speed;
 		}
-
-		//上下移動
-		if (input.GetTriggerInfo().left > kTriggerReaction)
-		{
-			nextPos.y += kMoveSpeed;
-		}
-		else if (input.GetTriggerInfo().right > kTriggerReaction)
-		{
-			nextPos.y -= kMoveSpeed;
-		}
-
-
-		//現在の角度に横移動の大きさを足す
-		angle += hMoveScale;
-
-		nextPos.x += cosf(angle) * toShaftPosVec.Length() + rotationShaftPos.x;
-		nextPos.y += m_pPlayer->GetPos().y;
-		nextPos.z += sinf(angle) * toShaftPosVec.Length() + rotationShaftPos.z;
-
-
-
-		velo = nextPos - m_pPlayer->GetPos();
-
-		//必殺技パレットが開かれていなく
-		if (!input.IsPress(Game::InputId::kLb))
-		{
-			//回避行動の入力がされたら
-			if (input.IsTrigger(Game::InputId::kA))
-			{
-				//一応エフェクトを消しておく
-				m_pPlayer->StopEffect();
-				//StateをDodgeに変更する
-				m_nextState = std::make_shared<PlayerStateDodge>(m_pPlayer, m_pScene);
-				//回避の方向を設定する
-				auto state = std::dynamic_pointer_cast<PlayerStateDodge>(m_nextState);
-				state->Init(dir);
-				return;
-			}
-		}
-		
-		m_pPlayer->PlayAnim();
-		m_pPlayer->SetVelo(velo);
-
-		//正面の座標
-		MyEngine::Vector3 frontPos = m_pPlayer->GetPos() + velo;
-		//上下移動を行う際は敵の方を向きながら動くようにする
-		if (frontPos.y != m_pPlayer->GetPos().y)
-		{
-			frontPos = m_pPlayer->GetTargetPos();
-		}
-
-		//移動先の座標を向くようにする
-		m_pPlayer->SetModelFront(frontPos);
-
-		//自分のポインタを返す
-		m_nextState = shared_from_this();
-		return;
 	}
-	//移動入力がされていないときに
+	//敵から一定距離離れている場合
 	else
+	{
+		nextPos += nextPos + toShaftPosVec.Normalize() * dir.z * speed;
+	}
+
+	//上下移動
+	if (input.GetTriggerInfo().left > kTriggerReaction)
+	{
+		nextPos.y += kMoveSpeed;
+	}
+	else if (input.GetTriggerInfo().right > kTriggerReaction)
+	{
+		nextPos.y -= kMoveSpeed;
+	}
+
+
+	//現在の角度に横移動の大きさを足す
+	angle += hMoveScale;
+
+	nextPos.x += cosf(angle) * toShaftPosVec.Length() + rotationShaftPos.x;
+	nextPos.y += m_pPlayer->GetPos().y;
+	nextPos.z += sinf(angle) * toShaftPosVec.Length() + rotationShaftPos.z;
+
+
+
+	velo = nextPos - m_pPlayer->GetPos();
+
+	//必殺技パレットが開かれていなく
+	if (!input.IsPress(Game::InputId::kLb))
 	{
 		//回避行動の入力がされたら
 		if (input.IsTrigger(Game::InputId::kA))
@@ -305,16 +271,44 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			m_nextState = std::make_shared<PlayerStateDodge>(m_pPlayer, m_pScene);
 			//回避の方向を設定する
 			auto state = std::dynamic_pointer_cast<PlayerStateDodge>(m_nextState);
-			//敵に向かうベクトルを作成する
-			MyEngine::Vector3 dir = (m_pPlayer->GetTargetPos() - m_pPlayer->GetPos()).Normalize();
 			state->Init(dir);
 			return;
 		}
+	}
+
+	m_pPlayer->PlayAnim();
+	m_pPlayer->SetVelo(velo);
+
+	//正面の座標
+	MyEngine::Vector3 frontPos = m_pPlayer->GetPos() + velo;
+	//上下移動を行う際は敵の方を向きながら動くようにする
+	if (frontPos.y != m_pPlayer->GetPos().y)
+	{
+		frontPos = m_pPlayer->GetTargetPos();
+	}
+
+	
+	
+	//移動してなければ
+	if (velo.sqLength() < 0.001f)
+	{
+		//ターゲットの座標を向くようにする
+		m_pPlayer->SetModelFront(m_pPlayer->GetTargetPos());
 		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
 		auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
 		state->Init();
 		return;
 	}
+	//移動していれば
+	else
+	{
+		//移動先の座標を向くようにする
+		m_pPlayer->SetModelFront(frontPos);
+		//自分のポインタを返す
+		m_nextState = shared_from_this();
+		return;
+	}
+
 
 }
 

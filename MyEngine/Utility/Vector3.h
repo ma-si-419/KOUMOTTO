@@ -92,6 +92,7 @@ namespace MyEngine
 		Vector3 operator/(float right)const;
 		Vector3 operator/=(float right);
 		Vector3 operator=(VECTOR right);
+
 	};
 }
 
