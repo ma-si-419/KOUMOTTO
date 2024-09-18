@@ -10,19 +10,19 @@
 namespace
 {
 	//移動速度
-	constexpr float kMoveSpeed = 10.0f;
+	constexpr float kMoveSpeed = 1.0f;
 	//攻撃を出す座標
-	constexpr float kAttackPos = 50.0f;
+	constexpr float kAttackPos = 5.0f;
 	//格闘攻撃を出す時の敵との距離(当たり判定の大きさの倍率)
 	constexpr float kPhysicalAttackLange = 0.9f;
 	//当たり判定の大きさ
-	constexpr float kColScale = 10.0f;
+	constexpr float kColScale = 2.0f;
 	//トリガーが反応する
 	constexpr int kTriggerReaction = 200;
 	//初期回転度
 	constexpr int kInitRota = 10;
 	//モデルの拡大率
-	constexpr float kModelScale = 0.3f;
+	constexpr float kModelScale = 0.03f;
 }
 Player::Player() :
 	CharacterBase("data/model/Player.mv1", ObjectTag::kPlayer),
@@ -234,6 +234,12 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 		//UIに受けたダメージを送る
 		m_pUi->AddShowDamage(m_rigidbody.GetPos(), damage, true);
 	}
+	//else if (collider->GetTag() == ObjectTag::kStage)
+	//{
+	//	int playEffect = PlayEffekseer3DEffect(GetEffekseerData("stageHit").first);
+	//	MyEngine::Vector3 pos = collider->m_rigidbody.GetPos();
+	//	SetPosPlayingEffekseer3DEffect(playEffect,);
+	//}
 }
 
 std::map<std::string, std::string> Player::GetSetSpecialAttackName()

@@ -153,6 +153,8 @@
     <ClCompile Include="Character\Enemy\EnemyStateHitAttack.cpp" />
     <ClCompile Include="Character\Enemy\EnemyStateIdle.cpp" />
     <ClCompile Include="Character\Enemy\EnemyStateMove.cpp" />
+    <ClCompile Include="EffekseerData.cpp" />
+    <ClCompile Include="EffekseerManager.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="Scene\GameCamera.cpp" />
@@ -186,6 +188,7 @@
     <ClCompile Include="Scene\SoundManager.cpp" />
     <ClCompile Include="Scene\TitleCamera.cpp" />
     <ClCompile Include="Scene\Ui.cpp" />
+    <ClCompile Include="Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character\AttackBase.h" />
@@ -198,6 +201,8 @@
     <ClInclude Include="Character\Enemy\EnemyStateHitAttack.h" />
     <ClInclude Include="Character\Enemy\EnemyStateIdle.h" />
     <ClInclude Include="Character\Enemy\EnemyStateMove.h" />
+    <ClInclude Include="EffekseerData.h" />
+    <ClInclude Include="EffekseerManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="Scene\GameCamera.h" />
@@ -234,6 +239,7 @@
     <ClInclude Include="Scene\SoundManager.h" />
     <ClInclude Include="Scene\TitleCamera.h" />
     <ClInclude Include="Scene\Ui.h" />
+    <ClInclude Include="Stage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

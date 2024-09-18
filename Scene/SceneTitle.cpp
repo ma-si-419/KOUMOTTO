@@ -7,9 +7,9 @@
 namespace
 {
 	//プレイヤーの初期位置
-	MyEngine::Vector3 kPlayerInitPos(-50, -80, -50);
+	MyEngine::Vector3 kPlayerInitPos(-5, -8, -5);
 	//エネミーの初期位置
-	MyEngine::Vector3 kEnemyInitPos(50, -50, 50);
+	MyEngine::Vector3 kEnemyInitPos(5, -5, 5);
 	//矢印を揺らす大きさ
 	constexpr float kShakeArrowScale = 10.0f;
 	//矢印を揺らすスピード
@@ -60,9 +60,9 @@ void SceneTitle::Init()
 	MV1SetPosition(m_playerHandle, kPlayerInitPos.CastVECTOR());
 	MV1SetPosition(m_enemyHandle, kEnemyInitPos.CastVECTOR());
 	//モデルのスケール設定
-	MV1SetScale(m_domeHandle, VGet(50, 50, 50));
-	MV1SetScale(m_playerHandle, VGet(0.3, 0.3, 0.3));
-	MV1SetScale(m_enemyHandle, VGet(30, 30, 30));
+	MV1SetScale(m_domeHandle, VGet(5, 5, 5));
+	MV1SetScale(m_playerHandle, VGet(0.03, 0.03, 0.03));
+	MV1SetScale(m_enemyHandle, VGet(3, 3, 3));
 	//モデルのアニメーション設定
 	MV1AttachAnim(m_playerHandle,kPlayerAnimNumber);
 	MV1AttachAnim(m_enemyHandle,kEnemyAnimNumber);
@@ -242,7 +242,6 @@ void SceneTitle::End()
 	{
 		DeleteGraph(item.second.handle);
 	}
-	m_dataManager.DeleteEffekseerData();
 }
 
 void SceneTitle::LoadUiHandle(std::vector<DataManager::UiInfo> data)

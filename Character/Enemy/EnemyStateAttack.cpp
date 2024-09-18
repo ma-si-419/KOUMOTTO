@@ -5,16 +5,16 @@
 namespace
 {
 	//Ši“¬UŒ‚‚ğ—Dæ‚·‚é‹——£
-	constexpr float kPrioritizePhysialAttackDistance = 300.0f;
+	constexpr float kPrioritizePhysialAttackDistance = 30.0f;
 
 	//‹C’eUŒ‚‚ğ—Dæ‚·‚é‹——£
-	constexpr float kPrioritizeEnergyAttackDistance = 1000.0f;
+	constexpr float kPrioritizeEnergyAttackDistance = 100.0f;
 
 	//Ši“¬UŒ‚‚ğo‚·‹——£
-	constexpr float kPhysicalAttackDistance = 150.0f;
+	constexpr float kPhysicalAttackDistance = 15.0f;
 
 	//Ši“¬UŒ‚‚ğo‚·‚Æ‚«‚ÌˆÚ“®‘¬“x
-	constexpr float kMoveSpeed = 15.0f;
+	constexpr float kMoveSpeed = 1.5f;
 
 	//Ši“¬UŒ‚‚ğ—£‚ê‚Ä‚¢‚Ä‚ào‚·ŠÔ
 	constexpr int kMaxMoveTime = 120;

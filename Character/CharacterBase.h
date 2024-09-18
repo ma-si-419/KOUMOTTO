@@ -16,7 +16,7 @@ public:
 	struct Status
 	{
 		float hp = 100000;
-		float mp = 130;
+		float mp = 250;
 		float atk = 200;
 		float def = 300;
 	};

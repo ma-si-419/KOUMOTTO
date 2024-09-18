@@ -4,13 +4,12 @@
 #include "CapsuleColliderData.h"
 #include "Ui.h"
 #include "EnemyStateIdle.h"
-#include "EffekseerForDXLib.h"
 namespace
 {
 	//当たり判定の大きさ
-	constexpr float kColScale = 10.0f;
+	constexpr float kColScale = 2.0f;
 	//初期位置
-	const MyEngine::Vector3 kInitPos(300, 0, 300);
+	const MyEngine::Vector3 kInitPos(30, 0, 30);
 	//スタンゲージのマックス
 	constexpr float kMaxStanPoint = 500;
 	//スタンゲージが回復するまでの時間
@@ -29,8 +28,8 @@ Enemy::Enemy() :
 	m_lastHitDamageTime(0),
 	m_comboCount(0)
 {
-	m_status.hp = kEnemyHp;
-	m_status.atk = kEnemyAtk;
+	//m_status.hp = kEnemyHp;
+	//m_status.atk = kEnemyAtk;
 }
 
 Enemy::~Enemy()
@@ -42,7 +41,7 @@ void Enemy::Init(std::shared_ptr<Physics> physics)
 {
 	ChangeAnim("Idle");
 
-	MV1SetScale(m_modelHandle, VGet(30, 30, 30));
+	MV1SetScale(m_modelHandle, VGet(3, 3, 3));
 	Collidable::Init(physics);
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	colData->m_radius = kColScale;

@@ -2,6 +2,7 @@
 #include <cassert>
 #include "Vector3.h"
 #include "Collidable.h"
+#include "Stage.h"
 #include "CapsuleColliderData.h"
 #include "SphereColliderData.h"
 void Physics::Entry(std::shared_ptr<Collidable> col)
@@ -129,11 +130,36 @@ void Physics::FixPosition()
 	{
 		// Posを更新するので、velocityもそこに移動するvelocityに修正
 		MyEngine::Vector3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos(); 
+		MyEngine::Vector3 nextPos = item->m_rigidbody.GetPos() + toFixedPos;
+
+		MyEngine::Vector3 centerPos(0, 0, 0);
+
+
+
+		//TODO:ステージの当たり判定を作成する
+		//移動制限を付ける(仮処理)
+		if ((nextPos - centerPos).Length() > 500)
+		{
+			//ぶつかった場所を保存する
+			OnCollideInfo hitCollides;
+			hitCollides.owner = item;
+			//ステージとぶつかったして
+			std::shared_ptr<Stage> stage = std::make_shared<Stage>();
+			//ぶつかった場所を補正前の座標に設定
+			stage->m_rigidbody.SetPos(nextPos);
+			hitCollides.colider = stage;
+			//ぶつかった時の処理を呼ぶ
+			hitCollides.OnCollide();
+			//座標を補正
+			nextPos = (nextPos - centerPos).Normalize() * 500;
+
+		}
 
 		item->m_rigidbody.SetVelo(toFixedPos);
 
+
 		// 位置確定
-		item->m_rigidbody.SetPos(item->m_nextPos);
+		item->m_rigidbody.SetPos(nextPos);
 
 		//当たり判定がカプセルだったら
 		if (item->m_pColData->GetKind() == ColliderData::Kind::kCapsule)

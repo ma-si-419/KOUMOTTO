@@ -9,6 +9,7 @@
 #include "AttackBase.h"
 #include "LoadCsv.h"
 #include "ObjectManager.h"
+#include "EffekseerManager.h"
 #include "EffekseerForDXLib.h"
 
 namespace
@@ -20,8 +21,8 @@ namespace
 	//クリア時のエフェクトを出す間隔
 	constexpr int kClearEffectPopTime = 10;
 	//クリア時のエフェクトの座標の範囲
-	constexpr int kClearEffectPopRange = 200;
-	constexpr int kClearEffectPopRangeHalf = 100;
+	constexpr int kClearEffectPopRange = 20;
+	constexpr int kClearEffectPopRangeHalf = 10;
 }
 
 SceneGame::SceneGame(SceneManager& sceneManager, DataManager& dataManager, SoundManager& soundManager) :
@@ -62,15 +63,11 @@ SceneGame::~SceneGame()
 void SceneGame::Init()
 {
 	m_dataManager.LoadAnimationFile();
-	m_dataManager.LoadEffekseerFile();
 
 	ObjectManager::GetInstance().SetObject(Game::SceneNum::kGame);
 
 	m_pPlayer->SetAnimationData(m_dataManager.GetAnimationData(), true);
 	m_pEnemy->SetAnimationData(m_dataManager.GetAnimationData(), false);
-
-	m_pPlayer->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
-	m_pEnemy->SetEffekseerHandle(m_dataManager.GetEffekseerHandle());
 
 	m_soundManager.SetHandle(m_dataManager.GetSoundData(Game::SceneNum::kGame));
 
@@ -233,14 +230,15 @@ void SceneGame::Update(MyEngine::Input input)
 			//一定時間ごとにエフェクトを出す
 			if (m_time % kClearEffectPopTime == 0)
 			{
-				int handle = PlayEffekseer3DEffect(m_dataManager.GetEffekseerHandle()["Clear"].first);
-				MyEngine::Vector3 pos = m_pPlayer->GetPos();
-				pos.x += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
-				pos.y += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
-				pos.z += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
+				MyEngine::Vector3 effectPos = m_pPlayer->GetPos();
+				effectPos.x += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
+				effectPos.y += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
+				effectPos.z += GetRand(kClearEffectPopRange) - kClearEffectPopRangeHalf;
 
-				SetPosPlayingEffekseer3DEffect(handle, pos.x, pos.y, pos.z);
 
+				std::shared_ptr<EffekseerData> clearEffect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("clear"),effectPos,false);
+				
+				EffekseerManager::GetInstance().Entry(clearEffect);
 			}
 
 			if (input.IsTrigger(Game::InputId::kA))
@@ -342,7 +340,7 @@ void SceneGame::Draw()
 	//オブジェクトの描画
 	ObjectManager::GetInstance().Draw();
 	//エフェクトを描画する
-	DrawEffekseer3D();
+	EffekseerManager::GetInstance().Draw();
 	//プレイヤーとエネミーの体力バーを表示する
 	m_pUi->DrawStateBar(m_pPlayer, m_pEnemy);
 	//与えたダメージの表示
@@ -372,7 +370,6 @@ void SceneGame::End()
 {
 	m_pPlayer->Final(m_pPhysics);
 	m_pEnemy->Final(m_pPhysics);
-	m_dataManager.DeleteEffekseerData();
 }
 
 void SceneGame::AddAttack(std::shared_ptr<AttackBase> pAttack)

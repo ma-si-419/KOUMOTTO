@@ -46,7 +46,6 @@ public:
 	void Init();
 
 	void LoadAttackFile();
-	void LoadEffekseerFile();
 	void LoadUiFile();
 	void LoadAiFile();
 	void LoadAnimationFile();
@@ -54,10 +53,6 @@ public:
 
 	//攻撃のデータを取得
 	std::map<std::string, AttackInfo> GetAttackData() { return m_attackData; };
-	//Effekseerのデータを取得
-	std::map<std::string, std::pair<int, int>> GetEffekseerHandle() { return m_effekseerHandles; };
-	//Effekseerのデータを削除
-	void DeleteEffekseerData();
 	//音楽のデータを取得
 	std::vector<std::string> GetSoundData(Game::SceneNum sceneNum);
 	//ゲームシーンのUIのパス取得
@@ -73,8 +68,6 @@ private:
 
 	//攻撃のデータ
 	std::map<std::string, AttackInfo> m_attackData;
-	//Effekseerのロードしたハンドルを保存しておく
-	std::map<std::string, std::pair<int,int>> m_effekseerHandles;
 	//音声のデータ
 	std::vector<std::string> m_sceneTitleSoundData;
 	std::vector<std::string> m_sceneGameSoundData;

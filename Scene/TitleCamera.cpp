@@ -3,14 +3,14 @@
 namespace
 {
 	//‰ñ“]‚·‚é‰~‚Ì‘å‚«‚³
-	constexpr float kLoopRadius = 200.0f;
+	constexpr float kLoopRadius = 20.0f;
 	//ƒJƒƒ‰‚Ì‰ñ“]‘¬“x
 	constexpr float kCameraSpeed = 0.01f;
 }
 TitleCamera::TitleCamera():
 	m_loopCount(0)
 {
-	SetCameraNearFar(1.5f, 10000.0f);
+	SetCameraNearFar(1.5f, 1000.0f);
 }
 
 TitleCamera::~TitleCamera()

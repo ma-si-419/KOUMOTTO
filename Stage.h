@@ -1,10 +1,10 @@
 #pragma once
-#include "ObjectBase.h"
-class Stage : public ObjectBase
+#include "Collidable.h"
+class Stage : public Collidable
 {
 public:
-	Stage();
+	Stage(ObjectTag tag);
 	virtual ~Stage();
 
-	void Draw() override;
+	virtual void OnCollide(std::shared_ptr<Collidable> collider)override;
 };

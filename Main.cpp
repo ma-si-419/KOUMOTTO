@@ -5,6 +5,7 @@
 #include "DataManager.h"
 #include "SoundManager.h"
 #include "ObjectManager.h"
+#include "EffekseerManager.h"
 #include "Input.h"
 #include "Game.h"
 #include <cassert>
@@ -58,6 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	data.LoadAiFile();
 	data.LoadSoundFile();
 	ObjectManager::GetInstance().LoadData();
+	EffekseerManager::GetInstance().LoadData();
 
 	MyEngine::Input input;
 
@@ -86,6 +88,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 		//シーンの更新
 		scene.Update(input);
+		//エフェクトの更新
+		EffekseerManager::GetInstance().Update();
 		//シーンの描画
 		Effekseer_Sync3DSetting();
 		scene.Draw();

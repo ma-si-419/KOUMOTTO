@@ -30,15 +30,15 @@ void ObjectManager::LoadData()
 		ObjectData pushData;
 
 		pushData.path = item[static_cast<int>(ObjectDataInfo::kPath)];
-		pushData.pos.x = std::stoi(item[static_cast<int>(ObjectDataInfo::kPosX)]);
-		pushData.pos.y = std::stoi(item[static_cast<int>(ObjectDataInfo::kPosY)]);
-		pushData.pos.z = std::stoi(item[static_cast<int>(ObjectDataInfo::kPosZ)]);
-		pushData.rota.x = std::stoi(item[static_cast<int>(ObjectDataInfo::kRotaX)]);
-		pushData.rota.y = std::stoi(item[static_cast<int>(ObjectDataInfo::kRotaY)]);
-		pushData.rota.z = std::stoi(item[static_cast<int>(ObjectDataInfo::kRotaZ)]);
-		pushData.scale.x = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleX)]);
-		pushData.scale.y = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleY)]);
-		pushData.scale.z = std::stoi(item[static_cast<int>(ObjectDataInfo::kScaleZ)]);
+		pushData.pos.x = std::stof(item[static_cast<int>(ObjectDataInfo::kPosX)]);
+		pushData.pos.y = std::stof(item[static_cast<int>(ObjectDataInfo::kPosY)]);
+		pushData.pos.z = std::stof(item[static_cast<int>(ObjectDataInfo::kPosZ)]);
+		pushData.rota.x = std::stof(item[static_cast<int>(ObjectDataInfo::kRotaX)]);
+		pushData.rota.y = std::stof(item[static_cast<int>(ObjectDataInfo::kRotaY)]);
+		pushData.rota.z = std::stof(item[static_cast<int>(ObjectDataInfo::kRotaZ)]);
+		pushData.scale.x = std::stof(item[static_cast<int>(ObjectDataInfo::kScaleX)]);
+		pushData.scale.y = std::stof(item[static_cast<int>(ObjectDataInfo::kScaleY)]);
+		pushData.scale.z = std::stof(item[static_cast<int>(ObjectDataInfo::kScaleZ)]);
 		pushData.scene = kSceneNum.at(item[static_cast<int>(ObjectDataInfo::kScene)]);
 		
 		m_objectDatas[item[static_cast<int>(ObjectDataInfo::kName)]] = pushData;

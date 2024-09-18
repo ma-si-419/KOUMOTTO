@@ -11,11 +11,11 @@
 namespace
 {
 	//気弾を出しているときの移動速度
-	constexpr float kEnergyAttackMoveSpeed = 8.0f;
+	constexpr float kEnergyAttackMoveSpeed = 0.8f;
 	//攻撃を出しているときの移動速度
-	constexpr float kPhysicalAttackMoveSpeed = 30;
+	constexpr float kPhysicalAttackMoveSpeed = 3;
 	//敵が近くにいる判定になる距離
-	constexpr float kNearEnemyLength = 150;
+	constexpr float kNearEnemyLength = 15;
 	//敵に近づく時間の最大
 	constexpr int kGoEnemyTime = 60;
 	//トリガーが反応する値

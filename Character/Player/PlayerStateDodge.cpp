@@ -5,11 +5,11 @@
 
 namespace
 {
-	constexpr float kDodgeSpeed = 20.0f;
+	constexpr float kDodgeSpeed = 2.0f;
 	//‰ñ”ğ‚ÌŠÔ
 	constexpr int kDodgeTime = 10;
 	//“G‚Æ‚ÌÅ’Z‹——£
-	constexpr int kShortestEnemyDistance = 150;
+	constexpr int kShortestEnemyDistance = 15;
 }
 void PlayerStateDodge::Init(MyEngine::Vector3 dir)
 {

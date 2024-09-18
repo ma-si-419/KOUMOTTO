@@ -6,7 +6,7 @@
 namespace
 {
 	//ƒ_ƒ[ƒW‚ÌŒyŒ¸—¦
-	constexpr float kDamageCutRate = 0.1f;
+	constexpr float kDamageCutRate = 0.2f;
 }
 void PlayerStateGuard::Init()
 {

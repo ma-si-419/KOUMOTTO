@@ -7,5 +7,5 @@ enum class ObjectTag
 	kEnemy,				//敵
 	kPlayerAttack,		//プレイヤーの攻撃
 	kEnemyAttack,		//エネミーの攻撃
-	kGround				//地面
+	kStage				//ステージ
 };

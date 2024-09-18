@@ -12,9 +12,9 @@
 namespace
 {
 	//移動速度
-	constexpr float kMoveSpeed = 10.0f;
+	constexpr float kMoveSpeed = 1.0f;
 	//敵との一番近い距離(真上にいかないように)
-	constexpr int kShortestEnemyDistance = 150;
+	constexpr int kShortestEnemyDistance = 15;
 	//ダッシュするときの移動速度の倍率
 	constexpr float kDashSpeedRate = 1.8f;
 	//トリガーが反応する値

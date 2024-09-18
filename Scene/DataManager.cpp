@@ -53,21 +53,6 @@ void DataManager::LoadAttackFile()
 	}
 }
 
-void DataManager::LoadEffekseerFile()
-{
-	//エフェクトのデータ読み込み
-	std::vector<std::vector<std::string>> loadEffectData = m_pLoadCsv->LoadFile("data/csv/effekseerHandleData.csv");
-
-	for (auto& item : loadEffectData)
-	{
-		std::string dataName = "data/effekseer/" + item[static_cast<int>(Game::EffeckInfoSort::kFileName)] + ".efk";
-
-		//ハンドルをロードしてマップに登録
-		m_effekseerHandles[item[static_cast<int>(Game::EffeckInfoSort::kName)]].first = LoadEffekseerEffect(dataName.c_str(), stoi(item[static_cast<int>(Game::EffeckInfoSort::kMag)]));
-		m_effekseerHandles[item[static_cast<int>(Game::EffeckInfoSort::kName)]].second = stoi(item[static_cast<int>(Game::EffeckInfoSort::kLoopFrame)]);
-	}
-}
-
 void DataManager::LoadUiFile()
 {
 	std::vector<std::vector<std::string>> loadUiData = m_pLoadCsv->LoadFile("data/csv/uiData.csv");
@@ -142,15 +127,7 @@ void DataManager::LoadSoundFile()
 		}
 	}
 }
-void DataManager::DeleteEffekseerData()
-{
-	for (auto item : m_effekseerHandles)
-	{
-		StopEffekseer3DEffect(item.second.first);
-		DeleteEffekseerEffect(item.second.first);
-	}
-	m_effekseerHandles.clear();
-}
+
 std::vector<std::string> DataManager::GetSoundData(Game::SceneNum sceneNum)
 {
 	if (sceneNum == Game::SceneNum::kTitle)

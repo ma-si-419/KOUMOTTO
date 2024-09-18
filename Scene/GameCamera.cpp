@@ -3,15 +3,15 @@
 namespace
 {
 	//カメラとプレイヤーの距離
-	constexpr float kPlayerDistance = 240.0f;
+	constexpr float kPlayerDistance = 24.0f;
 	//カメラの移動速度(距離の倍率)
-	constexpr float kCameraSpeed = 0.01f;
+	constexpr float kCameraSpeed = 0.001f;
 	//カメラの高さ
-	constexpr float kCameraHeight = 100.0f;
+	constexpr float kCameraHeight = 10.0f;
 	//回転をしない猶予範囲
 	constexpr float kRotaMargin = 60.0f;
 	//カメラの初期位置
-	MyEngine::Vector3 kInitPos(0, -500, -1000);
+	MyEngine::Vector3 kInitPos(0, -50, -100);
 	//カメラの回転具合を距離によって回していきます
 	constexpr float kDistanceRotaYDecayRate = 0.001f;
 	//カメラの初期視野角(60度)
@@ -21,11 +21,11 @@ namespace
 	//カメラの視野角を拡縮する速度
 	constexpr float kFovScalingSpeed = (kWideCameraFov - kInitCameraFov) * 0.05f;
 	//カメラをあげるときの上昇速度
-	constexpr float kCameraUpSpeed = 1.0f;
+	constexpr float kCameraUpSpeed = 0.1f;
 	//カメラの最大上昇値
-	constexpr float kCameraMaxUpPos = 10.0f;
+	constexpr float kCameraMaxUpPos = 1.0f;
 	//スカイドームの大きさ
-	constexpr float kSkyDomeScale = 60;
+	constexpr float kSkyDomeScale = 8;
 }
 
 GameCamera::GameCamera() :
@@ -110,7 +110,7 @@ void GameCamera::Update()
 
 	SetupCamera_Perspective(m_fov);
 
-	m_playerPos.y += 50 + m_cameraUpPos;
+	m_playerPos.y += 5 + m_cameraUpPos;
 
 	MyEngine::Vector3 enemyToPlayer = m_playerPos - m_targetPos;
 
@@ -122,7 +122,7 @@ void GameCamera::Update()
 	m_cameraPos.y = enemyToPlayer.y + kPlayerDistance * unitVec.y;
 	m_cameraPos.z = enemyToPlayer.z + kPlayerDistance * unitVec.z;
 
-	MATRIX mat = MGetRotY(0.5 / (vecSize * 0.01));
+	MATRIX mat = MGetRotY(0.5 / (vecSize * 0.1));
 
 	m_cameraPos = m_cameraPos.MatTransform(mat);
 
@@ -139,7 +139,7 @@ void GameCamera::Update()
 	//視野角を広げるかどうかをfalseにする
 	m_isUpFov = false;
 	//カメラの座標にスカイドームを設定
-	MV1SetPosition(m_domeHandle, m_cameraPos.CastVECTOR());
+	MV1SetPosition(m_domeHandle,VGet(0,0,0));
 
 	//カメラの見ている方向にディレクションライトを設定
 	SetLightDirectionHandle(m_lightHandle, (m_targetPos - m_cameraPos).Normalize().CastVECTOR());
