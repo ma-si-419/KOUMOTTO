@@ -1,5 +1,6 @@
 #include "EnemyStateIdle.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 
 namespace
 {
@@ -43,8 +44,8 @@ int EnemyStateIdle::OnDamage(std::shared_ptr<Collidable> collider)
 	//Žó‚¯‚½UŒ‚‚ÌŽí—Þ‚ðÝ’è‚·‚é
 	m_hitEffect = attack->GetHitEffect();
 	m_isChangeState = true;
-	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
 	MyEngine::Vector3 pos = m_pEnemy->GetPos();
-	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), pos, false);
+	EffekseerManager::GetInstance().Entry(effect);
 	return damage;
 }

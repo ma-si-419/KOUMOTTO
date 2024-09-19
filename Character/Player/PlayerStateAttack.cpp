@@ -6,6 +6,7 @@
 #include "SceneGame.h"
 #include "CommandIdList.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 
 
 namespace
@@ -467,9 +468,9 @@ int PlayerStateAttack::OnDamage(std::shared_ptr<Collidable> collider)
 		state->Init(collider);
 	}
 	//ヒットエフェクトを表示する
-	int effect = PlayEffekseer3DEffect(m_pPlayer->GetEffekseerData("Hit").first);
 	MyEngine::Vector3 pos = m_pPlayer->GetPos();
-	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), pos, false);
+	EffekseerManager::GetInstance().Entry(effect);
 	return damage;
 }
 

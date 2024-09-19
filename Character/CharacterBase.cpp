@@ -6,6 +6,7 @@
 #include "LoadCsv.h"
 #include "EffekseerForDXLib.h"
 #include "SceneGame.h"
+#include "EffekseerData.h"
 
 namespace
 {
@@ -24,12 +25,8 @@ CharacterBase::CharacterBase(const TCHAR* model, ObjectTag tag) :
 	m_animTime(0),
 	m_animPlaySpeed(0),
 	m_totalAnimTime(0),
-	m_playEffectFrame(0),
 	m_isLoopAnim(false)
 {
-	m_playEffectData.first = -1;
-	m_playEffectData.second = -1;
-
 	m_modelHandle = MV1LoadModel(model);
 	//auto& coldata = std::dynamic_pointer_cast<CapsuleColliderData>;
 }
@@ -163,44 +160,6 @@ void CharacterBase::SetAttackEndAnim(float attackEndTime)
 	m_animPlaySpeed = m_totalAnimTime / attackEndTime;
 }
 
-void CharacterBase::PlayEffect()
-{
-	//エフェクトのハンドルが入っていてまだ再生していなかったら
-	if (m_playEffectData.first != -1 && m_playingEffectHandle == -1)
-	{
-		//エフェクトをプレイする
-		m_playingEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
-		//プレイヤーの座標
-		MyEngine::Vector3 pos = m_rigidbody.GetPos();
-		//エフェクトをプレイヤーの座標に設定
-		SetPosPlayingEffekseer3DEffect(m_playingEffectHandle, pos.x, pos.y, pos.z);
-	}
-	//エフェクトを再生しているときの処理
-	if (m_playingEffectHandle != -1)
-	{
-		//プレイヤーの座標
-		MyEngine::Vector3 pos = m_rigidbody.GetPos();
-		//エフェクトをプレイヤーの座標に設定
-		SetPosPlayingEffekseer3DEffect(m_playingEffectHandle, pos.x, pos.y, pos.z);
-		//エフェクトの再生時間を更新
-		m_playEffectFrame++;
-	}
-	//エフェクトをループさせる
-	if (m_playEffectFrame > m_playEffectData.second)
-	{
-		//エフェクトの再生時間を0にする
-		m_playEffectFrame = 0;
-		//エフェクトを止める
-		StopEffekseer3DEffect(m_playingEffectHandle);
-		//エフェクトを再び再生する
-		m_playingEffectHandle = PlayEffekseer3DEffect(m_playEffectData.first);
-		//プレイヤーの座標
-		MyEngine::Vector3 pos = m_rigidbody.GetPos();
-		//エフェクトをプレイヤーの座標に設定
-		SetPosPlayingEffekseer3DEffect(m_playingEffectHandle, pos.x, pos.y, pos.z);
-	}
-}
-
 void CharacterBase::PlaySE(std::string name, int playType)
 {
 	m_pScene->PlaySE(name, playType);
@@ -209,6 +168,14 @@ void CharacterBase::PlaySE(std::string name, int playType)
 void CharacterBase::StopSE(std::string name)
 {
 	m_pScene->StopSE(name);
+}
+
+void CharacterBase::EndEffect()
+{
+	if (m_pEffectData)
+	{
+		m_pEffectData->Final();
+	}
 }
 
 void CharacterBase::PlaySpecialAttack(std::string id)

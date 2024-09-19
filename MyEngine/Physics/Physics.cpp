@@ -144,7 +144,7 @@ void Physics::FixPosition()
 			OnCollideInfo hitCollides;
 			hitCollides.owner = item;
 			//ステージとぶつかったして
-			std::shared_ptr<Stage> stage = std::make_shared<Stage>();
+			std::shared_ptr<Stage> stage = std::make_shared<Stage>(ObjectTag::kStage);
 			//ぶつかった場所を補正前の座標に設定
 			stage->m_rigidbody.SetPos(nextPos);
 			hitCollides.colider = stage;

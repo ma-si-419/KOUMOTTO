@@ -1,6 +1,8 @@
 #include "AttackBase.h"
 #include "CapsuleColliderData.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerData.h"
+#include "EffekseerManager.h"
 
 namespace
 {
@@ -34,7 +36,7 @@ AttackBase::~AttackBase()
 {
 }
 
-void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle, int soundHandle)
+void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, std::string effekseerId, int soundHandle)
 {
 	//当たり判定の初期化＆登録
 	Collidable::Init(physics);
@@ -51,17 +53,20 @@ void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, i
 	if (m_isPopEffect)
 	{
 		MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
+		//エフェクトのポインタを作成
+		std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData(effekseerId), effectPos, false);
+		//エフェクトをマネージャーに追加
+		EffekseerManager::GetInstance().Entry(effect);
 		if (m_status.isLaser)
 		{
-			m_laserPlayEffectHandles.push_back(PlayEffekseer3DEffect(effekseerHandle));
-			SetPosPlayingEffekseer3DEffect(m_laserPlayEffectHandles[0], effectPos.x, effectPos.y, effectPos.z);
+			//出しているエフェクトの配列に追加
+			m_pLaserEffekseerData.push_back(effect);
 		}
 		else
 		{
-			m_playEffectHandle = PlayEffekseer3DEffect(effekseerHandle);
-			SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+			m_pEffekseerData = effect;
 		}
-		m_effectHandle = effekseerHandle;
+		m_effectId = effekseerId;
 	}
 }
 
@@ -136,7 +141,7 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 		if (!m_status.isLaser)
 		{
 			//座標を更新し続ける
-			SetPosPlayingEffekseer3DEffect(m_playEffectHandle, effectPos.x, effectPos.y, effectPos.z);
+			m_pEffekseerData->SetPos(effectPos);
 		}
 		//レーザーの場合
 		else
@@ -146,9 +151,11 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 				MyEngine::Vector3 pos = colData->m_startPos;
 
 				//一定時間ごとにエフェクトを出す
-				int playHandle = PlayEffekseer3DEffect(m_effectHandle);
-				SetPosPlayingEffekseer3DEffect(playHandle, effectPos.x, effectPos.y, effectPos.z);
-				m_laserPlayEffectHandles.push_back(playHandle);
+				std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData(m_effectId), pos, false);
+
+				EffekseerManager::GetInstance().Entry(effect);
+
+				m_pLaserEffekseerData.push_back(effect);
 			}
 		}
 	}
@@ -173,7 +180,14 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 	if (m_lifeTime > m_status.lifeTime)
 	{
 		m_isExist = false;
-		StopEffekseer3DEffect(m_playEffectHandle);
+		for (auto& item : m_pLaserEffekseerData)
+		{
+			item->Final();
+		}
+		if (m_pEffekseerData)
+		{
+			m_pEffekseerData->Final();
+		}
 	}
 }
 
@@ -188,7 +202,14 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 			//エフェクトを残さないと決められていたら
 			if (!m_isLeaveEffect)
 			{
-				StopEffekseer3DEffect(m_playEffectHandle);
+				for (auto& item : m_pLaserEffekseerData)
+				{
+					item->Final();
+				}
+				if (m_pEffekseerData)
+				{
+					m_pEffekseerData->Final();
+				}
 			}
 		}
 	}
@@ -200,7 +221,14 @@ void AttackBase::OnCollide(std::shared_ptr<Collidable> collider)
 			//エフェクトを残さないと決められていたら
 			if (!m_isLeaveEffect)
 			{
-				StopEffekseer3DEffect(m_playEffectHandle);
+				for (auto& item : m_pLaserEffekseerData)
+				{
+					item->Final();
+				}
+				if (m_pEffekseerData)
+				{
+					m_pEffekseerData->Final();
+				}
 			}
 		}
 	}
@@ -212,7 +240,14 @@ void AttackBase::Final(std::shared_ptr<Physics> physics)
 	if (!m_isLeaveEffect)
 	{
 		//再生中のエフェクトを消す
-		StopEffekseer3DEffect(m_playEffectHandle);
+		for (auto& item : m_pLaserEffekseerData)
+		{
+			item->Final();
+		}
+		if (m_pEffekseerData)
+		{
+			m_pEffekseerData->Final();
+		}
 	}
 
 	//当たり判定をけす

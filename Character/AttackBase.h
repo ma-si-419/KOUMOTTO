@@ -2,13 +2,14 @@
 #include "Collidable.h"
 #include "Game.h"
 #include "DataManager.h"
+class EffekseerData;
 class AttackBase : public Collidable
 {
 public:
 	AttackBase(ObjectTag tag);
 	virtual ~AttackBase();
 
-	void Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, int effekseerHandle,int soundHandle);
+	void Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, std::string effekseerId,int soundHandle);
 	void SetStatus(DataManager::AttackInfo status, MyEngine::Vector3 target, MyEngine::Vector3 playerPos, float power);
 	void Update(MyEngine::Vector3 targetPos);
 	void Draw() {};
@@ -48,12 +49,12 @@ private:
 	float m_targetLength;
 	//移動した距離
 	float m_moveLength;
-	//エフェクトのハンドル
-	int m_effectHandle;
-	//プレイ中のエフェクトのハンドル
-	int m_playEffectHandle;
-	//レーザーのプレイ中のエフェクトハンドル
-	std::vector<int> m_laserPlayEffectHandles;
+	//出しているエフェクトのID
+	std::string m_effectId;
+	//エフェクトのポインタ
+	std::shared_ptr<EffekseerData> m_pEffekseerData;
+	//レーザーのプレイ中のエフェクトのポインタ
+	std::vector<std::shared_ptr<EffekseerData>> m_pLaserEffekseerData;
 	//当たり判定が消えた後にエフェクトを残すかどうか
 	bool m_isLeaveEffect;
 	//再生する音のハンドル

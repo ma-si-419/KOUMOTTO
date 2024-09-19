@@ -7,6 +7,7 @@
 #include "PlayerStateAttack.h"
 #include "Player.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 
 
 namespace
@@ -36,7 +37,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		if (input.IsTrigger(Game::InputId::kX))
 		{
 			//一応エフェクトを消しておく
-			m_pPlayer->StopEffect();
+			m_pPlayer->EndEffect();
 			//状態を変化させる
 			m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 			auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -47,7 +48,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		if (input.IsTrigger(Game::InputId::kB))
 		{
 			//一応エフェクトを消しておく
-			m_pPlayer->StopEffect();
+			m_pPlayer->EndEffect();
 			//状態を変化させる
 			m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 			auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -58,7 +59,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		if (input.IsPress(Game::InputId::kRb))
 		{
 			//一応エフェクトを消しておく
-			m_pPlayer->StopEffect();
+			m_pPlayer->EndEffect();
 			//StateをGuardに変更する
 			m_nextState = std::make_shared<PlayerStateGuard>(m_pPlayer, m_pScene);
 			auto state = std::dynamic_pointer_cast<PlayerStateGuard>(m_nextState);
@@ -85,7 +86,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kY]))
 			{
 				//一応エフェクトを消しておく
-				m_pPlayer->StopEffect();
+				m_pPlayer->EndEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -99,7 +100,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kB]))
 			{
 				//一応エフェクトを消しておく
-				m_pPlayer->StopEffect();
+				m_pPlayer->EndEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -114,7 +115,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kX]))
 			{
 				//一応エフェクトを消しておく
-				m_pPlayer->StopEffect();
+				m_pPlayer->EndEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -128,7 +129,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 			if (m_pPlayer->GetNowMp() >= m_pPlayer->GetAttackCost(setSpecialAttack[Game::InputId::kA]))
 			{
 				//一応エフェクトを消しておく
-				m_pPlayer->StopEffect();
+				m_pPlayer->EndEffect();
 				//状態を変化させる
 				m_nextState = std::make_shared<PlayerStateAttack>(m_pPlayer, m_pScene);
 				auto state = std::dynamic_pointer_cast<PlayerStateAttack>(m_nextState);
@@ -177,11 +178,21 @@ void PlayerStateMove::Update(MyEngine::Input input)
 	if (isDash)
 	{
 		speed *= kDashSpeedRate;
-		m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dash"));
+
+		if (!m_pPlayer->GetEffectData())
+		{
+			MyEngine::Vector3 pos = m_pPlayer->GetPos();
+			std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Dash"), pos, true);
+			EffekseerManager::GetInstance().Entry(effect);
+			m_pPlayer->SetEffectData(effect);
+		}
+
+		auto effect = m_pPlayer->GetEffectData();
+		effect->SetPos(m_pPlayer->GetPos());
 	}
 	else
 	{
-		m_pPlayer->StopEffect();
+		m_pPlayer->EndEffect();
 	}
 	//現状の回転度を取得する
 	float x = m_pPlayer->GetPos().x - rotationShaftPos.x;
@@ -266,7 +277,7 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		if (input.IsTrigger(Game::InputId::kA))
 		{
 			//一応エフェクトを消しておく
-			m_pPlayer->StopEffect();
+			m_pPlayer->EndEffect();
 			//StateをDodgeに変更する
 			m_nextState = std::make_shared<PlayerStateDodge>(m_pPlayer, m_pScene);
 			//回避の方向を設定する
@@ -287,8 +298,8 @@ void PlayerStateMove::Update(MyEngine::Input input)
 		frontPos = m_pPlayer->GetTargetPos();
 	}
 
-	
-	
+
+
 	//移動してなければ
 	if (velo.sqLength() < 0.001f)
 	{
@@ -326,9 +337,10 @@ int PlayerStateMove::OnDamage(std::shared_ptr<Collidable> collider)
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->Init(collider);
 	//ヒットエフェクトを表示する
-	int effect = PlayEffekseer3DEffect(m_pPlayer->GetEffekseerData("Hit").first);
+	m_pPlayer->EndEffect();
 	MyEngine::Vector3 pos = m_pPlayer->GetPos();
-	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), pos, false);
+	EffekseerManager::GetInstance().Entry(effect);
 
 	return damage;
 }

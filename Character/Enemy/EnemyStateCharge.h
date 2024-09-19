@@ -10,10 +10,5 @@ public:
 	virtual void Update() override;
 	//ダメージを受けた時の処理を行う
 	virtual int OnDamage(std::shared_ptr<Collidable> collider) override;
-private:
-	//エフェクトのハンドル
-	int m_effectHandle = -1;
-	//プレイ中のハンドル
-	int m_playEffectHandle = -1;
 };
 

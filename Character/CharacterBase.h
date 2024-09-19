@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 
+class EffekseerData;
 class AttackBase;
 class Physics;
 class SceneGame;
@@ -57,17 +58,16 @@ public:
 	int GetAttackCost(std::string Id) { return m_attackData[Id].cost; }
 	//アニメーションのデータを取得する
 	void SetAnimationData(std::vector<std::vector<std::string>> data,bool isPlayer);
-	//エフェクトのハンドルを設定する
-	void SetEffekseerHandle(std::map<std::string, std::pair<int,int>> data) { m_effekseerHandle = data; }
-	//エフェクトの情報を取得する
-	std::pair<int,int> GetEffekseerData(std::string name) {return m_effekseerHandle[name]; }
-	//エフェクトを再生する
-	void PlayEffect();
 	//効果音を鳴らす　
 	void PlaySE(std::string name, int playType);
 	//効果音を止める
 	void StopSE(std::string name);
-
+	//自分についてくるエフェクトを設定する
+	void SetEffectData(std::shared_ptr<EffekseerData> effect) { m_pEffectData = effect; }
+	//再生しているポインタを返す
+	std::shared_ptr<EffekseerData> GetEffectData() { return m_pEffectData; }
+	//自分についてくるエフェクトの再生を止める
+	void EndEffect();
 	//必殺技を出している状態に変化させる
 	void PlaySpecialAttack(std::string id);
 	//向く方向を設定する
@@ -113,8 +113,8 @@ protected:
 	std::map<std::string, DataManager::AttackInfo> m_attackData;
 	//アニメーションのデータ
 	std::map<std::string, AnimationInfo> m_animData;
-	//Effekseerのハンドル
-	std::map<std::string, std::pair<int,int>> m_effekseerHandle;
+	//自分についているエフェクトのポインタ
+	std::shared_ptr<EffekseerData> m_pEffectData;
 	//基本的なステータス
 	Status m_status;
 	//現在の体力
@@ -141,12 +141,6 @@ protected:
 	float m_animLoopEndTime;
 	//アニメーションをループさせるかどうか
 	bool m_isLoopAnim;
-	//再生しているエフェクトとループフレーム
-	std::pair<int,int> m_playEffectData;
-	//再生しているエフェクトのプレイハンドル
-	int m_playingEffectHandle;
-	//現在再生しているエフェクトのフレーム
-	int m_playEffectFrame;	
 	//出している攻撃
 	std::string m_attackId;
 	//攻撃を出したタイミングの敵の座標

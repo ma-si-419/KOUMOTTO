@@ -1,5 +1,6 @@
 #include "EnemyStateCharge.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 
 namespace
 {
@@ -10,7 +11,9 @@ namespace
 void EnemyStateCharge::Init()
 {
 	//エフェクトの設定
-	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Charge"));
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Chrage"),m_pEnemy->GetPos(),true);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pEnemy->SetEffectData(effect);
 
 	//アニメーションの設定
 	m_pEnemy->ChangeAnim("Charge");
@@ -33,8 +36,7 @@ void EnemyStateCharge::Update()
 	if (random > 0)
 	{
 		m_isChangeState = true;
-		StopEffekseer3DEffect(m_playEffectHandle);
-		m_pEnemy->StopEffect();
+		m_pEnemy->EndEffect();
 	}
 }
 
@@ -48,11 +50,10 @@ int EnemyStateCharge::OnDamage(std::shared_ptr<Collidable> collider)
 	damage = attack->GetDamage() - GetRand(static_cast<int>(m_pEnemy->GetStatus().def));
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
-	StopEffekseer3DEffect(m_playEffectHandle);
-	DeleteEffekseerEffect(m_effectHandle);
+	m_pEnemy->EndEffect();
 	m_isChangeState = true;
-	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
-	MyEngine::Vector3 pos = m_pEnemy->GetPos();
-	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), m_pEnemy->GetPos(), true);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pEnemy->SetEffectData(effect);
 	return damage;
 }

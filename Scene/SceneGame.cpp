@@ -121,8 +121,8 @@ void SceneGame::Init()
 
 void SceneGame::RetryInit()
 {
-	m_pPlayer->StopEffect();
-	m_pEnemy->StopEffect();
+	m_pPlayer->EndEffect();
+	m_pEnemy->EndEffect();
 	m_pEnemy->InitAiState(shared_from_this());
 	m_pEnemy->InitPos();
 	m_pPlayer->SetTargetPos(m_pEnemy->GetPos());

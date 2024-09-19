@@ -1,5 +1,6 @@
 #include "EnemyStateGuard.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 namespace
 {
 	//Å’á‰½ƒtƒŒ[ƒ€‚±‚ÌState‚Å‚¢‚é‚©
@@ -9,7 +10,11 @@ namespace
 }
 void EnemyStateGuard::Init()
 {
-	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Guard"));
+
+	MyEngine::Vector3 pos = m_pEnemy->GetPos();
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Guard"), pos, true);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pEnemy->SetEffectData(effect);
 	m_pEnemy->ChangeAnim("Guard");
 }
 void EnemyStateGuard::Update()
@@ -30,7 +35,7 @@ void EnemyStateGuard::Update()
 	if (random > 0)
 	{
 		m_isChangeState = true;
-		m_pEnemy->StopEffect();
+		m_pEnemy->EndEffect();
 	}
 }
 

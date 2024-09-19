@@ -3,7 +3,7 @@
 #include "PlayerStateHitAttack.h"
 #include "Player.h"
 #include "EffekseerForDXLib.h"
-
+#include "EffekseerManager.h"
 
 namespace
 {
@@ -13,7 +13,9 @@ namespace
 
 void PlayerStateCharge::Init()
 {
-	m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Charge"));
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Charge"), m_pPlayer->GetPos(), false);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pPlayer->SetEffectData(effect);
 	m_pPlayer->ChangeAnim("Guard");
 }
 
@@ -39,7 +41,7 @@ void PlayerStateCharge::Update(MyEngine::Input input)
 		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
 		auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
 		state->Init();
-		m_pPlayer->StopEffect();
+		m_pPlayer->EndEffect();
 		return;
 	}
 }
@@ -58,9 +60,9 @@ int PlayerStateCharge::OnDamage(std::shared_ptr<Collidable> collider)
 	auto state = std::dynamic_pointer_cast<PlayerStateHitAttack>(m_nextState);
 	state->Init(collider);
 	//ヒットエフェクトを表示する
-	int effect = PlayEffekseer3DEffect(m_pPlayer->GetEffekseerData("Hit").first);
 	MyEngine::Vector3 pos = m_pPlayer->GetPos();
-	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), pos, false);
+	EffekseerManager::GetInstance().Entry(effect);
 
 	return damage;
 }

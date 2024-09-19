@@ -2,6 +2,7 @@
 #include "PlayerStateIdle.h"
 #include "Player.h"
 #include <cmath>
+#include "EffekseerManager.h"
 
 namespace
 {
@@ -16,7 +17,10 @@ void PlayerStateDodge::Init(MyEngine::Vector3 dir)
 	m_moveDir = dir;
 	m_pPlayer->PlaySE("Dodge",DX_PLAYTYPE_BACK);
 	m_pPlayer->ChangeAnim("Move");
-	m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Dodge"));
+	MyEngine::Vector3 pos = m_pPlayer->GetPos();
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Dodge"), pos, false);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pPlayer->SetEffectData(effect);
 	m_pPlayer->SetUpFov(true);
 }
 void PlayerStateDodge::Update(MyEngine::Input input)
@@ -102,7 +106,7 @@ void PlayerStateDodge::Update(MyEngine::Input input)
 		//ƒAƒCƒhƒ‹ó‘Ô‚É–ß‚é
 		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer,m_pScene);
 		auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
-		m_pPlayer->StopEffect();
+		m_pPlayer->EndEffect();
 	}
 	return;
 

@@ -44,16 +44,26 @@ void EffekseerManager::Update()
 		count++;
 	}
 	//íœƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚½‚çíœ‚·‚é
-	for (auto& item : deleteDatas)
-	{
-		m_pEffekseerDatas.erase(m_pEffekseerDatas.begin() + item);
-	}
+	auto ret = std::remove_if(m_pEffekseerDatas.begin(), m_pEffekseerDatas.end(),
+		[](const auto& item)
+		{
+			bool isDelete = item->GetDeleteFlag();
+			if (isDelete)
+			{
+				item->Final();
+			}
+			return isDelete;
+		});
+	m_pEffekseerDatas.erase(ret, m_pEffekseerDatas.end());
 }
 
 void EffekseerManager::Draw()
 {
+	int c = 0;
 	for (auto& item : m_pEffekseerDatas)
 	{
 		item->Draw();
+		c++;
 	}
+	DrawFormatString(300, 300, GetColor(0, 0, 0), "%d", c);
 }

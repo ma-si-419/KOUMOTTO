@@ -42,11 +42,6 @@ public:
 	//攻撃を作成する
 	std::shared_ptr<AttackBase> CreateAttack(std::string id, MyEngine::Vector3 laserTargetPos);
 
-	//プレイするエフェクトを設定する
-	void SetPlayEffect(std::pair<int, int> playHandleData);
-	//プレイしているエフェクトをストップする
-	void StopEffect();
-
 	//初期位置に戻す
 	void InitPos();
 private:
@@ -60,6 +55,4 @@ private:
 	std::shared_ptr<EnemyStateBase> m_pState;
 	//敵のStateによって動きの確率を変化させる
 	std::map<std::string, std::vector<int>> m_aiStateData;
-	//エネミーが使用するエフェクトハンドルを所持しておく
-	std::map<std::string, int> m_effectHandles;
 };

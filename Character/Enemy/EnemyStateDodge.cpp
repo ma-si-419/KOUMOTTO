@@ -1,4 +1,6 @@
 #include "EnemyStateDodge.h"
+#include "EffekseerManager.h"
+
 namespace
 {
 	//Å’á‰½ƒtƒŒ[ƒ€‚±‚ÌState‚Å‚¢‚é‚©
@@ -21,7 +23,10 @@ void EnemyStateDodge::Init()
 	moveDir = moveDir.Normalize();
 	m_velo = moveDir * kMoveSpeed;
 	m_pEnemy->ChangeAnim("Move");
-	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Dodge"));
+	MyEngine::Vector3 pos = m_pEnemy->GetPos();
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Dodge"), pos, false);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pEnemy->SetEffectData(effect);
 }
 void EnemyStateDodge::Update()
 {
@@ -39,7 +44,7 @@ void EnemyStateDodge::Update()
 	if (m_time > kShortestTime)
 	{
 		m_isChangeState = true;
-		m_pEnemy->StopEffect();
+		m_pEnemy->EndEffect();
 	}
 }
 

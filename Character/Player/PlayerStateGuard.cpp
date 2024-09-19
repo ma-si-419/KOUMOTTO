@@ -3,6 +3,7 @@
 #include "PlayerStateHitAttack.h"
 #include "Player.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 namespace
 {
 	//ダメージの軽減率
@@ -10,7 +11,10 @@ namespace
 }
 void PlayerStateGuard::Init()
 {
-	m_pPlayer->SetPlayEffect(m_pPlayer->GetEffekseerData("Guard"));
+	MyEngine::Vector3 pos = m_pPlayer->GetPos();
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Guard"), pos, true);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pPlayer->SetEffectData(effect);
 	m_pPlayer->ChangeAnim("Guard");
 }
 void PlayerStateGuard::Update(MyEngine::Input input)
@@ -21,6 +25,10 @@ void PlayerStateGuard::Update(MyEngine::Input input)
 	m_pPlayer->SetVelo(MyEngine::Vector3(0,0,0));
 	//アニメーションを動かす
 	m_pPlayer->PlayAnim();
+	//エフェクトの位置を合わせる
+	auto effect = m_pPlayer->GetEffectData();
+	effect->SetPos(m_pPlayer->GetPos());
+
 	//状態の変化
 	if (input.IsPress(Game::InputId::kRb))
 	{
@@ -34,7 +42,7 @@ void PlayerStateGuard::Update(MyEngine::Input input)
 		m_nextState = std::make_shared<PlayerStateIdle>(m_pPlayer, m_pScene);
 		auto state = std::dynamic_pointer_cast<PlayerStateIdle>(m_nextState);
 		state->Init();
-		m_pPlayer->StopEffect();
+		m_pPlayer->EndEffect();
 		return;
 	}
 }

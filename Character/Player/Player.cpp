@@ -6,6 +6,7 @@
 #include "CapsuleColliderData.h"
 #include "PlayerStateIdle.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 #include "Ui.h"
 namespace
 {
@@ -30,7 +31,7 @@ Player::Player() :
 	m_lastAttackTime(0),
 	m_isOpenSpecialPallet(false)
 {
-	m_playEffectData.first = -1;
+
 }
 
 Player::~Player()
@@ -180,9 +181,6 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	//Stateの更新
 	m_pState->Update(input);
 
-	//エフェクトの再生
-	PlayEffect();
-
 	//当たり判定の更新
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_pColData);
 	//当たり判定の縦幅
@@ -197,12 +195,6 @@ void Player::Update(std::shared_ptr<SceneGame> scene, MyEngine::Input input)
 	{
 		scene->GameOver();
 	}
-#ifdef _DEBUG
-	if (input.IsPress(Game::InputId::kSelect))
-	{
-		m_nowHp -= 1000;
-	}
-#endif
 }
 
 void Player::Draw()
@@ -277,23 +269,9 @@ std::shared_ptr<AttackBase> Player::CreateAttack(std::string id, MyEngine::Vecto
 	{
 		ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
 	}
-	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName].first, soundHandle);
+	ans->Init(m_pPhysics, attackPos, m_attackData[id].effekseerName, soundHandle);
 
 	return ans;
-}
-
-void Player::SetPlayEffect(std::pair<int, int> playHandleData)
-{
-	m_playEffectData = playHandleData;
-}
-
-void Player::StopEffect()
-{
-	StopEffekseer3DEffect(m_playingEffectHandle);
-	m_playEffectData.first = -1;
-	m_playEffectData.second = 0;
-	m_playingEffectHandle = -1;
-	m_playEffectFrame = 0;
 }
 
 void Player::ChangeState(std::shared_ptr<PlayerStateBase> state)

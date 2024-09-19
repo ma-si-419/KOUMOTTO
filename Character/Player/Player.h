@@ -50,10 +50,6 @@ public:
 	std::map<std::string, std::string> GetSetSpecialAttackName();
 	//攻撃を作成する
 	std::shared_ptr<AttackBase> CreateAttack(std::string id,MyEngine::Vector3 laserTargetPos);
-	//プレイするエフェクトを設定する
-	void SetPlayEffect(std::pair<int, int> playHandleData);
-	//プレイしているエフェクトをストップする
-	void StopEffect();
 	//視野角を広げるかどうかを取得する
 	bool GetIsUpFov() { return m_isUpFov; }
 	//視野角を広げる

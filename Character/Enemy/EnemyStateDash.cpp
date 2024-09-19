@@ -1,5 +1,6 @@
 #include "EnemyStateDash.h"
 #include "EffekseerForDXLib.h"
+#include "EffekseerManager.h"
 
 namespace
 {
@@ -139,7 +140,9 @@ void EnemyStateDash::Init(MyEngine::Vector3 playerPos)
 	m_velo = moveDir * kMoveSpeed;
 
 	m_pEnemy->ChangeAnim("Move");
-	m_pEnemy->SetPlayEffect(m_pEnemy->GetEffekseerData("Dash"));
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Dash"), m_pEnemy->GetPos(), true);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pEnemy->SetEffectData(effect);
 
 }
 
@@ -154,7 +157,7 @@ void EnemyStateDash::Update()
 		//移動をやめて別のStateに行く
 		m_velo = MyEngine::Vector3(0, 0, 0);
 		m_isChangeState = true;
-		m_pEnemy->StopEffect();
+		m_pEnemy->EndEffect();
 	}
 	//プレイヤーに近づきすぎないように一定距離まで来たら別のStateに行く
 	if ((m_pEnemy->GetTargetPos() - m_pEnemy->GetPos()).Length() < kPlayerDistance)
@@ -162,7 +165,7 @@ void EnemyStateDash::Update()
 		//移動をやめて別のStateに行く
 		m_velo = MyEngine::Vector3(0, 0, 0);
 		m_isChangeState = true;
-		m_pEnemy->StopEffect();
+		m_pEnemy->EndEffect();
 	}
 
 	m_pEnemy->SetModelFront(m_velo + m_pEnemy->GetPos());
@@ -172,6 +175,10 @@ void EnemyStateDash::Update()
 
 	//Initで決定したベクトルで移動する
 	m_pEnemy->SetVelo(m_velo);
+
+	auto effect = m_pEnemy->GetEffectData();
+
+	effect->SetPos(m_pEnemy->GetPos());
 
 	int random = 0;
 
@@ -189,7 +196,7 @@ void EnemyStateDash::Update()
 	if (random > 0)
 	{
 		m_isChangeState = true;
-		m_pEnemy->StopEffect();
+		m_pEnemy->EndEffect();
 	}
 }
 
@@ -204,9 +211,9 @@ int EnemyStateDash::OnDamage(std::shared_ptr<Collidable> collider)
 	//受けた攻撃の種類を設定する
 	m_hitEffect = attack->GetHitEffect();
 	m_isChangeState = true;
-	m_pEnemy->StopEffect();
-	int effect = PlayEffekseer3DEffect(m_pEnemy->GetEffekseerData("Hit").first);
-	MyEngine::Vector3 pos = m_pEnemy->GetPos();
-	SetPosPlayingEffekseer3DEffect(effect, pos.x, pos.y, pos.z);
+	m_pEnemy->EndEffect();
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), m_pEnemy->GetPos(), false);
+	EffekseerManager::GetInstance().Entry(effect);
+	m_pEnemy->SetEffectData(effect);
 	return damage;
 }

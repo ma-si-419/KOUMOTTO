@@ -112,10 +112,6 @@ void Enemy::Update(std::shared_ptr<SceneGame> scene)
 	//Stateの更新処理
 	m_pState->Update();
 
-
-	//エフェクトの再生
-	PlayEffect();
-
 	//座標の更新
 	MV1SetPosition(m_modelHandle, m_rigidbody.GetPos().CastVECTOR());
 
@@ -213,23 +209,9 @@ std::shared_ptr<AttackBase> Enemy::CreateAttack(std::string id, MyEngine::Vector
 	{
 		ans->SetStatus(m_attackData[id], m_targetPos, m_rigidbody.GetPos(), m_status.atk);
 	}
-	ans->Init(m_pPhysics, attackPos, m_effekseerHandle[m_attackData[id].effekseerName].first, soundHandle);
+	ans->Init(m_pPhysics, attackPos, m_attackData[id].effekseerName, soundHandle);
 
 	return ans;
-}
-
-void Enemy::SetPlayEffect(std::pair<int, int> playHandleData)
-{
-	m_playEffectData = playHandleData;
-}
-
-void Enemy::StopEffect()
-{
-	StopEffekseer3DEffect(m_playingEffectHandle);
-	m_playEffectData.first = -1;
-	m_playEffectData.second = 0;
-	m_playingEffectHandle = -1;
-	m_playEffectFrame = 0;
 }
 
 void Enemy::InitPos()
