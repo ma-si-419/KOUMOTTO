@@ -52,7 +52,7 @@ void AttackBase::Init(std::shared_ptr<Physics> physics, MyEngine::Vector3 pos, s
 	//エフェクトの設定
 	if (m_isPopEffect)
 	{
-		MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
+		MyEngine::Vector3 effectPos = colData->m_startPos;
 		//エフェクトのポインタを作成
 		std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData(effekseerId), effectPos, false);
 		//エフェクトをマネージャーに追加

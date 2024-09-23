@@ -7,7 +7,6 @@
 #include "PlayerStateIdle.h"
 #include "EffekseerForDXLib.h"
 #include "EffekseerManager.h"
-#include "Ui.h"
 namespace
 {
 	//ˆÚ“®‘¬“x
@@ -234,14 +233,18 @@ void Player::OnCollide(std::shared_ptr<Collidable> collider)
 	//}
 }
 
-std::map<std::string, std::string> Player::GetSetSpecialAttackName()
+std::map<std::string, Ui::SpecialAttackCommandInfo> Player::GetSetSpecialAttackInfo()
 {
-	std::map<std::string, std::string> ans;
+	std::map<std::string, Ui::SpecialAttackCommandInfo> ans;
 
-	ans[Game::InputId::kA] = m_attackData[m_setSpecialAttackId[Game::InputId::kA]].name;
-	ans[Game::InputId::kB] = m_attackData[m_setSpecialAttackId[Game::InputId::kB]].name;
-	ans[Game::InputId::kX] = m_attackData[m_setSpecialAttackId[Game::InputId::kX]].name;
-	ans[Game::InputId::kY] = m_attackData[m_setSpecialAttackId[Game::InputId::kY]].name;
+	ans[Game::InputId::kA].name = m_attackData[m_setSpecialAttackId[Game::InputId::kA]].name;
+	ans[Game::InputId::kA].cost = m_attackData[m_setSpecialAttackId[Game::InputId::kA]].cost;
+	ans[Game::InputId::kB].name = m_attackData[m_setSpecialAttackId[Game::InputId::kB]].name;
+	ans[Game::InputId::kB].cost = m_attackData[m_setSpecialAttackId[Game::InputId::kB]].cost;
+	ans[Game::InputId::kX].name = m_attackData[m_setSpecialAttackId[Game::InputId::kX]].name;
+	ans[Game::InputId::kX].cost = m_attackData[m_setSpecialAttackId[Game::InputId::kX]].cost;
+	ans[Game::InputId::kY].name = m_attackData[m_setSpecialAttackId[Game::InputId::kY]].name;
+	ans[Game::InputId::kY].cost = m_attackData[m_setSpecialAttackId[Game::InputId::kY]].cost;
 
 	return ans;
 }

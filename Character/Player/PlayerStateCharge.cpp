@@ -13,7 +13,7 @@ namespace
 
 void PlayerStateCharge::Init()
 {
-	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Charge"), m_pPlayer->GetPos(), false);
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Charge"), m_pPlayer->GetPos(), true);
 	EffekseerManager::GetInstance().Entry(effect);
 	m_pPlayer->SetEffectData(effect);
 	m_pPlayer->ChangeAnim("Guard");

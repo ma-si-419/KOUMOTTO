@@ -19,6 +19,12 @@ public:
 		kEnd,
 		kItemNum
 	};
+
+	struct SpecialAttackCommandInfo
+	{
+		std::string name = "empty";
+		int cost = -1;
+	};
 public:
 	Ui();
 	virtual ~Ui();
@@ -62,7 +68,7 @@ public:
 	/// 攻撃関係の操作を表示する
 	/// </summary>
 	/// <param name="showSpecialAttack">必殺技パレットを開いているかどうか</param>
-	void DrawCommand(bool showSpecialAttack,std::map<std::string,std::string> attackName);
+	void DrawCommand(bool showSpecialAttack,std::map<std::string, SpecialAttackCommandInfo> attackInfo);
 
 	/// <summary>
 	/// コンボ数を表示する
@@ -167,6 +173,8 @@ private:
 
 	//体力を表示するときのフォントハンドル
 	int m_hpNumFontHandle;
+	//魔力を表示するときのフォントハンドル
+	int m_mpNumFontHandle;
 	//ダメージを表示するときのフォントハンドル
 	int m_damageFontHandle;
 	//ゲームオーバーの時の選択肢のフォントハンドル

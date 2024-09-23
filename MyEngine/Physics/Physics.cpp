@@ -142,17 +142,20 @@ void Physics::FixPosition()
 		{
 			//ぶつかった場所を保存する
 			OnCollideInfo hitCollides;
-			hitCollides.owner = item;
 			//ステージとぶつかったして
 			std::shared_ptr<Stage> stage = std::make_shared<Stage>(ObjectTag::kStage);
 			//ぶつかった場所を補正前の座標に設定
 			stage->m_rigidbody.SetPos(nextPos);
-			hitCollides.colider = stage;
+			hitCollides.owner = stage;
+			hitCollides.colider = item;
 			//ぶつかった時の処理を呼ぶ
 			hitCollides.OnCollide();
 			//座標を補正
 			nextPos = (nextPos - centerPos).Normalize() * 500;
-
+		}
+		if(nextPos.y < -50)
+		{
+			nextPos.y = -50;
 		}
 
 		item->m_rigidbody.SetVelo(toFixedPos);

@@ -2,6 +2,7 @@
 #include "CharacterBase.h"
 #include "Input.h"
 #include "PlayerStateBase.h"
+#include "Ui.h"
 class SceneGame;
 class Player : public CharacterBase 
 {
@@ -47,7 +48,7 @@ public:
 	//ƒZƒbƒg‚µ‚Ä‚ ‚é•KE‹Z‚ÌId‚ğ•Ô‚·
 	std::map<std::string, std::string> GetSetSpecialAttackId() { return m_setSpecialAttackId; };
 	//ƒZƒbƒg‚µ‚Ä‚ ‚é•KE‹Z‚Ì–¼‘O‚ğ•Ô‚·
-	std::map<std::string, std::string> GetSetSpecialAttackName();
+	std::map<std::string, Ui::SpecialAttackCommandInfo> GetSetSpecialAttackInfo();
 	//UŒ‚‚ğì¬‚·‚é
 	std::shared_ptr<AttackBase> CreateAttack(std::string id,MyEngine::Vector3 laserTargetPos);
 	//‹–ìŠp‚ğL‚°‚é‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é

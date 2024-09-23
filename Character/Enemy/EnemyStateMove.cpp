@@ -168,6 +168,15 @@ void EnemyStateMove::Update()
 		m_isChangeState = true;
 	}
 
+	//プレイヤーとのY座標の差
+	float yGap = m_pEnemy->GetTargetPos().y - m_pEnemy->GetPos().y;
+	//上下移動していてプレイヤーとのY座標が近くなったら
+	if (m_velo.y != 0 && yGap < kYGapScale)
+	{
+		//べつのStateに移動する
+		m_isChangeState = true;
+	}
+
 
 	m_pEnemy->SetModelFront(m_velo + m_pEnemy->GetPos());
 	m_isLookPlayer = false;

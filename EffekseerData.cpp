@@ -41,6 +41,7 @@ void EffekseerData::Update()
 		{
 			//Ä¶‚µ‚È‚¨‚·
 			m_playHandle = PlayEffekseer3DEffect(m_effekseerHandle);
+			m_playTime = 0;
 		}
 		//ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚È‚¯‚ê‚Î
 		else

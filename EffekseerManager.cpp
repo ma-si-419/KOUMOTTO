@@ -59,11 +59,12 @@ void EffekseerManager::Update()
 
 void EffekseerManager::Draw()
 {
-	int c = 0;
+	/*int c = 0;
 	for (auto& item : m_pEffekseerDatas)
 	{
 		item->Draw();
 		c++;
 	}
-	DrawFormatString(300, 300, GetColor(0, 0, 0), "%d", c);
+	DrawFormatString(300, 300, GetColor(0, 0, 0), "%d", c);*/
+	DrawEffekseer3D();
 }

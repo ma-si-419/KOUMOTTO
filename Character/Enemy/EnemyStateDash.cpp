@@ -114,8 +114,13 @@ void EnemyStateDash::Init(MyEngine::Vector3 playerPos)
 	//ランダムな方向に移動する
 	else if (moveKind == static_cast<int>(MoveKind::kRandom))
 	{
-		moveDir = MyEngine::Vector3(GetRand(kMoveDirNum) - kMoveDirNumHalf, 0, GetRand(kMoveDirNum) - kMoveDirNumHalf).Normalize();
-
+		moveDir = MyEngine::Vector3(GetRand(kMoveDirNum) - kMoveDirNumHalf, 0, GetRand(kMoveDirNum) - kMoveDirNumHalf);
+		//移動方向のランダムがどちらも0で出たら
+		if (moveDir.sqLength() == 0)
+		{
+			moveDir = MyEngine::Vector3(0, 0, 1);
+		}
+		moveDir = moveDir.Normalize();
 		//上下移動フラグが立っていたら
 		if (m_isMoveVertical)
 		{
@@ -176,9 +181,13 @@ void EnemyStateDash::Update()
 	//Initで決定したベクトルで移動する
 	m_pEnemy->SetVelo(m_velo);
 
-	auto effect = m_pEnemy->GetEffectData();
+	//エフェクトが設定されていたら
+	if (m_pEnemy->GetEffectData())
+	{
+		auto effect = m_pEnemy->GetEffectData();
 
-	effect->SetPos(m_pEnemy->GetPos());
+		effect->SetPos(m_pEnemy->GetPos());
+	}
 
 	int random = 0;
 

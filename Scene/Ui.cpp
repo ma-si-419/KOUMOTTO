@@ -8,6 +8,8 @@ namespace
 {
 	//HPの残量を表示するときのフォントの大きさ
 	constexpr int kHpNumFontSize = 20;
+	//MPの残量を表示するときのフォントの大きさ
+	constexpr int kMpNumFontSize = 15;
 	//HPバーの大きさ
 	constexpr int kHpBarHeight = 15;
 	constexpr int kHpBarWidth = 188;
@@ -34,7 +36,9 @@ namespace
 	//プレイヤーのHPの量を表示する座標
 	constexpr int kHpNumPosX = 42;
 	constexpr int kHpNumPosY = -3;
-
+	//プレイヤーのMPの量を表示する座標
+	constexpr int kMpNumPosX = 100;
+	constexpr int kMpNumPosY = 32;
 	//エネミーのスタンバーの座標(画像の座標に対してのスタンバーの座標のずれを直す)
 	constexpr int kStanBarPosX = 23;
 	constexpr int kStanBarPosY = 40;
@@ -92,6 +96,9 @@ namespace
 	//文字列とフレームのUIのずれ
 	constexpr int kCommandStringGapX = 80;
 	constexpr int kCommandStringGapY = 10;
+	//コストとフレームのUIのずれ
+	constexpr int kCostStringGapX = 350;
+	constexpr int kCostStringGapY = 10;
 	//コマンドを表示するX座標の基本的な位置
 	constexpr int kCommandPosX = 80;
 	//コマンドを表示するY座標
@@ -139,16 +146,18 @@ namespace
 	//SPコマンドを表示するコマンドを表示する座標
 	constexpr int kSpCommandControlPosX = 90;
 	constexpr int kSpCommandControlPosY = 520;
-	//上下移動コマンドを表示する座標
-	constexpr int kUpDownMoveCommandPosX = 90;
-	constexpr int kUpDownMoveCommandPosY = 430;
+	//下降コマンドを表示する座標
+	constexpr int kDownCommandPosX = 300;
+	constexpr int kDownCommandPosY = 430;
+	//上昇コマンドを表示する座標
+	constexpr int kUpCommandPosX = 90;
+	constexpr int kUpCommandPosY = 430;
 	//一フレームに増やすパーティクルの最大数
 	constexpr int kAddParticleMaxNum = 20;
 	//パーティクルの最大速度
 	constexpr int kParticleSpeed = 10;
 	//パーティクルの大きさ
-	constexpr int kParticleRadius = 2
-		;
+	constexpr int kParticleRadius = 2;
 	//パーティクルにかかる重力の力
 	constexpr float kParticleGravity = 0.05f;
 	//パーティクルのライフタイム
@@ -187,6 +196,7 @@ Ui::Ui() :
 	m_commandFontHandle = CreateFontToHandle("アンニャントロマン", kCommandFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	m_comboCountFontHandle = CreateFontToHandle("アンニャントロマン", kComboCountFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	m_hpNumFontHandle = CreateFontToHandle("アンニャントロマン", kHpNumFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	m_mpNumFontHandle = CreateFontToHandle("アンニャントロマン", kMpNumFontSize, 9, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 }
 
 Ui::~Ui()
@@ -436,7 +446,7 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	DrawRotaGraph(static_cast<int>(m_showUi[enemyStateBar].drawPos.x + enemyStateBarShakeSize.x),
 		static_cast<int>(m_showUi[enemyStateBar].drawPos.y + +enemyStateBarShakeSize.y),
 		1.0, 0.0, m_showUi[enemyStateBar].handle, true);
-	//プレイヤーの体力値表示
+	//体力値表示
 	std::string playerHp = std::to_string(static_cast<int>(player->GetNowHp()));
 	std::string enemyHp = std::to_string(static_cast<int>(enemy->GetNowHp()));
 
@@ -448,6 +458,12 @@ void Ui::DrawStateBar(std::shared_ptr<Player> player, std::shared_ptr<Enemy> ene
 	DrawStringToHandle(static_cast<int>(m_showUi[enemyStateBar].drawPos.x + enemyStateBarShakeSize.x + kHpNumPosX),
 		static_cast<int>(m_showUi[enemyStateBar].drawPos.y + enemyStateBarShakeSize.y + kHpNumPosY),
 		enemyHp.c_str(), GetColor(255, 255, 255), m_hpNumFontHandle);
+	//プレイヤーの気力値表示
+	std::string playerMp = std::to_string(static_cast<int>(player->GetNowMp()));
+
+	DrawStringToHandle(static_cast<int>(m_showUi[playerStateBar].drawPos.x + playerStateBarShakeSize.x + kMpNumPosX),
+		static_cast<int>(m_showUi[playerStateBar].drawPos.y + playerStateBarShakeSize.y + kMpNumPosY),
+		playerMp.c_str(), GetColor(255, 255, 255), m_mpNumFontHandle);
 }
 
 
@@ -759,7 +775,7 @@ void Ui::DrawStartSign(bool startFlag)
 	}
 }
 
-void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> attackName)
+void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, SpecialAttackCommandInfo> attackInfo)
 {
 	//コマンドを表示するフレーム
 	std::string frame = "CommandFrame";
@@ -794,7 +810,6 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 			m_specialCommandAlpha = 0;
 		}
 
-
 		//基本コマンドの座標を右に動かす
 		if (m_normalCommandPosX < kCommandPosX)
 		{
@@ -817,6 +832,7 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 			//0よりも小さくしない
 			m_specialCommandPosX = 0;
 		}
+		
 	}
 	//必殺技パレットを開いているとき
 	else
@@ -937,14 +953,25 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 		m_showUi[button].handle, true);
 
 	//各操作の名前を表示する
+
 	DrawStringToHandle(m_specialCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialA)] + kCommandStringGapY,
-		attackName[Game::InputId::kA].c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		attackInfo[Game::InputId::kA].name.c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_specialCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialB)] + kCommandStringGapY,
-		attackName[Game::InputId::kB].c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		attackInfo[Game::InputId::kB].name.c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_specialCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialX)] + kCommandStringGapY,
-		attackName[Game::InputId::kX].c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		attackInfo[Game::InputId::kX].name.c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	DrawStringToHandle(m_specialCommandPosX + kCommandStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialY)] + kCommandStringGapY,
-		attackName[Game::InputId::kY].c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+		attackInfo[Game::InputId::kY].name.c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	
+	//各操作のコストを表示する
+	DrawStringToHandle(m_specialCommandPosX + kCostStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialA)] + kCostStringGapY,
+		std::to_string(attackInfo[Game::InputId::kA].cost).c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	DrawStringToHandle(m_specialCommandPosX + kCostStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialB)] + kCostStringGapY,
+		std::to_string(attackInfo[Game::InputId::kB].cost).c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	DrawStringToHandle(m_specialCommandPosX + kCostStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialX)] + kCostStringGapY,
+		std::to_string(attackInfo[Game::InputId::kX].cost).c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	DrawStringToHandle(m_specialCommandPosX + kCostStringGapX, kCommandPosY[static_cast<int>(CommandSort::kSpecialY)] + kCostStringGapY,
+		std::to_string(attackInfo[Game::InputId::kY].cost).c_str(), GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
@@ -963,12 +990,18 @@ void Ui::DrawCommand(bool showSpecialAttack, std::map<std::string, std::string> 
 	DrawStringToHandle(kSpCommandControlPosX + kShoulderButtonGraphGapX, kSpCommandControlPosY + kShoulderButtonGraphGapY,
 		"Spコマンド", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 	//上下移動コマンドを表示するコマンドを表示する
-	DrawRectGraph(kUpDownMoveCommandPosX, kUpDownMoveCommandPosY,
+	DrawRectGraph(kUpCommandPosX, kUpCommandPosY,
 		kShoulderButtonGraphSize * static_cast<int>(ButtonSort::kLt),
 		0, kShoulderButtonGraphSize, kShoulderButtonGraphSize,
 		m_showUi[shoulderButton].handle, true);
-	DrawStringToHandle(kUpDownMoveCommandPosX + kShoulderButtonGraphGapX, kUpDownMoveCommandPosY + kShoulderButtonGraphGapY,
-		"アップダウン", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	DrawStringToHandle(kUpCommandPosX + kShoulderButtonGraphGapX, kUpCommandPosY + kShoulderButtonGraphGapY,
+		"アップ", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
+	DrawRectGraph(kDownCommandPosX, kDownCommandPosY,
+		kShoulderButtonGraphSize* static_cast<int>(ButtonSort::kRt),
+		0, kShoulderButtonGraphSize, kShoulderButtonGraphSize,
+		m_showUi[shoulderButton].handle, true);
+	DrawStringToHandle(kDownCommandPosX + kShoulderButtonGraphGapX, kDownCommandPosY + kShoulderButtonGraphGapY,
+		"ダウン", GetColor(0, 0, 0), m_commandFontHandle, GetColor(255, 255, 255));
 }
 
 void Ui::DrawComboCount()

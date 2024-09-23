@@ -175,6 +175,7 @@ void CharacterBase::EndEffect()
 	if (m_pEffectData)
 	{
 		m_pEffectData->Final();
+		m_pEffectData = nullptr;
 	}
 }
 

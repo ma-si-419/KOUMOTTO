@@ -346,7 +346,7 @@ void SceneGame::Draw()
 	//与えたダメージの表示
 	m_pUi->DrawDamage();
 	//コマンドの表示
-	m_pUi->DrawCommand(m_pPlayer->GetIsOpenSpecialPallet(), m_pPlayer->GetSetSpecialAttackName());
+	m_pUi->DrawCommand(m_pPlayer->GetIsOpenSpecialPallet(), m_pPlayer->GetSetSpecialAttackInfo());
 	//コンボ数の表示
 	m_pUi->DrawComboCount();
 	MyEngine::Vector3 pos = m_pGameCamera->GetPos();

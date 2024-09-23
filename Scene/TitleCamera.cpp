@@ -8,7 +8,8 @@ namespace
 	constexpr float kCameraSpeed = 0.01f;
 }
 TitleCamera::TitleCamera():
-	m_loopCount(0)
+	m_loopCount(0),
+	m_lightHandle(-1)
 {
 	SetCameraNearFar(1.5f, 1000.0f);
 }
