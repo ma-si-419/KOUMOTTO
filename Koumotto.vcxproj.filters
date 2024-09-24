@@ -55,18 +55,18 @@
     <Filter Include="ヘッダー ファイル\Character\Enemy">
       <UniqueIdentifier>{31db2b38-2175-4bce-b77b-47fcc171f787}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Scene\Game">
+      <UniqueIdentifier>{6a555552-1380-4aae-bb00-9450990546c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene\Title">
+      <UniqueIdentifier>{cd6c4912-9930-4001-8873-ec5fe75418eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\SceneTitle.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\SceneBase.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\SceneGame.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Scene\SceneManager.cpp">
@@ -98,9 +98,6 @@
     </ClCompile>
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp">
       <Filter>ソース ファイル\MyEngine\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\SceneSelect.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp">
       <Filter>ソース ファイル\MyEngine\Utility</Filter>
@@ -171,42 +168,48 @@
     <ClCompile Include="Scene\SoundManager.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\TitleCamera.cpp">
+    <ClCompile Include="Scene\EffekseerManager.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\GameCamera.cpp">
+    <ClCompile Include="Scene\EffekseerData.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Ui.cpp">
+    <ClCompile Include="Scene\Object.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Scene\ObjectManager.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Scene\Game\SceneGame.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerManager.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Scene\Title\SceneTitle.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerData.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Scene\Title\TitleCamera.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
     </ClCompile>
-    <ClCompile Include="Stage.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Scene\Game\Ui.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Game\GameCamera.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Game\Stage.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\SceneBase.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\SceneGame.h">
+    <ClInclude Include="Scene\Game\SceneGame.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene\SceneManager.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\SceneTitle.h">
+    <ClInclude Include="Scene\Title\SceneTitle.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="MyEngine\Physics\ObjectTag.h">
@@ -317,31 +320,31 @@
     <ClInclude Include="Scene\DataManager.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\GameCamera.h">
+    <ClInclude Include="Scene\Game\GameCamera.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene\SoundManager.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\TitleCamera.h">
+    <ClInclude Include="Scene\Title\TitleCamera.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Ui.h">
+    <ClInclude Include="Scene\Game\Ui.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectManager.h">
+    <ClInclude Include="Scene\ObjectManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
+    <ClInclude Include="Scene\Object.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerManager.h">
+    <ClInclude Include="Scene\EffekseerManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerData.h">
+    <ClInclude Include="Scene\EffekseerData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Stage.h">
+    <ClInclude Include="Scene\Game\Stage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,7 +12,14 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	bool isWindow = true;
+	bool isWindow = false;
+
+#ifdef _DEBUG
+
+	//デバッグモード時はウィンドウモードにする
+	isWindow = true;
+
+#endif // _DEBUG
 
 
 	// ウィンドウかフルスクリーンか可変にする

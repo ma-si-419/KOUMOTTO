@@ -76,13 +76,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -102,7 +102,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -112,13 +112,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -138,7 +138,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;$(ProjectDir)Scene;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXLIB_DIR);$(ProjectDir);$(ProjectDir)MyEngine/Utility;$(ProjectDir)MyEngine/Physics;data/addFile;$(ProjectDir)Character;$(ProjectDir)Character/Player;$(ProjectDir)Character/Enemy;$(ProjectDir)Scene;$(ProjectDir)Scene/Game;$(ProjectDir)Scene/Title</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -153,11 +153,11 @@
     <ClCompile Include="Character\Enemy\EnemyStateHitAttack.cpp" />
     <ClCompile Include="Character\Enemy\EnemyStateIdle.cpp" />
     <ClCompile Include="Character\Enemy\EnemyStateMove.cpp" />
-    <ClCompile Include="EffekseerData.cpp" />
-    <ClCompile Include="EffekseerManager.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
-    <ClCompile Include="Scene\GameCamera.cpp" />
+    <ClCompile Include="Scene\EffekseerData.cpp" />
+    <ClCompile Include="Scene\EffekseerManager.cpp" />
+    <ClCompile Include="Scene\Object.cpp" />
+    <ClCompile Include="Scene\ObjectManager.cpp" />
+    <ClCompile Include="Scene\Game\GameCamera.cpp" />
     <ClCompile Include="Character\Enemy\Enemy.cpp" />
     <ClCompile Include="Scene\DataManager.cpp" />
     <ClCompile Include="MyEngine\Utility\LoadCsv.cpp" />
@@ -175,20 +175,19 @@
     <ClCompile Include="Character\Player\PlayerStateHitAttack.cpp" />
     <ClCompile Include="Character\Player\PlayerStateMove.cpp" />
     <ClCompile Include="Character\Player\PlayerStateCharge.cpp" />
-    <ClCompile Include="Scene\SceneSelect.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
-    <ClCompile Include="Scene\SceneGame.cpp" />
+    <ClCompile Include="Scene\Game\SceneGame.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
-    <ClCompile Include="Scene\SceneTitle.cpp" />
+    <ClCompile Include="Scene\Title\SceneTitle.cpp" />
     <ClCompile Include="MyEngine\Utility\Vector2.cpp" />
     <ClCompile Include="MyEngine\Utility\Vector3.cpp" />
     <ClCompile Include="MyEngine\Physics\SphereColliderData.cpp" />
     <ClCompile Include="Character\Player\PlayerStateBase.cpp" />
     <ClCompile Include="Character\Player\PlayerStateIdle.cpp" />
     <ClCompile Include="Scene\SoundManager.cpp" />
-    <ClCompile Include="Scene\TitleCamera.cpp" />
-    <ClCompile Include="Scene\Ui.cpp" />
-    <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Scene\Title\TitleCamera.cpp" />
+    <ClCompile Include="Scene\Game\Ui.cpp" />
+    <ClCompile Include="Scene\Game\Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character\AttackBase.h" />
@@ -201,11 +200,11 @@
     <ClInclude Include="Character\Enemy\EnemyStateHitAttack.h" />
     <ClInclude Include="Character\Enemy\EnemyStateIdle.h" />
     <ClInclude Include="Character\Enemy\EnemyStateMove.h" />
-    <ClInclude Include="EffekseerData.h" />
-    <ClInclude Include="EffekseerManager.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="ObjectManager.h" />
-    <ClInclude Include="Scene\GameCamera.h" />
+    <ClInclude Include="Scene\EffekseerData.h" />
+    <ClInclude Include="Scene\EffekseerManager.h" />
+    <ClInclude Include="Scene\Object.h" />
+    <ClInclude Include="Scene\ObjectManager.h" />
+    <ClInclude Include="Scene\Game\GameCamera.h" />
     <ClInclude Include="Character\CommandIdList.h" />
     <ClInclude Include="Character\Enemy\Enemy.h" />
     <ClInclude Include="Scene\DataManager.h" />
@@ -228,18 +227,18 @@
     <ClInclude Include="Character\Player\PlayerStateCharge.h" />
     <ClInclude Include="Scene\SceneSelect.h" />
     <ClInclude Include="Scene\SceneBase.h" />
-    <ClInclude Include="Scene\SceneGame.h" />
+    <ClInclude Include="Scene\Game\SceneGame.h" />
     <ClInclude Include="Scene\SceneManager.h" />
-    <ClInclude Include="Scene\SceneTitle.h" />
+    <ClInclude Include="Scene\Title\SceneTitle.h" />
     <ClInclude Include="MyEngine\Utility\Vector2.h" />
     <ClInclude Include="MyEngine\Utility\Vector3.h" />
     <ClInclude Include="MyEngine\Physics\SphereColliderData.h" />
     <ClInclude Include="Character\Player\PlayerStateBase.h" />
     <ClInclude Include="Character\Player\PlayerStateIdle.h" />
     <ClInclude Include="Scene\SoundManager.h" />
-    <ClInclude Include="Scene\TitleCamera.h" />
-    <ClInclude Include="Scene\Ui.h" />
-    <ClInclude Include="Stage.h" />
+    <ClInclude Include="Scene\Title\TitleCamera.h" />
+    <ClInclude Include="Scene\Game\Ui.h" />
+    <ClInclude Include="Scene\Game\Stage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
