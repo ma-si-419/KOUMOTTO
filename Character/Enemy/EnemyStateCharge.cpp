@@ -52,7 +52,7 @@ int EnemyStateCharge::OnDamage(std::shared_ptr<Collidable> collider)
 	m_hitEffect = attack->GetHitEffect();
 	m_pEnemy->EndEffect();
 	m_isChangeState = true;
-	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), m_pEnemy->GetPos(), true);
+	std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData("Hit"), m_pEnemy->GetPos(), false);
 	EffekseerManager::GetInstance().Entry(effect);
 	m_pEnemy->SetEffectData(effect);
 	return damage;

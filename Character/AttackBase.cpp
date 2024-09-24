@@ -135,7 +135,7 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 	if (m_isPopEffect)
 	{
 		//エフェクトの更新
-		MyEngine::Vector3 effectPos = m_rigidbody.GetPos();
+		MyEngine::Vector3 effectPos = colData->m_startPos;
 
 		//レーザーじゃない場合
 		if (!m_status.isLaser)
@@ -148,7 +148,7 @@ void AttackBase::Update(MyEngine::Vector3 targetPos)
 		{
 			if (m_lifeTime % kLaserEffectPopTime == 0)
 			{
-				MyEngine::Vector3 pos = colData->m_startPos;
+				MyEngine::Vector3 pos = m_rigidbody.GetPos();
 
 				//一定時間ごとにエフェクトを出す
 				std::shared_ptr<EffekseerData> effect = std::make_shared<EffekseerData>(EffekseerManager::GetInstance().GetEffekseerHandleData(m_effectId), pos, false);

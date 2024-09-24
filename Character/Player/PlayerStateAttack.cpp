@@ -272,7 +272,7 @@ void PlayerStateAttack::Update(MyEngine::Input input)
 					//エフェクトを残すようにする
 					attack->SetLeaveEffect();
 					//一度目の攻撃以外エフェクトを出さないようにする
-					if (m_popAttackNum != 0)
+					if (m_popAttackNum > 0)
 					{
 						attack->SetNotPopEffect();
 					}
