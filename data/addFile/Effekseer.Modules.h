@@ -1261,7 +1261,14 @@ private:
 	}
 
 public:
-	Curve()
+	Curve():
+		mControllPoint(0),
+		mDimension(0),
+		mKnotCount(0),
+		mLength(0),
+		mOrder(0),
+		mStep(0),
+		mType(0)
 	{
 	}
 
